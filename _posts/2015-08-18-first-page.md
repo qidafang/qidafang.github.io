@@ -6,7 +6,7 @@ title: 在github上的第一篇博客
 
 #1.在github上建博客#
 
-其实很简单，建个库，库的名字叫username.github.io，其中github和你的用户名一样就可以。
+其实很简单，建个库，库的名字叫username.github.io，其中username和你的用户名一样就可以。
 
 然后上传一个index.html，访问username.github.io应该就可以看得到了。
 
