@@ -5,8 +5,8 @@ permalink:           pretty
 relative_permalinks: true
 
 # Setup
-title:               Poole
-tagline:             The Jekyll Butler
+title:               思而室主人的github博客
+tagline:             思而勤工作室
 url:                 http://getpoole.com
 paginate:            1
 baseurl:             ""
@@ -20,7 +20,7 @@ sass:
 
 # About/contact
 author:
-  name:              Mark Otto
+  name:              思而室主人
   url:               https://twitter.com/mdo
   email:             markdotto@gmail.com
 
