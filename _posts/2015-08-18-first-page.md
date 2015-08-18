@@ -1,10 +1,11 @@
 ---
 layout: post
-title: 内容示例
+title: 在github上的第一篇博客
 ---
 
 
 <div class="message">
+  其实这篇是个示例页面，演示示例标签的用法，可以用来做参考。
   Howdy! This is an example blog post that shows several types of HTML content supported in this theme.
 </div>
 
