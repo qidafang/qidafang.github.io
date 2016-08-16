@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>iOS中UIWebView与其中网页的javascript的交互</h1>
+<div><div>1.本地语言调js的方式与android中的方式类似，也是向WebView控件发送要调用的js语句</div>
+
+<div>2. 但js调本地语言，则不是像android那样直接调一个全局变量的方法，而是通过location.href=xx://yy这样的方式触发UIWebViewDelegate接口实现者的webView shouldStartLoadWithRequest navigationType方法，该方法应该判断目标路径（即xx://yy）的schema（即xx）是否实际是要调用swift，如果是，则按约定执行之，并返回false阻止网页路径变化，如果不是要调用swift，则返回true，让改网页继续正常加载目标url。</div>
+
+<div>android和iOS对比，它们都用了伪url的技术，但android是在本地语言调js时使用了伪url（该url的schema为javascript），而iOS是js调本地语言时使用了伪url（该url是自定义的标识），这个错落很有意思。</div>
+
+<div>&nbsp;</div>
+
+<div>&nbsp;</div>
+
+<p><span style="color:#FF0000"><span style="font-size:16px"><strong><span style="font-family:hannotatesc-w5">swift代码：</span></strong></span></span></p>
+
+<div>
+<blockquote>
+<p>import&nbsp;UIKit</p>
+
+<p>&nbsp;</p>
+
+<p>class&nbsp;ViewController:&nbsp;UIViewController,&nbsp;UIWebViewDelegate&nbsp;{</p>
+
+<p>&nbsp;&nbsp; &nbsp;</p>
+
+<p>&nbsp; &nbsp;&nbsp;@IBOutlet&nbsp;weak&nbsp;var&nbsp;theWebView:&nbsp;UIWebView!</p>
+
+<p>&nbsp;&nbsp; &nbsp;</p>
+
+<p>&nbsp; &nbsp;&nbsp;override&nbsp;func&nbsp;viewDidLoad() {</p>
+
+<p>&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;<span style="color:#FF0000"><strong>//加载本地html</strong></span></p>
+
+<p>&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;let&nbsp;res =&nbsp;NSBundle.mainBundle().pathForResource(&quot;index&quot;,ofType:&quot;html&quot;)</p>
+
+<p>&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;let&nbsp;url =&nbsp;NSURL(fileURLWithPath: res!);</p>
+
+<p>&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;let&nbsp;request =&nbsp;NSURLRequest(URL: url);</p>
+
+<p>&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;self.theWebView.loadRequest(request);</p>
+
+<p>&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;self.theWebView.delegate&nbsp;=&nbsp;self;</p>
+
+<p>&nbsp; &nbsp;&nbsp;}</p>
+
+<p>&nbsp;&nbsp; &nbsp;</p>
+
+<p>&nbsp; &nbsp;&nbsp;<span style="color:#FF0000"><strong>//让js可以调用swift</strong></span></p>
+
+<p>&nbsp; &nbsp;&nbsp;func&nbsp;webView(webView:&nbsp;UIWebView, shouldStartLoadWithRequest request:&nbsp;NSURLRequest, navigationType:&nbsp;UIWebViewNavigationType) -&gt;&nbsp;Bool&nbsp;{</p>
+
+<p>&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;//判断是不是js在调用swift，如果是，则处理并返回false</p>
+
+<p>&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;if(request.URL!.scheme&nbsp;==&nbsp;&quot;myschema&quot;){</p>
+
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;let&nbsp;host = request.URL!.host;</p>
+
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;if(host ==&nbsp;&quot;go&quot;){</p>
+
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;let&nbsp;query = request.URL!.query!;</p>
+
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;print(query);</p>
+
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;let&nbsp;split = query.componentsSeparatedByString(&quot;=&quot;);</p>
+
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;let&nbsp;text = split[1];</p>
+
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;self.theWebView.stringByEvaluatingJavaScriptFromString(&quot;changeContent(\&quot;&quot;&nbsp;+ text +&nbsp;&quot;\&quot;)&quot;);</p>
+
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;}</p>
+
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;return&nbsp;false;</p>
+
+<p>&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;}else{</p>
+
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;return&nbsp;true;</p>
+
+<p>&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;}</p>
+
+<p>&nbsp; &nbsp;&nbsp;}</p>
+
+<p>&nbsp;&nbsp; &nbsp;</p>
+
+<p>&nbsp; &nbsp;&nbsp;<span style="color:#FF0000"><strong>//swift调用js</strong></span></p>
+
+<p>&nbsp; &nbsp;&nbsp;@IBAction&nbsp;func&nbsp;btnClicked(sender:&nbsp;AnyObject) {&nbsp;</p>
+
+<p>&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;self.theWebView.stringByEvaluatingJavaScriptFromString(&quot;changeContent(\&quot;123\&quot;)&quot;);</p>
+
+<p>&nbsp; &nbsp;&nbsp;}</p>
+
+<p>}</p>
+</blockquote>
+
+<p>&nbsp;</p>
+
+<p><span style="color:#FF0000"><span style="font-size:16px"><strong>网页代码：</strong></span></span></p>
+
+<blockquote>
+<p>&lt;!DOCTYPE html&gt;</p>
+
+<p>&lt;html&gt;</p>
+
+<p>&lt;head&gt;</p>
+
+<p><span style="color:rgb(0, 0, 0)">&nbsp; &nbsp;&nbsp;</span>&lt;meta&nbsp;<span style="color:rgb(150, 126, 52)">charset</span>=<span style="color:rgb(209, 47, 27)">&quot;utf-8&quot;</span>&gt;</p>
+
+<p>&lt;/head&gt;</p>
+
+<p>&lt;body&gt;</p>
+
+<p><span style="color:rgb(0, 0, 0)">&nbsp; &nbsp;&nbsp;</span>&lt;span&nbsp;<span style="color:rgb(150, 126, 52)">id</span>=<span style="color:rgb(209, 47, 27)">&quot;theSpan&quot;</span>&gt;&lt;/span&gt;</p>
+
+<p><span style="color:rgb(0, 0, 0)">&nbsp; &nbsp;&nbsp;</span>&lt;button&nbsp;<span style="color:rgb(150, 126, 52)">onclick</span>=<span style="color:rgb(209, 47, 27)">&quot;doIt()&quot;</span>&gt;<span style="color:rgb(0, 0, 0)">js</span><span style="color:rgb(0, 0, 0); font-family:heiti sc light">调用</span><span style="color:rgb(0, 0, 0)">swift</span>&lt;/button&gt;</p>
+
+<p><span style="color:rgb(0, 0, 0)">&nbsp; &nbsp;&nbsp;</span>&lt;input&nbsp;<span style="color:rgb(150, 126, 52)">type</span>=<span style="color:rgb(209, 47, 27)">&quot;text&quot;</span>&nbsp;<span style="color:rgb(150, 126, 52)">id</span>=<span style="color:rgb(209, 47, 27)">&quot;t&quot;</span>&gt;</p>
+
+<p><span style="color:rgb(0, 0, 0)">&nbsp; &nbsp;&nbsp;</span>&lt;script&gt;</p>
+
+<p><span style="color:rgb(0, 0, 0)">&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</span><span style="color:#FF0000"><strong>//<span style="font-family:heiti sc light">让</span>swift<span style="font-family:heiti sc light">可以调用</span>js</strong></span></p>
+
+<p>&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;<span style="color:rgb(187, 44, 162)">function</span>&nbsp;changeContent(str){</p>
+
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;document.getElementById(<span style="color:rgb(39, 42, 216)">&#39;theSpan&#39;</span>).innerHTML = str;</p>
+
+<p>&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;}</p>
+
+<p><span style="color:rgb(0, 0, 0)">&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</span><span style="color:#FF0000"><strong>//js<span style="font-family:heiti sc light">调用</span>swift</strong></span></p>
+
+<p>&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;<span style="color:rgb(187, 44, 162)">function</span>&nbsp;doIt(){</p>
+
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;document.location.href =&nbsp;<span style="color:rgb(209, 47, 27)">&quot;myschema://go?a=&quot;</span>&nbsp;+ document.getElementById(<span style="color:rgb(209, 47, 27)">&quot;t&quot;</span>).value;</p>
+
+<p>&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;}</p>
+
+<p><span style="color:rgb(0, 0, 0)">&nbsp; &nbsp;&nbsp;</span>&lt;/script&gt;</p>
+
+<p>&lt;/body&gt;</p>
+
+<p>&nbsp;</p>
+
+<p>&lt;/html&gt;</p>
+</blockquote>
+</div>
+</div>
+</div>
+</body>
+</html>

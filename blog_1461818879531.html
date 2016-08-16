@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>将私有代码托管到git@osc</h1>
+<div><p>代码有做版本管理的需求。否则哪天手残删了项目，或者电脑硬盘出了问题，哭都没处哭。</p>
+
+<p>非开源项目，github托管要收费，git@osc的免费托管私有项目是不错的选择。</p>
+
+<p>我现在使用的方法是：</p>
+
+<ol>
+<li>在git@osc上建立私有项目</li>
+<li>将刚建立的私有项目git clone</li>
+<li>cd进入clone后出现的文件夹</li>
+<li>将已有项目目录内的所有文件粘贴到该文件夹（如pom.xml等）</li>
+<li>在文件夹内建立并认真编写.gitignore</li>
+<li>将该文件夹导入ide（之前先将老项目从ide中删除），检查无误后继续</li>
+<li>git add .</li>
+<li>git commit -m "init"</li>
+<li>git push</li>
+</ol>
+
+<p>怎样将一个已有的项目文件夹，用git@osc做版本管理？不知道，摸索过几次，有<code>误操作将项目删除</code>的惨痛经历，再不尝试。</p>
+
+<p>现在的做法是在osc网页上建立新库，git clone出现新目录，将项目拷贝进去，再提交。ide导入这个新的目录作为工作项目。</p>
+
+<p>至于原来的项目目录，作为一个以防万一的备份留着也不错，反正之后再也不用它了，ide中也不保留这个路径，之后的修改、提交都与它无关。</p>
+
+<p>现在用的.gitignore：</p>
+
+<pre><code>/target
+/.settings
+/.classpath
+/.project
+/.gitignore
+</code></pre>
+</div>
+</div>
+</body>
+</html>

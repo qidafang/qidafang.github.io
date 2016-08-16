@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>mybatis的动态使用</h1>
+<div><p><span style="color:#FF0000">昨夜西风凋碧树，独上高楼，望尽天涯路。欲寄彩笺兼尺素，天长水阔知何处？</span></p>
+
+<p>模板语言有一定动态能力，但毕竟本职工作是渲染。<br />
+当SQL过于动态以至于模板难以搞定，就只好用动态SQL的解决办法了。</p>
+
+<p>这时候的需求是：<br />
+1)拼SQL尽量智能<br />
+2)参数转型和绑定<br />
+3)查询并获得结果<br />
+4)结果转型</p>
+
+<p>上一个mybatis动态查询的测试用例，涵盖了以上需求，该用例原汁原味，可以在其基础上进行封装。</p>
+
+<blockquote>
+<p>@Before<br />
+public void before() throws Exception{<br />
+&nbsp; &nbsp; String resource = &quot;mybatis/mybatis-config.xml&quot;;<br />
+&nbsp; &nbsp; InputStream inputStream = Resources.getResourceAsStream(resource);<br />
+&nbsp; &nbsp;&nbsp;<br />
+&nbsp; &nbsp; sessionFactory = new SqlSessionFactoryBuilder().build(inputStream);<br />
+&nbsp; &nbsp; conf = sessionFactory.getConfiguration();<br />
+&nbsp; &nbsp; conn = conf.getEnvironment().getDataSource().getConnection(); &nbsp;<br />
+&nbsp; &nbsp; runner=new SqlRunner(conn);<br />
+}</p>
+
+<p>@Test<br />
+public void testSQL() throws Exception {<br />
+&nbsp; &nbsp; //参数对象<br />
+&nbsp; &nbsp; Book book = new Book();<br />
+&nbsp; &nbsp; book.setId(23L);<br />
+&nbsp; &nbsp; book.setName(&quot;xx&quot;);<br />
+&nbsp; &nbsp;&nbsp;<br />
+&nbsp; &nbsp; //SQL模板<br />
+&nbsp; &nbsp; SQL sql = new SQL()<br />
+&nbsp; &nbsp; &nbsp; &nbsp; .SELECT(&quot;id, name&quot;)<br />
+&nbsp; &nbsp; &nbsp; &nbsp; .FROM(&quot;desk_book b&quot;)<br />
+&nbsp; &nbsp; &nbsp; &nbsp; .WHERE(&quot;b.id = #{id}&quot;)<br />
+&nbsp; &nbsp; &nbsp; &nbsp; .WHERE(&quot;b.name != #{name}&quot;);<br />
+&nbsp; &nbsp;&nbsp;<br />
+&nbsp; &nbsp; //解读SQL模板<br />
+&nbsp; &nbsp; TextSqlNode node =new TextSqlNode(sql.toString());<br />
+&nbsp; &nbsp; DynamicSqlSource s=new DynamicSqlSource(conf, node); &nbsp; &nbsp;<br />
+&nbsp; &nbsp; BoundSql boundSql = s.getBoundSql(book); &nbsp;<br />
+&nbsp; &nbsp; String sqlToUse = boundSql.getSql();<br />
+&nbsp; &nbsp;&nbsp;<br />
+&nbsp; &nbsp; //参数列表<br />
+&nbsp; &nbsp; List&lt;ParameterMapping&gt; parameters = boundSql.getParameterMappings();<br />
+&nbsp; &nbsp; MetaObject parameterObjectMeta = conf.newMetaObject(boundSql.getParameterObject());<br />
+&nbsp; &nbsp; Object[] paramArray = new Object[parameters.size()];<br />
+&nbsp; &nbsp; for(int i = 0; i &lt; parameters.size(); i++){<br />
+&nbsp; &nbsp; &nbsp; &nbsp; String prop = parameters.get(i).getProperty();<br />
+&nbsp; &nbsp; &nbsp; &nbsp; paramArray[i] = parameterObjectMeta.getValue(prop);<br />
+&nbsp; &nbsp; }<br />
+&nbsp; &nbsp;&nbsp;<br />
+&nbsp; &nbsp; //查询结果<br />
+&nbsp; &nbsp; Map&lt;String, Object&gt; result = runner.selectOne(sqlToUse, paramArray);<br />
+&nbsp; &nbsp;&nbsp;<br />
+&nbsp; &nbsp; //查询结果到对象<br />
+&nbsp; &nbsp; Book resultBook = new Book();<br />
+&nbsp; &nbsp; MetaObject resultBookMeta = conf.newMetaObject(resultBook);<br />
+&nbsp; &nbsp; for(String field : result.keySet()){<br />
+&nbsp; &nbsp; &nbsp; &nbsp; resultBookMeta.setValue(field.toLowerCase(), result.get(field));<br />
+&nbsp; &nbsp; }<br />
+&nbsp; &nbsp;&nbsp;<br />
+&nbsp; &nbsp; Assert.assertEquals(resultBook.getName(), &quot;书籍名称&quot;);<br />
+}</p>
+</blockquote>
+</div>
+</div>
+</body>
+</html>

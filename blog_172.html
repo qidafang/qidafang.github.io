@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>activemq初识</h1>
+<div><p>一图流：解耦思路</p>
+
+<p><img alt="" src="http://img.zidafone.com/427studio/ab145fb0-7659-4aa3-95a3-c3a74b73e842.png" style="height:231px; width:531px" /></p>
+
+<p>1.<br />
+<a href="http://activemq.apache.org/using-activemq.html">activemq的文档</a>在其官网首页上没有链接够奇怪的。<br />
+<a href="http://activemq.apache.org/hello-world.html">重要的helloworld</a>藏在这里<br />
+因为有官方的helloworld了，这里就不贴自己写的demo了。<br />
+2.<br />
+消息队列，本质还是个容器，只是访问它的人身份比较明确，放的人只负责放，取的人只负责取。<br />
+放的那方只管&ldquo;春种一粒粟&rdquo;，然后就坐等&ldquo;秋收万颗子&rdquo;，具体能不能收，反正是&ldquo;想当然耳&rdquo;。<br />
+因为&ldquo;种粟&rdquo;只需一个瞬间，所以可以快速返回，用户就不需要等待，体验更好，应用服务器这边也没义务妥妥把事情办了，压力巨减。<br />
+干活的那一方因为可以n个兄弟齐上阵慢慢做，瞬间高并发的压力被缓解了，反正最终能把活干完就行。<br />
+这就是消息队列的意义。<br />
+3.<br />
+同步的本质是前一个方法要等后一个方法返回后才可以返回，如果后一个方法巨慢，前一个方法就得干等，用户在屏幕那边就会抓狂。<br />
+异步就是前一个方法说&ldquo;反正交给你了啊我先回去了&rdquo;然后乐颠颠给用户报喜，后一个方法说&ldquo;大哥你就放心吧这事我肯定给你办了&rdquo;，具体啥时候办可能就晚一点儿。<br />
+4.<br />
+啥时候用？很简单。<br />
+一是后一个方法太慢，用户等不起，异步。<br />
+二是后一个方法不慢，但并发太高忙活不过来，为了在时间上通融点儿，异步。<br />
+5.<br />
+当然了，因为本质就是个容器，所以其实理论上只要是个容器就能实现这事儿。<br />
+缓存服务可不可以？当然可以。<br />
+数据库服务可不可以？当然可以。<br />
+文件服务可不可以？当然&hellip;&hellip;谁爱这么干谁这么干<br />
+6.<br />
+&ldquo;术业有专攻&rdquo;的好处是因为不用假装全能强行普适，专注做一件事儿能把这件事做到极致。<br />
+7.<br />
+最后，当然是<a href="https://github.com/springside/springside4/wiki/ActiveMQ">springside的demo</a>，详见链接内容&hellip;&hellip;</p>
+</div>
+</div>
+</body>
+</html>

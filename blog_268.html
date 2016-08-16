@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>php基础语法，兼说切换语言的问题</h1>
+<div><p>是<a href="http://427studio.net/blog/1/260" target="_blank">ruby基础语法</a>和<a href="http://427studio.net/blog/1/261">python基础语法</a>的继续，目的是减少切换编程语言时的成本。</p>
+
+<p><strong>一图流：为什么说切换编程语言很容易&mdash;&mdash;</strong></p>
+
+<p><img alt="" src="http://img.zidafone.com/427studio/61a45c49-b6e4-422d-9898-c6aa4bc8d3c3.png" style="height:475px; width:500px" /></p>
+
+<p>&nbsp;</p>
+
+<p>一门编程语言，需要考察的是其使用领域、语言基础、最常用的库和框架，其中语言基础包括语法（常量变量运算符，顺序选择循环，数字文本日期，数组和字典，类和对象，源码文件们的组织方式）和核心库（关于文件系统，网络，操作系统等的库），一般来说语法足以用一个短篇博文列举出来，而核心库的手册也不会有太大篇幅（十几个网页足够了）。</p>
+
+<p>而最常用的库和框架，既然是最常用这个级别，其官网的tutorial教程、demo示例、api文档一般都会不错，如果可能的话阅读源码更是加深理解的最好方法。所以这部分虽然知识量会比较大，但也不用担心，至少有问题可以随时查阅嘛。至于资料不足、代码也不那么好读的库和框架，最好谨慎着用它，能不用就不用，否则出来一个奇葩bug影响都会是致命的。</p>
+
+<p>至于其他零零碎碎的细枝末节知识和细节，无视之就好，遇到了现研究是最划算的方式。有的还会随着时间的流逝而失去价值（如css的hack），所以完全不必在这上面下功夫，否则就是强迫症。</p>
+
+<p>至于该语言适用领域的问题，一开始就是该搞懂的，这才不会干出用锤子开啤酒瓶盖的事情（比如<a href="http://php.net/manual/zh/intro-whatcando.php" target="_blank">php官网说php能用来做桌面程序</a>，但你会这么做吗？连官网自己都不太赞成），否则，你再天纵英才，再悬梁刺股，事情搞砸了，都只有两个字：活该。</p>
+
+<p>&nbsp;</p>
+
+<p><strong>正文：php基础语法（参考：<a href="http://www.w3school.com.cn/php/index.asp" target="_blank">w3school的教程</a>，另外该教程中的手册部分用作日常参考）：</strong></p>
+
+<blockquote>
+<p>&lt;?php</p>
+
+<p>$z = 1;#变量以$开头<br />
+$z = &quot;ab&quot;;#弱类型<br />
+echo &quot;content is $z&quot;;#基本输出，变量在字符串的输出方法</p>
+
+<p>$a = 100;<br />
+$b = 0.1;<br />
+$array = array(&quot;aa&quot;, &quot;bb&quot;);#数组<br />
+$map = array(&quot;a&quot;=&gt;1, &quot;b&quot;=&gt;2);#关联数组</p>
+
+<p>#面向对象<br />
+class MyClass{<br />
+&nbsp;&nbsp; &nbsp;var $myVar;<br />
+&nbsp;&nbsp; &nbsp;function MyClass($myVar=&quot;default&quot;){<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;$this-&gt;myVar = $myVar;<br />
+&nbsp;&nbsp; &nbsp;}<br />
+&nbsp;&nbsp; &nbsp;function showVar(){<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;return $this-&gt;myVar;<br />
+&nbsp;&nbsp; &nbsp;}<br />
+}</p>
+
+<p>#字符串函数<br />
+strlen(&quot;abc&quot;);#长度<br />
+strpos(&quot;abc&quot;, &quot;b&quot;);#定位</p>
+
+<p>#常量<br />
+define(&quot;CONST&quot;, 1);</p>
+
+<p>#控制流<br />
+if(true){<br />
+&nbsp;&nbsp; &nbsp;#<br />
+}elseif(true){<br />
+&nbsp;&nbsp; &nbsp;#<br />
+}else{<br />
+&nbsp;&nbsp; &nbsp;#<br />
+}<br />
+switch($a){<br />
+&nbsp;&nbsp; &nbsp;case 1:<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;break;<br />
+&nbsp;&nbsp; &nbsp;default:<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;#<br />
+}</p>
+
+<p>while(false){<br />
+&nbsp;&nbsp; &nbsp;#<br />
+}<br />
+do{<br />
+&nbsp;&nbsp; &nbsp;#<br />
+}while(false);#最后的分号很关键<br />
+for($x=1; $x&lt;=10; $x++){<br />
+&nbsp;&nbsp; &nbsp;#<br />
+}<br />
+foreach($array as $value) {#遍历数组<br />
+&nbsp;&nbsp; &nbsp;#<br />
+}<br />
+foreach($map as $k=&gt;$v){#遍历关联数组<br />
+&nbsp;&nbsp; &nbsp;#<br />
+}</p>
+
+<p>#函数<br />
+function myFunction($a){<br />
+&nbsp;&nbsp; &nbsp;#<br />
+}<br />
+myFunction(1);</p>
+
+<p>#超全局变量<br />
+$g = $GLOBALS[&quot;a&quot;];#全局作用域可用<br />
+$g = $_SERVER[&quot;a&quot;];#本次请求信息<br />
+$g = $_REQUEST[&quot;a&quot;];#表单数据<br />
+$g = $_POST[&quot;a&quot;];#post提交的数据<br />
+$g = $_GET[&quot;a&quot;];#get提交的数据</p>
+
+<p>#引入<br />
+include &#39;test2.php&#39;;<br />
+require &#39;test2.php&#39;;<br />
+?&gt;</p>
+</blockquote>
+</div>
+</div>
+</body>
+</html>

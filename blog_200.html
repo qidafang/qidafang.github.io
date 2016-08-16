@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>jquery.tmpl模板引擎源码分析</h1>
+<div><p>偶尔难免需要用js生成html，用拼字符串的方法太麻烦了。<br />
+<a href="https://github.com/BorisMoore/jquery-tmpl">jquery-tmpl</a>是简单好用的选择。<br />
+官方的最简洁无废话demo<a href="http://borismoore.github.io/jquery-tmpl/demos/step-by-step.html">在这里</a>。<br />
+源代码才400多行，对开源项目要&ldquo;欺软怕硬&rdquo;，见到短的就吃掉它。</p>
+
+<p>个人做的最简单demo<a href="http://page.zidafone.com/template/">看这里</a>，可以在浏览器中加断点进行单步调试，用到的jquery-tmpl源码个人已加了些中文注释，<br />
+<strong>加过中文注释的源码<a href="https://github.com/qidafang/Demos/blob/master/demos/src/main/webapp/demos/jquery-tmpl/jquery.tmpl.js">看这里</a></strong>。</p>
+
+<p><strong>模板引擎的核心思路：两个步骤：<br />
+1.从模板字符串，生成渲染函数<br />
+2.用渲染函数和模型数据，生成结果</strong></p>
+
+<p><strong>第1步的具体做法：</strong><br />
+1.思路：根据模板字符串，生成方法体字符串，调用Function构造函数生成渲染函数<br />
+2.实现方法：用正则表达式匹配模板字符串中的标签，替换为方法体中的代码片段<br />
+3.匹配方法：模板字符串中{{..}}这样的片段视为标签，解析为1)标签名；2)标签参数<br />
+4.标签名：对应方法片段的模板，其中含有占位符<br />
+5.标签参数：替换上一步中模板中占位符<br />
+6.至此{{..}}标签即已替换为代码片段<br />
+7.重复以上工作，使全部{{..}}标签都被替换，结果即纯javascript的方法体的字符串<br />
+8.将该字符串用作Function构造函数的参数，即成功生成渲染函数</p>
+
+<p><strong>第2步的具体做法：</strong><br />
+1.将模型数据传入渲染函数<br />
+2.渲染函数的返回值即为结果字符串</p>
+
+<p><strong>以上是模板引擎的核心，另外外围的工作：</strong><br />
+1.模板字符串可以来源于页面中的&lt;script type=&quot;text/html&quot;&gt;标签，也可以来源于js的字符串变量，需要统一转成字符串，再生成渲染函数。<br />
+2.模板字符串生成渲染函数后应该把渲染函数缓存起来，下次直接从缓存中取<br />
+3.结果字符串要方便地插入页面dom中<br />
+以上工作jquery.tmpl.js也都做了。</p>
+</div>
+</div>
+</body>
+</html>

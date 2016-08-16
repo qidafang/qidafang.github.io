@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>React+Node.js+Express+mongoskin+MongoDB</h1>
+<div><p><span style="color:#FF0000"><strong>更新：</strong>添加socket.io的演示，现在两个人同时使用，一个人的操作可以立刻被另一个看到了（可以开两个浏览器看效果）</span></p>
+
+<p>采用React + Node.js + Express + mongoskin + MongoDB <span style="color:#FF0000">+ socket.io</span>技术开发的一个示例，演示地址<a href="http://zidafone.com:3000/" target="_blank">在这里</a>，项目源码<a href="https://github.com/qidafang/react_express_mongodb_demo" target="_blank">在这里</a>。</p>
+
+<p>这个技术栈的最大的好处就是，浏览器、服务器、数据库这三层用的状态数据格式完全一样都是json，不用相互转化，想想java的json转entity，entity转json，entity转record,record转entity，如果不是天太冷，都要汗流浃背。</p>
+
+<p>&nbsp;</p>
+
+<p><strong>源码使用方法：</strong><br />
+<span style="color:#FF0000">1.安装Node.js</span><br />
+在<a href="https://nodejs.org/en/" target="_blank">Node.js官网</a>下载并安装Node.js<br />
+<span style="color:#FF0000">2.安装MongoDB数据库</span><br />
+在<a href="https://www.mongodb.org/downloads" target="_blank">MongoDB官网</a>下载并安装MongoDB<br />
+<span style="color:#FF0000">3.下载示例源码</span><br />
+在<a href="https://github.com/qidafang/react_express_mongodb_demo" target="_blank">Github</a>下载本示例源码<br />
+<span style="color:#FF0000">4.运行</span><br />
+1)在下载后的源码的解压目录，运行以下命令安装依赖的Node.js模块：</p>
+
+<blockquote>
+<p>npm install</p>
+</blockquote>
+
+<p>2)初始化MongoDB数据库<br />
+在MongoDB的bin目录的父目录下建立data目录（即让data目录与bin目录成为兄弟目录）。<br />
+在bin目录中运行以下命令启动数据库服务器：</p>
+
+<blockquote>
+<p>mongod --dbpath ../data</p>
+</blockquote>
+
+<p>运行bin目录下的mongo.exe启动客户端窗口，在该窗口中运行以下命令来建立示例程序使用的数据库：</p>
+
+<blockquote>
+<p>use dota_new_year</p>
+</blockquote>
+
+<p>3)启动示例程序<br />
+在示例程序源码的解压目录，运行以下程序启动Node.js服务器：</p>
+
+<blockquote>
+<p>node app.js</p>
+</blockquote>
+
+<p>4)访问页面<br />
+访问<a href="http://localhost:3000/" target="_blank">http://localhost:3000/</a>，点击表格中的红色或绿色色块，颜色变化后刷新页面，如果刷新后显示的页面与刚才操作后相同，则表示颜色的变化已经保存到数据库中，至此示例程序运行成功。</p>
+
+<p>&nbsp;</p>
+
+<p><strong>参考：</strong><br />
+<a href="http://www.ruanyifeng.com/blog/2015/03/react.html" target="_blank">react入门教程</a><br />
+<a href="http://www.expressjs.com.cn/4x/api.html" target="_blank">express文档</a><br />
+<a href="http://www.hacksparrow.com/mongoskin-tutorial-with-examples.html" target="_blank">mongoskin模块示例</a><br />
+<a href="http://docs.mongoing.com/manual-zh/" target="_blank">mongoDB中文文档</a></p>
+
+<p><a href="http://socket.io/docs/" target="_blank"><span style="color:#FF0000">socket.io官方文档</span></a></p>
+</div>
+</div>
+</body>
+</html>

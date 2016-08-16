@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>编写响应式表格</h1>
+<div><p>使用bootstrap做基础框架，页面天生具有响应式的优点，只有表格有问题。</p>
+
+<p>当表格有很多列时，显示在移动设备上，有两种可能：</p>
+
+<ol>
+<li>每列都变得很窄，表头和内容如果有多个字，单元格垂直高度非常高。</li>
+<li>用css禁止单元格内容换行，则表格宽度撑开，超过移动设备屏幕宽度，出现横向滚动条。</li>
+</ol>
+
+<p>究其原因，bootstrap响应式网页的根本思路是，假如有两个块A和B，则在大屏幕上，A和B并排显示，而在小屏幕上，A和B上下显示。</p>
+
+<p>而table自身含有的“永远同行显示”的特点，让它没有办法实现这个“该换行就换行”的思路。</p>
+
+<p>所以，想让表格响应式，就要避免使用table标签，转而用div的嵌套实现：</p>
+
+<pre><code>&lt;div class="my-table"&gt;
+    &lt;div class="my-tr"&gt;
+        &lt;div class="my-td1"&gt;
+        &lt;/div&gt;
+        &lt;div class="my-td2"&gt;
+        &lt;/div&gt;
+        &lt;div class="my-td3"&gt;
+        &lt;/div&gt;
+        &lt;div class="clearfix"&gt;&lt;/div&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+</code></pre>
+
+<p>其中.my-td的样式模仿bootstrap的col样式，左浮动，指定百分比宽度。在不同设备下百分比不同。</p>
+
+<pre><code>.my-td1, .my-td2{
+    float: left;
+    height: 30px;
+}
+@media(max-width: 767px){
+    .my-td1{
+        width: 100%;
+    }
+    .my-td2{
+        width: 100%;
+    }
+    .my-td3{
+        display: none;
+    }
+}
+@media(min-width: 768px){
+    .my-td1{
+        width: 40%;
+    }
+    .my-td2{
+        width: 30%;
+    }
+    .my-td3{
+        width: 30%;
+    }
+}
+</code></pre>
+
+<p>这样，就实现了在大屏幕上同行显示，在小屏幕上分行显示的目的，同时也能控制哪些列在小屏幕上隐藏。</p>
+
+<p>想实现表格的样式，如间距、边框、底色、字体等，定义my-table和my-tr即可，需要组合的情况则添加类my-tr-dark等，思路参照bootstrap。</p>
+
+<pre><code>.my-tr-dark{
+    background-color: #CCC;
+}
+
+&lt;div class="my-tr my-tr-dark"&gt;...&lt;/div&gt;
+</code></pre>
+
+<p>div不像td那样能天然等高，如需要可以强行限制，避免可能出现的过高的高度引起样式混乱的情况：</p>
+
+<pre><code>.my-td1, .my-td2, .my-td3{
+    float: left;
+    height: 30px;
+    overflow: hidden;
+}
+</code></pre>
+
+<p>这能保证在需要显示边框的时候，所有td都是等高的，如果不需要显示边框，只需要显示两行之间的横线，则定义行的下边框即可：</p>
+
+<pre><code>.my-tr{
+    border-bottom: 1px solid #CCC;
+    padding: 5px 0;
+}
+</code></pre>
+</div>
+</div>
+</body>
+</html>

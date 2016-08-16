@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>学点儿c#语言wpf开发</h1>
+<div><p>visual studio 2015，界面越来越漂亮了。</p>
+
+<p>比起swift和python啥的，还是c#外观上更像java，windows的界面编程，wpf的方式跟android等编程也蛮像，声明式的界面定义，界面和controller类当然绑定，总之玩着很爽就是了。</p>
+
+<p>现在在想的问题是想个啥主题做着&hellip;&hellip;</p>
+
+<p>下面的代码是学习关键点时练的，老规矩，界面交互+web请求+数据库访问&mdash;&mdash;</p>
+
+<blockquote>
+<p>using MySql.Data.MySqlClient;<br />
+using qdf_test_wpf_1;<br />
+using System;<br />
+using System.Collections.Generic;<br />
+using System.IO;<br />
+using System.Linq;<br />
+using System.Net;<br />
+using System.Text;<br />
+using System.Threading.Tasks;<br />
+using System.Windows;<br />
+using System.Windows.Controls;<br />
+using System.Windows.Data;<br />
+using System.Windows.Documents;<br />
+using System.Windows.Input;<br />
+using System.Windows.Media;<br />
+using System.Windows.Media.Imaging;<br />
+using System.Windows.Navigation;<br />
+using System.Windows.Shapes;</p>
+
+<p>namespace WpfApplication2<br />
+{<br />
+&nbsp; &nbsp; /// &lt;summary&gt;<br />
+&nbsp; &nbsp; /// MainWindow.xaml 的交互逻辑<br />
+&nbsp; &nbsp; /// &lt;/summary&gt;<br />
+&nbsp; &nbsp; public partial class MainWindow : Window<br />
+&nbsp; &nbsp; {<br />
+&nbsp; &nbsp; &nbsp; &nbsp; public MainWindow()<br />
+&nbsp; &nbsp; &nbsp; &nbsp; {<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; InitializeComponent();<br />
+&nbsp; &nbsp; &nbsp; &nbsp; }</p>
+
+<p>&nbsp; &nbsp; &nbsp; &nbsp; private void button_Click(object sender, RoutedEventArgs e)<br />
+&nbsp; &nbsp; &nbsp; &nbsp; {</p>
+
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; //进行web请求<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; HttpWebRequest httpRequest = (HttpWebRequest)WebRequest.Create(&quot;http://427studio.net/api/blog&quot;);<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; httpRequest.Timeout = 2000;<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; httpRequest.Method = &quot;GET&quot;;<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; HttpWebResponse httpResponse = (HttpWebResponse)httpRequest.GetResponse();<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; StreamReader sr = new StreamReader(httpResponse.GetResponseStream(), System.Text.Encoding.GetEncoding(&quot;utf-8&quot;));<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; string result = sr.ReadToEnd();<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; result = result.Replace(&quot;\r&quot;, &quot;&quot;).Replace(&quot;\n&quot;, &quot;&quot;).Replace(&quot;\t&quot;, &quot;&quot;);<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; int status = (int)httpResponse.StatusCode;<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; sr.Close();</p>
+
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; //解析json<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; List&lt;Person&gt; ps = JSON.parse&lt;List&lt;Person&gt;&gt;(result);<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; foreach (Person p in ps)<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; {<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Console.WriteLine(p.title);<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; }<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; jsonCount.Content = &quot;js数组长度：&quot; + ps.Count();</p>
+
+<p><br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; //数据库连接<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; string str = &quot;Server=那啥;User ID=那啥;Password=那啥;Database=那啥;CharSet=那啥;&quot;;<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; MySqlConnection conn = new MySqlConnection(str);//实例化链接<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; conn.Open();//开启连接<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; string strcmd = &quot;select id, name from admin_user&quot;;<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; MySqlCommand cmd = new MySqlCommand(strcmd, conn);<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; MySqlDataReader reader = cmd.ExecuteReader();<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; int rowCount = 0;<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; while (reader.Read())<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; {<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; String title = reader.GetString(&quot;name&quot;);<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; //Console.WriteLine(title);</p>
+
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; rowCount++;<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; }<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; dbCount.Content = &quot;数据库记录行数：&quot; + rowCount;<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; reader.Close();<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; conn.Close();</p>
+
+<p><br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; //文件系统<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; FileStream fs = new FileStream(&quot;test.txt&quot;, FileMode.OpenOrCreate);<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; StreamWriter sw = new StreamWriter(fs);<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; sw.Write(&quot;由wpf程序写入！&quot;);<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; sw.Close();<br />
+&nbsp; &nbsp; &nbsp; &nbsp; }<br />
+&nbsp; &nbsp; }<br />
+}</p>
+</blockquote>
+</div>
+</div>
+</body>
+</html>

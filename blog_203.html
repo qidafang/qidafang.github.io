@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>python的Scrapy爬虫初学</h1>
+<div><p>在涛哥的介绍下稍微了解了一下python的Scrapy爬虫，记录如下：</p>
+
+<p><span style="font-size:14px"><strong>1.python入门</strong></span></p>
+
+<p><a href="http://woodpecker.org.cn/diveintopython/">dive into python</a>是典型的作者很聪明但缺乏组织力的书，<a href="http://zhidao.baidu.com/link?url=1gPh6pUl_bp6S4OgrTJGoRvkNhnK4yJu5BH8JkwdRfeh2-d7qS0frBNcUaJXvF06CvypYz7zcgQrZBeiuASzunE9APZvyOEX6jI_3_x6m_W">这篇吐槽</a>吐得很畅快，不过用来给其他语言的程序员做入门还是不错的，而且还是中文的。</p>
+
+<p>个人感觉，入门书籍的作者要保持谦虚低调和敬畏，不要大大咧咧和不甘寂寞（生怕读者不知道自己有多学识渊博和挥洒自如），东一榔头西一棒子，让读者感到自卑。<br />
+要给初学的读者信心和安全感。很多老外的书籍章节顺序混乱，正文废话连篇，流于天马行空的炫技和扯淡，缺少简洁优雅流畅的引导，而这引导是读者最需要的。<br />
+这体现出其实是作者的自以为是和缺乏掌控力。</p>
+
+<p>个人做了最基本的语法总结<a href="https://github.com/qidafang/page/blob/master/python/TestModule.py">在这里</a>。<br />
+<span style="color:#FF0000"><strong>一门编程语言核心的核心，无非顺序选择循环，字典数组，类和对象。<br />
+当写出用到这些的hello world了，你就无所不能了。其外围的库和框架，都是末节，小瞧之也没问题。</strong></span><br />
+总之别吓唬自己。</p>
+
+<p>强烈推荐<a href="https://docs.python.org/2.7/tutorial/index.html">官网的教程</a>，循序渐进，内容详实，废话一句没有。<br />
+至于scrapy推荐的<a href="http://learnpythonthehardway.org/book/">learn python the hard way</a>，内容如其名，把简单的东西弄得吓人起来，非常不喜欢。</p>
+
+<p><span style="font-size:14px"><strong>2.ide</strong></span></p>
+
+<p>因为太喜欢eclipse了而且eclipse marketplace太好用了，决定什么语言都用eclipse做ide。<br />
+参考<a href="http://www.cnblogs.com/linjiqin/p/3579995.html">这篇教程</a>，其中安装步骤不用教程里的自己下载的方式怪麻烦的，marketplace里直接搜索安装就是了。<br />
+个人习惯是eclipse最新版压缩包下载后留着，每需要时解压一份在其基础上安插件，如果出了莫名问题直接删掉重新解压一份再安一遍插件就是了。<br />
+不要所有编程语言都用同一个eclipse，一旦出了问题代价太高了，鸡蛋不放在同一个篮子里。我现在是java ee一个ide，安卓一个，nodejs和python共用一个，最后这个料想还要用来做ruby之类的ide。</p>
+
+<p><span style="font-size:14px"><strong>3.Scrapy</strong></span></p>
+
+<p>有<a href="http://scrapy-chs.readthedocs.org/zh_CN/latest/index.html">中文教程</a>就是好，但这份教程的组织方式实在不敢恭维。<br />
+安装的时候参考<a href="http://scrapy-chs.readthedocs.org/zh_CN/latest/intro/install.html">这里</a>，如果不能顺利安装成功再看看<a href="http://scrapy-chs.readthedocs.org/zh_CN/latest/intro/install.html">这里</a>，需要自己安装依赖简直让人无奈。<br />
+参考<a href="http://scrapy-chs.readthedocs.org/zh_CN/latest/intro/tutorial.html">这里</a>开始hello world，然后观察一下逻辑，其实很简单：<br />
+网页内容-&gt;数据结构-&gt;数据存储目标<br />
+爬虫爬目标网页，解析网页结构，按用户定义的解读方式取数据，放到用户定义的数据结构里，最后把list&lt;数据结构&gt;存到某个持久化的地方，示例是存磁盘文件，当然也可以存数据库。<br />
+更细节和个性的需要时查文档。</p>
+</div>
+</div>
+</body>
+</html>

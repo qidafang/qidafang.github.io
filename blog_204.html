@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>java爬虫webmagic初学</h1>
+<div><p>涛哥介绍的java爬虫<a href="http://webmagic.io/">webmagic</a>也看了一下。</p>
+
+<p>webmagic的架构在<a href="http://webmagic.io/docs/zh/posts/ch1-overview/architecture.html">文档</a>里已经讲得很明白了。<br />
+个人觉得还能更明白一点。</p>
+
+<p>核心的7个类分2组：承载数据的数据类，和处理数据的组件类。</p>
+
+<p>数据类：<br />
+Request，<strong>[请求]</strong>地址<br />
+Page，<strong>[页面]</strong>内容<br />
+ResultItems，从页面内容这个大html字符串中摘取的有用数据组成的<strong>[模型]</strong></p>
+
+<p>组件类：<br />
+Scheduler，请求队列管理者，<strong>[请求进，请求出(经过了筛选处理)]</strong>。<br />
+Downloader，下载者，<strong>[请求进，页面出]</strong>。<br />
+PageProcessor，页面解析者，<strong>[页面进，请求出(用于更深入一级的遍历)，模型出]</strong>。<br />
+Pipeline，模型处理者，<strong>[模型进，结果出]</strong>。<br />
+以上四大组件的进出关系从整体看，即<strong>[请求进，结果出]</strong>，这与爬虫要实现的目的是一致的。</p>
+
+<p>&ldquo;对修改关闭&rdquo;，即这四大组件的角色是死的，不能增也不能减。<br />
+&ldquo;对扩展开放&rdquo;，即这四大组件的实现是活的，可以自行编程实现。</p>
+
+<p>四个组件类其实意味着框架规定的四大步骤。<br />
+其中前两个步骤相对固定，各个爬虫的这俩步骤都相同。<br />
+而后两个步骤由于涉及模型，当然各个爬虫的这俩步骤都是不一样的。<br />
+所以实际需要实现的只有PageProcessor实现类的process方法，和Pipeline实现类的process方法。</p>
+
+<p>实例程序已传到<a href="https://github.com/qidafang/Demos/tree/master/demos">demo项目</a>中，两大自定义组件在<a href="https://github.com/qidafang/Demos/blob/master/demos/src/main/java/net/_427studio/demo/webmagic/MyPageProcessor.java">这里</a>和<a href="https://github.com/qidafang/Demos/blob/master/demos/src/main/java/net/_427studio/demo/webmagic/MyPipeline.java">这里</a>。<br />
+单元测试在<a href="https://github.com/qidafang/Demos/blob/master/demos/src/test/java/net/_427studio/demo/webmagic/WebMagicTest.java">这里</a>。</p>
+</div>
+</div>
+</body>
+</html>

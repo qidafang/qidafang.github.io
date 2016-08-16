@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>git那点破事</h1>
+<div><p><a href="http://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000">廖雪峰的git教程</a>很详尽，但还是嫌太长了。<br />
+如果用eclipse，参考<a href="http://jingyan.baidu.com/article/64d05a0262f013de55f73bcc.html">这篇教程</a>就挺好了。</p>
+
+<p><strong>git的关键概念：本地库、远程库，你电脑上的库就是本地库，github上的库就是远程库。<br />
+修改代码后要先commit到本地库，再push到远程库。</strong><br />
+如果要参与开源项目，过程就更复杂了：<br />
+1.你要从原作者的远程库，fork代码到你的远程库。<br />
+2.你要把代码从你的远程库拿到你的本地库，可能还要导入ide。<br />
+3.修改之后，要commit到你的本地库。<br />
+4.再push到你的远程库。<br />
+5.在github上你的远程库上发起pull request，向原作者申请接受你的修改。<br />
+6.原作者看到你的pull request，同意或拒绝你的pull request，如果同意，你的修改就成为该开源项目的一部分了，即你是这开源项目的作者之一了。</p>
+
+<p>下面记录下用eclipse操作的那点破事，真的很破。<br />
+1.如果新建开源项目，按<a href="http://jingyan.baidu.com/article/64d05a0262f013de55f73bcc.html">这个教程</a>就可以，顺序是1)建远程空仓库，2)建本地项目，3)建本地仓库并将项目commit，4)push到远程空仓库<br />
+2.如果从github上已有的仓库检出项目，在eclipse的Git Repositories视图点击有个蓝色弯箭头的小图标即Clone a git repository啥啥的，从远程库下载项目到本地库，然后import下载下来的项目，这时该项目还没有git信息，需要Team-Share Project-勾选最上面的Use or create啥啥复选框，finish之后才能正常commit和push。</p>
+
+<p>最后，我的<a href="https://github.com/qidafang/page">这个实验项目</a>欢迎用来实验pull request，让你体验参与&ldquo;开源项目&rdquo;的感觉。</p>
+
+<p><br />
+<strong>感想：</strong><br />
+<strong>github的windows客户端，个人感觉不好用，不要用。</strong><br />
+<strong>如果用eclipse这样的ide，也别用git的命令行。</strong><br />
+抱着eclipse折腾明白就算了，毕竟就是个工具，能用就行。<br />
+<strong>但是怎样参与开源项目一定要搞清楚。</strong>所以强烈建议在我这试试pull request，如果因为工具原因而不是水平原因而不能参与开源项目，就太可笑了。<br />
+关于参与开源项目的意义和好处，我再想想，下篇博文会写。</p>
+</div>
+</div>
+</body>
+</html>

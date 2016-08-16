@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>spring mvc知识导图</h1>
+<div><p><span style="color:#FF0000">曾经沧海难为水，除却巫山不是云。取次花丛懒回顾，半缘修道半缘君。</span></p>
+
+<p><strong>理解一个框架的要点：</strong>（没有控制反转特性的不叫框架叫库，理解库的要点就是看规模把源码吃掉）</p>
+
+<p>1.框架运转的流程，这是死的，即&ldquo;对修改关闭&rdquo;的部分<br />
+2.框架扩展的可能，这是活得，即&ldquo;对扩展开放&rdquo;的部分<br />
+3.框架对扩展点提供的默认实现，这是80/20定律生效的地方。<br />
+4.这才有可能基于1)，参考3)，在2)上做自定义扩展，实现80/20没覆盖到的场景的需求。</p>
+
+<p><strong>spring mvc的立身之本：把响应方法当成客户，提供全套服务。</strong><br />
+这包括1)对输入的服务；2)对输出的服务；3)对异常的服务；4)支持AOP的服务<br />
+很明显，这四点的服务对象，都着眼于&ldquo;方法&rdquo;。对服务器来说，以方法为核心，是最自然的事情。</p>
+
+<p><strong>对输入的服务：</strong><br />
+1)路由，由路径、方法、参数、头联合规定<br />
+2)入参，可能性多达基本类型、对象类型、servlet api、io、cookie、header等<br />
+3)输入整体转型，扩展点，如json整体输入时使用<br />
+4)单个参数转型，扩展点，如date等类型自定义转换<br />
+5)校验，扩展点，使用hibernate validate规定格式，并自定义异常<br />
+6)文件上传</p>
+
+<p><strong>对输出的服务：</strong><br />
+1)输出整体渲染，扩展点，如rest整体返回<br />
+2)视图渲染，扩展点，如jsp、freemarker等<br />
+3)本地化</p>
+
+<p><strong>对异常的服务：</strong><br />
+1)自定义异常处理，扩展点，如rest异常返回丰富信息<br />
+2)错误类型映射到报错页面，如404显示美观的页面</p>
+
+<p><strong>对AOP的服务：</strong><br />
+1)标准spring aop的功能，扩展点，如在controller之前把重要对象设到threadlocal中<br />
+2)spring mvc的拦截器概念，扩展点</p>
+
+<p>&ldquo;不重复发明轮子&rdquo;不是&ldquo;不求甚解有理&rdquo;的借口，要了解其原理，把轮子用到极致，并且能在需要的时候扩展轮子，比如加上登山或涉水的功能。<br />
+知其雄，守其雌。&mdash;&mdash;《道德经》</p>
+
+<p>有了这个整体了解后，按需要到以下资料里找相应的章节就好了：<br />
+书籍《Spring3.x企业应用开发实战》<br />
+<a href="http://docs.spring.io/spring/docs/4.2.0.BUILD-SNAPSHOT/spring-framework-reference/">Spring的官方文档</a><br />
+以书为主文档为辅，毕竟读英文不那么有趣，而且书的质量非常高。</p>
+
+<p>最后的最后，当然还是<a href="https://github.com/springside/springside4/wiki">springside</a>的示例。</p>
+</div>
+</div>
+</body>
+</html>

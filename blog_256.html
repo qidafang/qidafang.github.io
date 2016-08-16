@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>在学Go语言</h1>
+<div><p>开始学点儿Go语言，这语言据说在国内比在国外火，社区上褒贬不一，不过&ldquo;小马过河&rdquo;嘛，总要先自己试试再来下结论。</p>
+
+<p>&nbsp;</p>
+
+<p><strong>环境准备：</strong></p>
+
+<p>1.<a href="http://www.golangtc.com/download" target="_blank">在Golang中国下载安装go语言</a>，个人喜欢用msi安装，直接帮你设置环境变量，免得手动弄。<br />
+2.安装goclipse：在<a href="http://www.eclipse.org/downloads/" target="_blank">eclipse官网</a>下载最新版eclipse，安装后进入菜单Help -&gt; Install New Software，输入网址<strong>http://goclipse.github.io/releases/</strong>。注意在读出的长长的列表中选择goclipse即可，千万别全选（血的教训），然后一路Next。<br />
+3.安装好goclipse后，在eclipse配置(Window -&gt; Preferences)中选Go菜单，里面的<strong>GOROOT</strong>和<strong>GOPATH</strong>自行指定，前者当然就是go的根目录，后者自行指定一个目录。<br />
+4.如果在控制台无法运行git命令，即电脑中未安装git客户端，则需要<a href="https://git-for-windows.github.io/" target="_blank">下载msysgit并安装</a>，这是为第5步做准备。<br />
+5.点开菜单Go-Tools，点Download gocode的大按钮，会自动下载安装gocode，并放到上一步你指定的GOPATH里。<br />
+6.下载GDB（我图省事直接在<a href="http://download.csdn.net/detail/u014772182/8425575" target="_blank">csdn</a>下的），将exe文件放到系统path中，即让命令行运行gdb能够生效（我是将它直接放到go文件夹下的bin里了），这样goclipse就能断点调试了。</p>
+
+<p>&nbsp;</p>
+
+<p><strong>学习体会：</strong><br />
+这里有go语言的<a href="http://zh-golang.appsp0t.com/pkg/" target="_blank">中文文档</a>，入门读七牛出的《Go语言编程》个人觉得不错，该书附录有&ldquo;常用包介绍&rdquo;，对照着去文档看看挺好。</p>
+
+<p>语法上，一般评价是&ldquo;乏善可陈&rdquo;，不花哨，走实用主义路线，看书第1章提到的，<strong>自动垃圾回收，丰富的内置类型，函数多返回值，错误处理，匿名函数闭包，类型接口，并发编程，反射</strong>，都比较基本，还有些动态语言常见的讨喜的语法糖，除了多返回值之外，出彩的地方不多，但Go是强类型的。</p>
+
+<p>这意味着编译器能帮你做很多事，错误检查，语法提示，这能减轻程序员的不少负担，编译的结果比如exe程序，直接放到服务器裸机上就能跑，不像python啊nodejs它们需要现在目标机器上安语言，减轻了点工作量（同样是发布一个web程序，除了程序之外，java需要安个java环境再安个应用服务器，nodejs需要安个nodejs语言环境，而go啥都不用安），但如果在裸机上跑四个编译后的程序，依赖库就是四份的体积了，而python之类只有一份，大家公用。不过这不太重要。</p>
+
+<p>重要的是Go最拿手的做网络服务器的能力，使用轻量级的协程，能胜任很大的并发量（几百万），而且协程是语言天生支持的，启动一个新协程直接go xxFun就好，xxFun是函数，Go里函数是一等对象。<br />
+用基础库做网络编程，语法简单得令人发指，看书的第5章，个人的helloworld如下（更高深的还没研究）：</p>
+
+<blockquote>
+<p>package main</p>
+
+<p>import (<br />
+&nbsp; &nbsp; &quot;bufio&quot;<br />
+&nbsp; &nbsp; &quot;fmt&quot;<br />
+&nbsp; &nbsp; &quot;io/ioutil&quot;<br />
+&nbsp; &nbsp; &quot;log&quot;<br />
+&nbsp; &nbsp; &quot;net&quot;<br />
+&nbsp; &nbsp; &quot;net/http&quot;<br />
+&nbsp; &nbsp; &quot;os&quot;<br />
+)</p>
+
+<p>func main() {<br />
+&nbsp; &nbsp; //httpServer()<br />
+&nbsp; &nbsp; //httpClient()<br />
+&nbsp; &nbsp; //tcpClient()<br />
+&nbsp; &nbsp; //tcpServer()<br />
+&nbsp; &nbsp; test()<br />
+}</p>
+
+<p>func test() {<br />
+&nbsp; &nbsp; ch := make(chan int, 1)<br />
+&nbsp; &nbsp; for{<br />
+&nbsp; &nbsp; &nbsp; &nbsp; select {<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; case ch &lt;- 0:<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; case ch &lt;- 1:<br />
+&nbsp; &nbsp; &nbsp; &nbsp; }<br />
+&nbsp; &nbsp; &nbsp; &nbsp; i := &lt;-ch<br />
+&nbsp; &nbsp; &nbsp; &nbsp; fmt.Println(&quot;Value&quot;, i)<br />
+&nbsp; &nbsp; }<br />
+}</p>
+
+<p>func cmd() {<br />
+&nbsp; &nbsp; for {<br />
+&nbsp; &nbsp; &nbsp; &nbsp; reader := bufio.NewReader(os.Stdin)<br />
+&nbsp; &nbsp; &nbsp; &nbsp; input, _ := reader.ReadBytes(&#39;\n&#39;)<br />
+&nbsp; &nbsp; &nbsp; &nbsp; println(string(input[0 : len(input)-1]))<br />
+&nbsp; &nbsp; }<br />
+}</p>
+
+<p>//http服务器<br />
+func httpServer() {<br />
+&nbsp; &nbsp; http.HandleFunc(&quot;/hello&quot;, func(w http.ResponseWriter, r *http.Request) {<br />
+&nbsp; &nbsp; &nbsp; &nbsp; w.Write([]byte(&quot;Hello&quot;))<br />
+&nbsp; &nbsp; })<br />
+&nbsp; &nbsp; log.Fatal(http.ListenAndServe(&quot;:90&quot;, nil))<br />
+}</p>
+
+<p>//http客户端<br />
+func httpClient() {<br />
+&nbsp; &nbsp; client := &amp;http.Client{}<br />
+&nbsp; &nbsp; reqest, _ := http.NewRequest(&quot;GET&quot;, &quot;http://427studio.net&quot;, nil)<br />
+&nbsp; &nbsp; response, _ := client.Do(reqest)<br />
+&nbsp; &nbsp; if response.StatusCode == 200 {<br />
+&nbsp; &nbsp; &nbsp; &nbsp; body, _ := ioutil.ReadAll(response.Body)<br />
+&nbsp; &nbsp; &nbsp; &nbsp; bodystr := string(body)<br />
+&nbsp; &nbsp; &nbsp; &nbsp; fmt.Println(bodystr)<br />
+&nbsp; &nbsp; }<br />
+}</p>
+
+<p>//tcp客户端<br />
+func tcpClient() {<br />
+&nbsp; &nbsp; conn, _ := net.Dial(&quot;tcp&quot;, &quot;182.92.10.238:42769&quot;)//写<br />
+&nbsp; &nbsp; fmt.Fprintf(conn, &quot;getgames\n&quot;)<br />
+&nbsp; &nbsp;&nbsp;<br />
+&nbsp; &nbsp; data, _ := bufio.NewReader(conn).ReadString(&#39;\n&#39;)//读<br />
+&nbsp; &nbsp; fmt.Printf(&quot;%#v\n&quot;, data)<br />
+}</p>
+
+<p>//tcp服务器<br />
+func tcpServer() {<br />
+&nbsp; &nbsp; ln, err := net.Listen(&quot;tcp&quot;, &quot;:6010&quot;)<br />
+&nbsp; &nbsp; if err != nil {<br />
+&nbsp; &nbsp; &nbsp; &nbsp; panic(err)<br />
+&nbsp; &nbsp; }<br />
+&nbsp; &nbsp; for {<br />
+&nbsp; &nbsp; &nbsp; &nbsp; conn, err := ln.Accept()<br />
+&nbsp; &nbsp; &nbsp; &nbsp; if err != nil {<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; log.Fatal(&quot;get client connection error: &quot;, err)<br />
+&nbsp; &nbsp; &nbsp; &nbsp; }<br />
+&nbsp; &nbsp; &nbsp; &nbsp; go _service(conn)<br />
+&nbsp; &nbsp; }<br />
+}<br />
+//tcp服务器使用的服务函数<br />
+func _service(conn net.Conn) {<br />
+&nbsp; &nbsp; data, err := bufio.NewReader(conn).ReadString(&#39;\n&#39;)<br />
+&nbsp; &nbsp; if err != nil {<br />
+&nbsp; &nbsp; &nbsp; &nbsp; log.Fatal(&quot;get client data error: &quot;, err)<br />
+&nbsp; &nbsp; }<br />
+&nbsp; &nbsp; fmt.Printf(&quot;%#v\n&quot;, data)<br />
+&nbsp; &nbsp; fmt.Fprintf(conn, &quot;hello client\n&quot;)<br />
+&nbsp; &nbsp; conn.Close()<br />
+}</p>
+
+<p>func checkErr(e error){<br />
+&nbsp; &nbsp; if e != nil {<br />
+&nbsp; &nbsp; &nbsp; &nbsp; fmt.Fprintf(os.Stderr, &quot;%s&quot;, e.Error())<br />
+&nbsp; &nbsp; }<br />
+}</p>
+</blockquote>
+
+<p>目前就学了这点儿，明天想个点子做服务器+多客户端的命令行游戏玩玩。</p>
+</div>
+</div>
+</body>
+</html>

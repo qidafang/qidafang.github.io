@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>linux学习</h1>
+<div><p>linux一直是个人比较惧怕的东西，太大太陌生，不过据说其实稍微学学也就够用了&hellip;&hellip;<br />
+看了<a href="http://www.imooc.com/learn/181">慕课网&ldquo;Linux Guide for Developers&rdquo;课程</a>，<br />
+然后跟着老师的推荐大概看了看<a href="http://billie66.github.io/TLCL/book/zh/">《The Linux Command Line》中文版</a>。<br />
+对基本操作有点信心了，以后随着用再深入。<br />
+下面是笔记&mdash;&mdash;</p>
+
+<p><br />
+1.跳转<br />
+history:查看历史命令 可以history | less这样分页看<br />
+cd:用tab补齐，双击tab看多个备选<br />
+pwd:当前在哪儿<br />
+ls:看当前目录下文件 -a可以看隐藏文件（以.开头的文件） -l可以看细节<br />
+file:看文件类型<br />
+less:查看文件</p>
+
+<p>2.文件&amp;目录<br />
+1)基本<br />
+cp f1 f2 拷贝文件<br />
+cp -r d1 d2 拷贝文件夹<br />
+mv f1 f2 重命名文件<br />
+mv f1 d1 移动文件<br />
+mv d1 d2 重命名文件夹<br />
+rm f 删除文件<br />
+rm -r d 删除文件夹<br />
+创建文件：用编辑器保存<br />
+mkdir d 创建文件夹<br />
+ln file link 创建链接<br />
+2)压缩解压<br />
+unzip/zip<br />
+tar zxvf/tar zcvf<br />
+tar jxvf/tar jcvf<br />
+分别对付zip/tar.gz/tar.bz2文件，打包目录后面参数1为文件名，参数2为目录名<br />
+3)命令<br />
+type显示命令类型<br />
+which显示程序位置<br />
+help显示命令帮助<br />
+man显示命令手册</p>
+
+<p>3.重定向<br />
+标准输入stdin，标准输出stdout，标准错误输出stderr<br />
+&gt;输出重定向，&gt;&gt;输出追加重定向，单大于号会清空，2&gt;错误输出重定向<br />
+&lt;输入重定向，|管道线连接<br />
+cat 连接文件<br />
+sort 排序<br />
+uniq 去重<br />
+grep 匹配，语法：grep pattern content<br />
+例：ls /bin /usr/bin | sort | less</p>
+
+<p>4.权限<br />
+读r写w执行x，<br />
+以下字符串每3个一组，依次拥有者、小组、其他人：-rw-rw-r--，表示拥有者的rw权限，小组的rw权限，其他人的r权限<br />
+chmod 666 a.txt，666表示8进制的110110110，即rw-rw-rw-<br />
+用ls -l a.txt看权限</p>
+
+<p>5.进程<br />
+进程号pid<br />
+ps aux查看进程<br />
+kill 进程号 杀死进程<br />
+top 计算机运行状态信息</p>
+
+<p>6.搜索<br />
+locate全局搜索文件&nbsp;<br />
+find在目录中搜索文件&nbsp;<br />
+grep搜索字符串</p>
+
+<p>7.网络操作<br />
+ssh协议，22端口<br />
+我个人用的是xshell和xftp，据说putty也不错<br />
+ping，不解释<br />
+netstat：网络连接<br />
+wget：下载</p>
+
+<p>8.安装软件<br />
+个人用yum还得研究</p>
+
+<p>9.脚本编程<br />
+老师提到的原则：<br />
+*声明语言<br />
+*命令即语句<br />
+*位置参数<br />
+*脚本不在当前shell执行<br />
+*循环控制<br />
+*远程执行<br />
+*确认执行<br />
+*用其他语言写脚本，bash晦涩</p>
+</div>
+</div>
+</body>
+</html>

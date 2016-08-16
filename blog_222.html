@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>docker初学</h1>
+<div><p><strong>docker的效果：</strong><span style="color:#FF0000">把【操作系统+服务器软件+应用程序+数据】打包成一个整体，名曰&ldquo;容器&rdquo;</span>。<br />
+<span style="color:#FF0000">然后就可以把这个&ldquo;容器&rdquo;跑在任意的docker上</span>。package once, deploys anywhere。<br />
+典型的&ldquo;中间层&rdquo;的作用，屏蔽底层差异的工作交给我来干，上层的打包结果放心，肯定可以跑。以前jvm做的也是这种承诺。</p>
+
+<p>教程有很多，我参考的是<a href="http://blog.saymagic.cn/2015/06/01/learning-docker.html">这篇</a>。<br />
+安装过程参考的是《docker从入门到实践》的&ldquo;安装&rdquo;章节。<br />
+在阿里云centos6.5上遇到的奇葩问题（端口被占用）用的是【docker -bip=192.168.100.1/24 -d &amp;】这个语句解决的，参考的是<a href="http://www.kankanews.com/ICkengine/archives/194812.shtml">这篇</a>。</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p>做个记录&mdash;&mdash;</p>
+
+<p>1)安装docker<br />
+yum install http://mirrors.yun-dic.com/epel/6/i386/epel-release-6-8.noarch.rpm<br />
+yum install docker-io</p>
+
+<p><br />
+2)启动<br />
+service docker start</p>
+
+<p><br />
+3)解决ip问题<br />
+docker -bip=192.168.100.1/24 -d &amp;</p>
+
+<p><br />
+4)获取镜像：ubunto操作系统<br />
+docker pull ubuntu:12.04</p>
+
+<p><br />
+5)启动容器：<br />
+docker run -it ubuntu:14.04</p>
+
+<p><br />
+6)在容器中安装nginx：<br />
+apt-get update<br />
+apt-get install -y nginx<br />
+这代表容器已经像真实机器一样好用了，这时可以进行点操作，然后出去打镜像，不赘，详见教程。<br />
+下面说我感觉有用的东西。</p>
+
+<p><br />
+7)<strong>使用Dockerfile生成镜像，注意操作是在本机进行而不是上一步安的那个ubunto中</strong>：<br />
+cd ~<br />
+mkdir www<br />
+cd www<br />
+vim index.html写点内容保存<br />
+cd ~<br />
+vim Dockerfile编辑内容，注意COPY一行与教程中不同，具体应该是啥可以在安装nginx后find / -name &#39;index.html&#39;一下看路径</p>
+
+<blockquote>
+<p>FROM ubuntu:12.04<br />
+MAINTAINER zidafone zidafone@163.com<br />
+RUN apt-get update<br />
+RUN apt-get install -y nginx<br />
+COPY ./www /usr/share/nginx/www<br />
+EXPOSE 80<br />
+CMD [&quot;nginx&quot;, &quot;-g&quot;, &quot;daemon off;&quot;]</p>
+</blockquote>
+
+<p><br />
+当www/index.html和Dockerfile都ok了之后，执行下面命令，注意最后的点表示Dockerfile在当前目录&mdash;&mdash;<br />
+docker build -t=&quot;zidafone/un:v2&quot; .<br />
+这样就生成了自己的镜像</p>
+
+<p><br />
+<strong>8)运行我们刚生成的镜像：</strong><br />
+当然运行之前可以docker images看看当前的镜像库确定确实有了。<br />
+docker run -p 80:80 zidafone/un:v2<br />
+这样就在80端口启动了，看效果的话<a href="http://123.57.93.193/">点这里</a>。</p>
+</div>
+</div>
+</body>
+</html>

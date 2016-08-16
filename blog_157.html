@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>Apache+Tomcat虚拟主机实践</h1>
+<div><p>把昨天研究的<a href="http://427studio.net/blog/1/154">多个域名映射同一主机</a>实践到外网服务器上了，结构如下：</p>
+
+<p>书桌网<a href="http://zidafone.com">zidafone.com</a>：域名映射到182.92.64.91，由Apache转发给Tomcat0处理。</p>
+
+<p>测试甲<a href="http://test1.zidafone.com">test1.zidafone.com</a>：域名映射到182.92.64.91，由Apache转发给Tomcat1处理。</p>
+
+<p>测试乙<a href="http://test2.zidafone.com">test2.zidafone.com</a>：域名映射到182.92.64.91，由Apache转发给Tomcat2处理。</p>
+
+<p>综上，主机上部署一个Apache和三个Tomcat，<strong>在Apache的虚拟主机配置文件里定义三个虚拟主机，内容如下：</strong></p>
+
+<p><br />
+&nbsp; &nbsp; ServerAdmin webmaster@dummy-host.example.com<br />
+&nbsp; &nbsp; DocumentRoot &quot;c:/sites/&quot;<br />
+&nbsp; &nbsp; ServerName <span style="color:#FF0000">zidafone.com</span><br />
+&nbsp; &nbsp; ServerAlias www.dummy-host.example.com<br />
+&nbsp; &nbsp; ErrorLog &quot;logs/dummy-host.example.com-error.log&quot;<br />
+&nbsp; &nbsp; CustomLog &quot;logs/dummy-host.example.com-access.log&quot; common</p>
+
+<p>&nbsp; &nbsp; <span style="color:#FF0000">JkMount /* controller0</span></p>
+
+<p><br />
+&nbsp; &nbsp; ServerAdmin webmaster@dummy-host.example.com<br />
+&nbsp; &nbsp; DocumentRoot &quot;c:/sites/site1&quot;<br />
+&nbsp; &nbsp; ServerName <span style="color:#FF0000">test1.zidafone.com</span><br />
+&nbsp; &nbsp; ServerAlias www.dummy-host.example.com<br />
+&nbsp; &nbsp; ErrorLog &quot;logs/dummy-host.example.com-error.log&quot;<br />
+&nbsp; &nbsp; CustomLog &quot;logs/dummy-host.example.com-access.log&quot; common</p>
+
+<p>&nbsp; &nbsp; <span style="color:#FF0000">JkMount /* controller1</span></p>
+
+<p><br />
+&nbsp; &nbsp; ServerAdmin webmaster@dummy-host.example.com<br />
+&nbsp; &nbsp; DocumentRoot &quot;c:/sites/site2&quot;<br />
+&nbsp; &nbsp; ServerName <span style="color:#FF0000">test2.zidafone.com</span><br />
+&nbsp; &nbsp; ServerAlias www.dummy-host.example.com<br />
+&nbsp; &nbsp; ErrorLog &quot;logs/dummy-host.example.com-error.log&quot;<br />
+&nbsp; &nbsp; CustomLog &quot;logs/dummy-host.example.com-access.log&quot; common</p>
+
+<p>&nbsp; &nbsp; <span style="color:#FF0000">JkMount /* controller2</span></p>
+
+<p><strong>其中的controller们在workers.properties中配置，内容如下：</strong></p>
+
+<p>#server<br />
+worker.list = controller0,controller1,controller2<br />
+#========tomcat0========<br />
+worker.tomcat0.port=8009<br />
+worker.tomcat0.host=localhost<br />
+worker.tomcat0.type=ajp13<br />
+worker.tomcat0.lbfactor = 1<br />
+#========tomcat1========<br />
+worker.tomcat1.port=4109<br />
+worker.tomcat1.host=localhost<br />
+worker.tomcat1.type=ajp13<br />
+worker.tomcat1.lbfactor = 1<br />
+#========tomcat7========<br />
+worker.tomcat2.port=4209<br />
+worker.tomcat2.host=localhost<br />
+worker.tomcat2.type=ajp13<br />
+worker.tomcat2.lbfactor = 1</p>
+
+<p>#========controller,负载均衡控制器========<br />
+worker.controller0.type=lb<br />
+worker.controller0.balanced_workers=tomcat0<br />
+worker.controller0.sticky_session=false<br />
+worker.controller0.sticky_session_force=1<br />
+worker.controller0.sticky_session=1</p>
+
+<p>worker.controller1.type=lb<br />
+worker.controller1.balanced_workers=tomcat1<br />
+worker.controller1.sticky_session=false<br />
+worker.controller1.sticky_session_force=1<br />
+worker.controller1.sticky_session=1</p>
+
+<p>worker.controller2.type=lb<br />
+worker.controller2.balanced_workers=tomcat2<br />
+worker.controller2.sticky_session=false<br />
+worker.controller2.sticky_session_force=1<br />
+worker.controller2.sticky_session=1</p>
+
+<p><strong>为使workers.properties被Apache访问，在Apache的httpd.conf添加如下内容：</strong></p>
+
+<p>LoadModule jk_module <span style="color:#FF0000">modules/mod_jk.so</span><br />
+JkWorkersFile &quot;C:\a_tomcats\workers.properties&quot;<br />
+JkLogFile &quot;C:\a_tomcats\mod_jk2.log&quot;<br />
+JkLogLevel info</p>
+
+<p>标红的模块是需要下载后拷贝到Apache的modules目录下的。</p>
+
+<p>tomcat们的server.xml配置文件，除了要把端口们改得各不相同外，还要在Connector节点上添加：</p>
+
+<p><span style="color:#FF0000">useBodyEncodingForURI=&quot;true&quot; URIEncoding=&quot;UTF8&quot;</span></p>
+
+<p>以避免Apache转发请求过程中出现乱码。</p>
+
+<p>以上的配置，除了能让Apache转发到Tomcat外，稍加改动即可实现Tomcat集群和负载均衡，即workers.properties中controller与workers的关系由一对一改成一对多即可，如worker.controller0.balanced_workers=tomcat0<span style="color:#FF0000">,tomcat1</span></p>
+
+<p><a href="http://www.iteye.com/topic/1017961">关于负载均衡可以参考这里</a></p>
+
+<p>&nbsp;</p>
+
+<p>====以下补充于4月24日下午====</p>
+
+<p><strong><span style="color:#FF0000">补充：也可以使用反向代理实现我的目的</span></strong>（将多个域名映射到同一台主机上访问不同的项目）</p>
+
+<p>在http.conf中把<br />
+LoadModule proxy_module modules/mod_proxy.so<br />
+和<br />
+LoadModule proxy_http_module modules/mod_proxy_http.so<br />
+取消注释，<br />
+然后配置虚拟主机：<br />
+NameVirtualHost *:80</p>
+
+<p><br />
+ServerAdmin webmaster@dummy-host.example.com<br />
+ServerName <span style="color:#FF0000">test1.com</span><br />
+ProxyRequests Off<br />
+<br />
+Order deny,allow<br />
+Allow from all<br />
+<br />
+<span style="color:#FF0000">ProxyPass / http://localhost:8080/test/</span><br />
+<span style="color:#FF0000">ProxyPassReverse / http://localhost:8080/test/</span><br />
+<br />
+&nbsp;<br />
+<br />
+ServerAdmin webmaster@dummy-host.example.com<br />
+ServerName <span style="color:#FF0000">test2.com</span><br />
+ProxyRequests Off<br />
+<br />
+Order deny,allow<br />
+Allow from all<br />
+<br />
+<span style="color:#FF0000">ProxyPass / http://localhost:8080/test2/</span><br />
+<span style="color:#FF0000">ProxyPassReverse / http://localhost:8080/test2/</span></p>
+
+<p><strong>反向代理目前带来的问题是：</strong>如将test2.com代理到http://localhost:8080/test2/<br />
+则jsp中的js、css等链接由于含有${ctx}，而${ctx}是tomcat了解的真实请求路径，即test2，则js文件会变成：<br />
+src=&quot;/test2/xx.js&quot;<br />
+于是不知内情的浏览器会去访问test2.com/test2/xx.js<br />
+经过反向代理，apache向tomcat索要资源的路径是：<br />
+http://localhost:8080/test2/test2/xx.js<br />
+这样就出了错。<br />
+解决办法也简单，做项目时始终相信自己的项目是一级项目，即tomcat下的ROOT项目这个级别，而不是tomcat的webapp里的xx文件夹这个级别。<br />
+所以js的src直接自信地写成&quot;/xx.js&quot;<br />
+浏览器这回将访问test2.com/xx.js<br />
+apache向http://localhost:8080/test2/xx.js索要结果，就得到正确的结果了。</p>
+
+<p>参考的资料<a href="http://yahoon.blog.51cto.com/13184/162922/">在这里</a></p>
+</div>
+</div>
+</body>
+</html>

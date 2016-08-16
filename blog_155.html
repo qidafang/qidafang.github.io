@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>shiro学习</h1>
+<div><p>学习shiro，当然得看<a href="http://jinnianshilongnian.iteye.com/blog/2018398">今年是龙年的《跟我学shiro》</a></p>
+
+<p>1.核心的组件：</p>
+
+<p>应用-&gt;Subject（门面）-&gt;SecurityManager（核心）-&gt;Realm（用户自己实现）-&gt;?（用户说了算，很可能是业务层、持久层、DB）</p>
+
+<p>2.Realm的几大核心职责：</p>
+
+<p>获得验证信息，获得授权信息，决定加密方法。这三个策略函数每个项目千差万别，所以需要用户自己写。</p>
+
+<p>3.Token和Realm：</p>
+
+<p>Token是状态对象，用于装载表单信息，Realm是策略对象，用于定义判决规则。</p>
+
+<p>4.拦截器：</p>
+
+<p>明明是Filter，却叫拦截器而不是过滤器，可能是因为&ldquo;拦截&rdquo;含有&ldquo;阻挡&rdquo;的意思，拦截器定义了对一个请求放行不放行的策略，配置文件中常见的user啊roles啊都是拦截器，如果需要完全可以写自己的拦截器。</p>
+
+<p>今天我就自己写了一个，目的是让前台用户和后台用户的登录使用不同的表单，把roles拦截器对应的RolesAuthorizationFilter抄一个来，该改的改改，配置文件里装配就可以用了。在设计良好的框架上做扩展就是爽快！</p>
+
+<p>在&ldquo;策略&rdquo;类的&ldquo;模板-回调&rdquo;族中定义一个新的策略很惬意，找准应该照抄的那个类，修改其内容，或覆盖其父类方法，工作量其实不大。</p>
+
+<p>5.登录判断：</p>
+
+<p>shiro配置文件中的loginUrl很有意思，用GET方法访问它，就显示登录表单，用POST方法访问它，就会在拦截器中（实际是filter）进行登录校验，如果校验失败，就会穿过（！）filter，到达用户定义的对该路径的POST方法响应的函数。</p>
+
+<p>所以要在LoginController里，写两个函数，一个响应GET方法显示表单，另一个响应POST方法决定校验失败后该怎么办。然后login.jsp中form的action必须写成loginUrl，这一系列的约定曾经让我晕头转向，今天终于梳理利索了。</p>
+
+<p>6.自定义校验器：</p>
+
+<p>指的不是Realm，而是与authc拦截器类似的自定义拦截器，用于自定义的表单的提交后的处理，同样是照抄修改现有的拦截器，定义好什么情况下通过、通不过的话怎么办就可以了。</p>
+
+<p>总之shiro的扩展性非常强，只要找准想要扩展的点，把自己的组件编写好，注入给shiro就好了。</p>
+
+<p>7.欣赏一小段代码吧：（来自自定义登录器的onAccessDenied方法，绝大部分是抄的）</p>
+
+<p>&nbsp; &nbsp; &nbsp; &nbsp; if (pathsMatch(loginUrl, request)) {<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; if (isLoginSubmission(request, response)) {<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; return executeLogin(request, response);<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; } else {<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; return true;<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; }<br />
+&nbsp; &nbsp; &nbsp; &nbsp; } else {<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;saveRequest(request);<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; WebUtils.issueRedirect(request, response, loginUrl);<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; return false;<br />
+&nbsp; &nbsp; &nbsp; &nbsp; }</p>
+
+<p>没权限？是不是在登录啊&hellip;&hellip;如果是的话就登录下试试&hellip;&hellip;不是在登录？我把你想去哪里暂时存起来，乖乖去登录！小样的。</p>
+</div>
+</div>
+</body>
+</html>

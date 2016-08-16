@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>jmeter性能测试入门</h1>
+<div><p><a href="http://jmeter.apache.org/">jmeter</a>用处：模拟并发请求，进行性能测试。</p>
+
+<p><br />
+参考：书籍《零成本实现WEB性能测试 基于APACHE JMETER》<br />
+<a href="https://github.com/springside/springside4/wiki/Jmeter">SpringSide的介绍</a></p>
+
+<p>&nbsp;</p>
+
+<p><strong>使用jmeter进行网站性能测试</strong><br />
+最基本的demo:<br />
+1.运行bin目录的jmeter.bat<br />
+2.右键测试计划添加线程组，设置线程数为10，循环次数勾选永远<br />
+3.右键线程组添加Sampler-&gt;Http请求，写服务器地址，如baidu.com<br />
+4.右键线程组添加监听器-&gt;图形结果<br />
+5.点击工具栏的绿色运行图标<br />
+6.观察图形结果，在适当的时候在工具栏点击红色的结束图标</p>
+
+<p><br />
+<strong>使用<a href="http://www.badboy.com.au">Badboy</a>录制测试脚本:</strong><br />
+1.下载安装<br />
+2.在地址栏输入地址<br />
+3.在页面进行操作<br />
+4.File-&gt;Export To JMeter</p>
+
+<p><br />
+<strong>添加对mysql的测试：</strong><br />
+1.将jdbc的jar拷贝到lib包<br />
+2.右键线程组添加配置元件-&gt;JdbcConnectionConfiguration，设置VariableName及最下面四项<br />
+如：<br />
+jdbc:mysql://localhost:3427/test<br />
+com.mysql.jdbc.Driver<br />
+root<br />
+root<br />
+3.右键线程组添加Sampler-&gt;JDBC Request，在Query部分写语句<br />
+如:select * from tbl_user;<br />
+4.右键线程组添加图形结果，运行，观察结果</p>
+</div>
+</div>
+</body>
+</html>

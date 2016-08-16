@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>redis初识</h1>
+<div><p><strong>1.安装</strong><br />
+1)在<a href="https://github.com/MSOpenTech/redis/releases">这里</a>下载windows版<br />
+2)redis-server.exe启动服务器，redis-cli.exe启动客户端<br />
+3)参考<a href="http://redisdoc.com/">命令文档</a>输入命令做实验</p>
+
+<p><strong>2.使用</strong><br />
+java库：<a href="https://github.com/xetorthio/jedis">jedis</a><br />
+最简单的示例：</p>
+
+<blockquote>
+<p>&nbsp;&nbsp; &nbsp;&lt;dependency&gt;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&lt;groupId&gt;redis.clients&lt;/groupId&gt;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&lt;artifactId&gt;jedis&lt;/artifactId&gt;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&lt;version&gt;2.6.1&lt;/version&gt;<br />
+&nbsp;&nbsp; &nbsp;&lt;/dependency&gt;</p>
+</blockquote>
+
+<p>单元测试：</p>
+
+<blockquote>
+<p>&nbsp;&nbsp; &nbsp;@Test<br />
+&nbsp;&nbsp; &nbsp;public void test(){<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;Jedis jedis = new Jedis(&quot;localhost&quot;);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;jedis.set(&quot;name&quot;, &quot;427studio&quot;);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;String name = jedis.get(&quot;name&quot;);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;Assert.assertEquals(&quot;名字不对&quot;, &quot;427studio&quot;, name);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;jedis.close();<br />
+&nbsp;&nbsp; &nbsp;}</p>
+</blockquote>
+
+<p>如果用springside封装的<a href="https://github.com/springside/springside4/blob/master/modules/redis/src/main/java/org/springside/modules/nosql/redis/JedisTemplate.java">JedisTemplate</a>，最简单的演示如下：</p>
+
+<blockquote>
+<p>public class RedisDemo{<br />
+&nbsp;&nbsp; &nbsp;<br />
+&nbsp;&nbsp; &nbsp;private JedisPool pool;<br />
+&nbsp;&nbsp; &nbsp;private JedisTemplate jedisTemplate;<br />
+&nbsp;&nbsp; &nbsp;<br />
+&nbsp;&nbsp; &nbsp;@Before<br />
+&nbsp;&nbsp; &nbsp;public void before(){<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;pool = new JedisPoolBuilder()<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;.setPoolName(&quot;poolName&quot;)<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;.setUrl(&quot;direct://localhost:6379?poolSize=1&quot;)<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;.buildPool();<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;jedisTemplate = new JedisTemplate(pool);<br />
+&nbsp;&nbsp; &nbsp;}<br />
+&nbsp;&nbsp; &nbsp;<br />
+&nbsp;&nbsp; &nbsp;@Test<br />
+&nbsp;&nbsp; &nbsp;public void test(){<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;jedisTemplate.set(&quot;name&quot;, &quot;427studio&quot;);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;String nameFromRedis = jedisTemplate.get(&quot;name&quot;);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;Assert.assertEquals(&quot;名字不对&quot;, &quot;427studio&quot;, nameFromRedis);<br />
+&nbsp;&nbsp; &nbsp;}<br />
+}</p>
+</blockquote>
+
+<p><strong>3.参考：</strong><br />
+书籍《Redis入门指南》<br />
+<a href="https://github.com/springside/springside4/wiki/Redis">springside的redis介绍</a></p>
+
+<p><strong>4.个人理解</strong><br />
+1)redis的本质是容器服务，凡是&ldquo;容器&rdquo;这种编程元素需要出现的地方，都可以用redis<br />
+2)跟ehcache等得区别是，redis可以离开应用服务器<br />
+3)跟memcached的区别是，redis可以持久化<br />
+4)跟mysql等的区别是，redis可以保存五种数据：str/map/list/set/sorted-set<br />
+5)万能的收纳盒，用于缓存也行，当数据库使也行，就看你脑洞能开到什么程度</p>
+</div>
+</div>
+</body>
+</html>

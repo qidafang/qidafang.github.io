@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>性能测试，Jmeter和javasimon</h1>
+<div><h2>Jmeter</h2>
+
+<p>使用Jmeter做压力测试，之前的<a href="http://page.427studio.net/blog/blog_165.html">这篇博文</a>已写，不赘。</p>
+
+<p>有Jmeter做压力测试，<a href="http://page.427studio.net/blog/blog_166.html">ehcache做页面缓存</a>的效果就一目了然了。</p>
+
+<p>过滤器重写过，为了去掉讨厌的jsessionid：</p>
+
+<pre><code>public class PageCacheFilter extends SimplePageCachingFilter{
+
+    @Override
+    protected String calculateKey(HttpServletRequest httpRequest) {
+        StringBuffer stringBuffer = new StringBuffer();
+        stringBuffer.append(httpRequest.getMethod()).append(httpRequest.getRequestURI()).append(httpRequest.getQueryString());
+        String key = stringBuffer.toString();
+        int index = key.indexOf(";");
+        if(index != -1){
+            key = key.substring(0, index);
+        }
+        return key;
+    }
+
+}
+</code></pre>
+
+<p>最关键的首页，给了60秒的缓存，在高并发下响应飞快。</p>
+
+<pre><code>&lt;filter&gt;
+    &lt;filter-name&gt;SimplePageCachingFilter&lt;/filter-name&gt;
+    &lt;filter-class&gt;xxx.PageCacheFilter&lt;/filter-class&gt;
+    &lt;init-param&gt;
+        &lt;param-name&gt;suppressStackTrace&lt;/param-name&gt;
+        &lt;param-value&gt;false&lt;/param-value&gt;
+    &lt;/init-param&gt;
+    &lt;init-param&gt;
+        &lt;param-name&gt;cacheName&lt;/param-name&gt;
+        &lt;param-value&gt;SimplePageCachingFilter&lt;/param-value&gt;
+    &lt;/init-param&gt;
+&lt;/filter&gt;
+&lt;filter-mapping&gt;
+    &lt;filter-name&gt;SimplePageCachingFilter&lt;/filter-name&gt;
+    &lt;url-pattern&gt;/&lt;/url-pattern&gt;
+&lt;/filter-mapping&gt;
+</code></pre>
+
+<p>另外，为了保护首页，将首页每个部分的“查询数据库、向model赋值”语句，包裹在一个try-catch里。</p>
+
+<p>这样即使出了错，只是页面局部不显示，而不会整页崩溃。错误信息在catch块里记录日志。</p>
+
+<h2>javasimon</h2>
+
+<p>javasimon的目的在监控方法的耗时，找到特别消耗时间的方法，好针对优化之。</p>
+
+<p>使用方法看<a href="https://github.com/springside/springside4/wiki/Profiler">偶像的介绍</a>。</p>
+
+<p>因为嵌入式网页控制台会把类路径暴露出来，而且没找到加密的方法，担心被人找到，所以url不用默认的javasimon，改了自己起的名字。</p>
+
+<pre><code>&lt;servlet&gt;
+    &lt;servlet-name&gt;SimonConsoleServlet&lt;/servlet-name&gt;
+    &lt;servlet-class&gt;org.javasimon.console.SimonConsoleServlet&lt;/servlet-class&gt;
+    &lt;init-param&gt;
+        &lt;param-name&gt;url-prefix&lt;/param-name&gt;
+        &lt;param-value&gt;/can_you_guess_it&lt;/param-value&gt;
+    &lt;/init-param&gt;
+&lt;/servlet&gt;
+&lt;servlet-mapping&gt;
+    &lt;servlet-name&gt;SimonConsoleServlet&lt;/servlet-name&gt;
+    &lt;url-pattern&gt;/can_you_guess_it/*&lt;/url-pattern&gt;
+&lt;/servlet-mapping&gt;
+</code></pre>
+</div>
+</div>
+</body>
+</html>

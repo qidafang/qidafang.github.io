@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>android又一次入门</h1>
+<div><p>这几年进行了好几次&ldquo;安卓入门&rdquo;的学习，每次都浅尝辄止，因为确实感觉内容不多。</p>
+
+<p>这周又入门了一次，靠的是慕课网的视频教程和书籍《疯狂java讲义》。</p>
+
+<p>大部分技术都是远观的时候不明觉厉，近了看不过尔尔，动手起来又有点笨手笨脚，稍微习惯点了就行云流水。这几年学任何技术都是这个过程，以致现在对技术信心爆棚。</p>
+
+<p>稍稍总结一下：</p>
+
+<p>所谓四大组件，activity重中之重，看做servlet就，service绝不是javaee的业务层概念，而是rmi提供者的意义，contentprovider是webservice的提供者，broadcastreceiver是全局事件的监听器。这四者除了activity，其他三个都注重程序们之间的信息交互。至于intent，虽然重要但用途过于清楚就不说了。</p>
+
+<p>各种资源其实就是配置文件，r文件只是配置文件的目录而已，它们都是用来给java类用的，包括layout文件也是，eclipse的可视化操作只是给编辑这个xml配置文件提供了简单的操作方法，就像eclipse下的工作流编辑器一样，本质还是落脚到xml上。处于被动地位的、任人调用的xml，仅此而已。</p>
+
+<p>较有权力的还是activity，但也是类似servlet一样，只是给程序员写语句的点，它本质也是被真的引擎驱动的一个对象而已，初始化也不用程序员操心，跟servlet绝类。</p>
+
+<p>操作本地的文件、数据库，与java的io和jdbc类似，类库级的本领，没什么好说。</p>
+
+<p>客户端与服务器的交互，通过webservice，其实就是客户端发http请求，等服务器返回http响应后，把文本解析成对象罢了，普通的webservice。对我而言一个新奇点的是原来把这块看成javaee程序的和数据库打交道就行了。毕竟数据访问层，除了访问数据库，也包括通过webservice访问资源，访问非本系统的数据，都是数据访问层的任务。</p>
+
+<p>界面的交互，类似dom上注册javascript事件，一类比就简单了。activity对象要持有控件对象，因为activity对象意义本来就是界面，持有控件合情合理。另外activity也可以持有界面逻辑的数据。至于业务逻辑的数据应该由谁来持有，感觉应该由一个单独的单例对象，比如Game.java之类，界面逻辑和业务逻辑要区分。</p>
+
+<p>游戏，看似复杂的界面，其实也是不断重绘而已，根据游戏状态重绘页面。一、在循环中自动重绘；二、每次响应操作后重绘。分别对应非回合制和回合制游戏。</p>
+
+<p>&nbsp;</p>
+</div>
+</div>
+</body>
+</html>

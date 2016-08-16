@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>mybatis的内部结构</h1>
+<div><p>读源码要做的一件事是从事无巨细的代码们中体会设计思路。</p>
+
+<p><strong>一图流：mybatis的主要组件，在一次查询中的协作关系。</strong></p>
+
+<p><img alt="" src="http://img.zidafone.com/427studio/50a22627-d644-43a0-a6a8-88b5807835d6.png" style="height:524px; width:807px" /></p>
+
+<div>&nbsp;</div>
+
+<div>
+<p>图中的executor和statement-handler在实现中都是多个对象，以组合的关系组织在一起，核心对象以委托的方式调用辅助对象。</p>
+
+<p>这里为了让图更清晰，只画逻辑对象而不画物理对象。</p>
+
+<p>其中executor层用到三个类，CachingExecutor提供二级缓存支持，BaseExecutor提供一级缓存，SimpleExecutor具体做事。</p>
+
+<p>而statementHandler层用到三个类，PreparedStatementHandler是核心，ParameterHandler和ResultSetHandler分管两个关键转型。</p>
+
+<p>更细节的就不写了，下断点进代码一点也不麻烦：</p>
+
+<blockquote>
+<p>&nbsp; &nbsp; &nbsp; &nbsp; SqlSession session = sessionFactory.openSession();<br />
+&nbsp; &nbsp; &nbsp; &nbsp; List&lt;Book&gt; books = session.selectList(&quot;test.mybatis.BookMapper.select&quot;, 23L);</p>
+</blockquote>
+</div>
+</div>
+</div>
+</body>
+</html>

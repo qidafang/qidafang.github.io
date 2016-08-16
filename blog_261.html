@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>python基础语法</h1>
+<div><p>接上文<a href="http://427studio.net/blog/1/260" target="_blank">ruby基础语法</a>，为在切换语言时查看，迅速习惯写法，记录了一些基本语法，代码<a href="https://github.com/qidafang/language_study" target="_blank">在这里</a>。</p>
+
+<blockquote>
+<p># -*- coding: utf-8 -*-<br />
+&#39;&#39;&#39;<br />
+参考：http://www.runoob.com/python/python-tutorial.html<br />
+多行注释<br />
+多行注释<br />
+&#39;&#39;&#39;</p>
+
+<p><span style="color:#FF0000"><strong>##变量</strong></span><br />
+a = 100#变量直接声明即可<br />
+a = &quot;abc&quot;#变量弱类型<br />
+l = [1, 2, 3]#数组，可以赋值和取值l[0]<br />
+t = (1, 2, 3)#元组，不能赋值，只能取值t[0]<br />
+d = {&quot;a&quot; : 1, &quot;b&quot; : 2}#字典，可以赋值取值d[&quot;a&quot;]<br />
+s = str(1)#数据类型转化</p>
+
+<p><span style="color:#FF0000"><strong>##流程控制</strong></span><br />
+#if<br />
+if 1 &gt; 2:<br />
+&nbsp; &nbsp; pass#啥也不想干，pass用来占位，否则语法不成立<br />
+elif 1 &gt; 3:<br />
+&nbsp; &nbsp; pass<br />
+else:<br />
+&nbsp; &nbsp; pass<br />
+#while<br />
+while 1 &gt; 2:<br />
+&nbsp; &nbsp; pass<br />
+else:<br />
+&nbsp; &nbsp; pass<br />
+#for<br />
+for i in [1,2,3]:<br />
+&nbsp; &nbsp; #这里可以使用break和continue<br />
+&nbsp; &nbsp; pass<br />
+else:<br />
+&nbsp; &nbsp; pass</p>
+
+<p><span style="color:#FF0000"><strong>##面向对象</strong></span><br />
+#定义函数<br />
+def log(str):<br />
+&nbsp; &nbsp; return str.decode(&quot;utf-8&quot;).encode(&quot;gbk&quot;)<br />
+#定义类<br />
+class MyClass:<br />
+&nbsp; &nbsp; #成员变量<br />
+&nbsp; &nbsp; _privateAttr = &quot;私有变量值&quot;#下划线开头为私有变量<br />
+&nbsp; &nbsp; myAttr = &quot;公有变量值&quot;#公有变量<br />
+&nbsp; &nbsp; #构造函数<br />
+&nbsp; &nbsp; def __init__(self, a):<br />
+&nbsp; &nbsp; &nbsp; &nbsp; self.myAttr = a<br />
+&nbsp; &nbsp; &nbsp; &nbsp; self._privateAttr = a<br />
+&nbsp; &nbsp; #成员方法，第一个参数必须是self，这体现了myObj.myMethod(..)实际是myMethod(myObj, ..)<br />
+&nbsp; &nbsp; def myMethod(self):<br />
+&nbsp; &nbsp; &nbsp; &nbsp; print log(self.myAttr + self._privateAttr)<br />
+#继承<br />
+class MySubClass(MyClass):<br />
+&nbsp; &nbsp; def __init__(self, a):<br />
+&nbsp; &nbsp; &nbsp; &nbsp; self.myAttr = a + &quot;在子类中变了&quot;</p>
+
+<p>myObj = MySubClass(&quot;你好，世界！&quot;)#实例化，不需要new关键字<br />
+myObj.myMethod()<br />
+#使用其他模块中定义的类<br />
+from python_another_module import AnotherClass<br />
+AnotherClass().anotherMethod()</p>
+
+<p><span style="color:#FF0000"><strong>##异常</strong></span><br />
+try:#这里写正常语句<br />
+&nbsp; &nbsp; pass<br />
+except Error:#如果捕获了该类异常则运行<br />
+&nbsp; &nbsp; pass<br />
+else:#如果没捕获异常则运行<br />
+&nbsp; &nbsp; pass</p>
+
+<p><span style="color:#FF0000"><strong>##正则表达式</strong></span><br />
+import re<br />
+#匹配<br />
+m = re.match(r&#39;\D+(\d+)\D+(\d+)&#39;, &quot;ab12cd34&quot;)<br />
+if m:<br />
+&nbsp; &nbsp; print m.group(0)#ab12cd34<br />
+&nbsp; &nbsp; print m.group(1)#12<br />
+&nbsp; &nbsp; print m.group(2)#34<br />
+else:<br />
+&nbsp; &nbsp; print &quot;no match&quot;<br />
+#替换<br />
+print re.sub(r&#39;\d&#39;, &quot;!&quot;, &quot;ab12cd34&quot;)#ab!!cd!!<br />
+print re.sub(r&#39;\d+&#39;, &quot;!&quot;, &quot;ab12cd34&quot;)#ab!cd!</p>
+</blockquote>
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>系统保护：Hystrix和Rate Limit</h1>
+<div><h1>Hystrix</h1>
+
+<p>程序A使用程序B的服务接口，如果程序B挂了，程序A也会跟着挂掉，这肯定不是想看到的。</p>
+
+<p>最好是A能知道B是否挂了，如果认为B挂了，则干脆完全不访问B，直到B恢复。在这期间A可能部分功能受到影响，但不会整体挂掉。</p>
+
+<p>问题是：1)A怎样知道B是否挂了？2)如果A认为B挂了，A应该采用什么策略？</p>
+
+<p><a href="https://github.com/Netflix/Hystrix">Hystrix</a>就是解决这些问题用的。</p>
+
+<p>对问题1，Hystrix的方法是，每次A请求B的时候，观察下响应的情况，如果既响应及时，又得到正常结果，则视为正常，否则，响应超时，或者得到异常结果，则视为异常。一段时间内，请求次数达到一定数量，而异常比例也超过一定阈值，则认为B出了问题。</p>
+
+<p>对问题2，当认为B出了问题时，在一小段时间内A应该请求B时，根本不去请求，而直接按请求失败处理（称为熔断）。过了这一小段时间之后，尝试请求一次，如果成功，则恢复正常，如果还是失败，则继续熔断。</p>
+
+<p>Hystrix使用的地方是在A上，在交互的时候，新建一个命令对象，把A向B发出请求并获得响应的代码写到命令对象的run方法体里，并把异常情况下不进行请求而直接返回结果的代码写到命令对象的getFallback方法体（优雅降级）里。</p>
+
+<pre><code>public class SomeCommand extends HystrixCommand&lt;String&gt;{
+
+    @Override
+    protected String run(){
+        //这里代码的任务：请求响应，返回正常结果
+    }
+
+    @Override
+    protected String getFallback(){
+        //这里代码的任务：返回降级结果
+    }
+
+}
+</code></pre>
+
+<p>业务对象只需要调用命令对象的execute方法，获得其返回值继续业务。该execute方法获得的是run方法返回的正常结果？还是getFallback方法返回的降级结果？那就是Hystrix决定的了。</p>
+
+<pre><code>String result = new SomeCommand().execute();
+</code></pre>
+
+<p>Hystrix的决定思路如前所述，正常情况下使用run来获得结果，如果异常或超时达到一定频率，则熔断，熔断时期返回getFallback的降级结果，之后尝试恢复正常。</p>
+
+<p>参考：<a href="https://github.com/springside/springside4/wiki/Hystrix">偶像的介绍</a></p>
+
+<h1>Rate Limiter</h1>
+
+<p>限流。如果访问超过规定的频率，则只有预期数量的访问得到正常响应，其他访问被拒绝。</p>
+
+<p>使用google的RateLimiter，限定每秒钟访问数100：</p>
+
+<pre><code>public static final RateLimiter someLimiter = RateLimiter.create(100d);
+</code></pre>
+
+<p>然后把想被保护的代码放到如下判断块中：</p>
+
+<pre><code>if(someLimiter.tryAcquire()){
+    //如果不是超量的请求，则进入这里执行正常逻辑
+}
+</code></pre>
+
+<p>这样就实现了规定某段业务代码的最高访问频次的目的。</p>
+
+<p>参考：<a href="https://github.com/springside/springside4/wiki/System-Protection">偶像的介绍</a></p>
+
+<h1>总结</h1>
+
+<p>Hystrix和RateLimiter两者，一个用在客户端，一个用在服务端，共同点是“缩短请求深度”。</p>
+
+<p>前者请求不进行下去，直接失败。</p>
+
+<p>后者请求不进行业务，直接返回。</p>
+</div>
+</div>
+</body>
+</html>

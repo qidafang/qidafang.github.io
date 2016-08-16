@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>AngularJS再探</h1>
+<div><p>1.angular的应用场景是单页面web程序。<br />
+2.这种程序的特点甲是不存在整个页面的刷新，所以js全局变量是连贯保持的。<br />
+3.这种程序的特点乙是功能丰富，js全局变量要做良好的规划，否则会导致著名的全局变量污染问题。<br />
+4.这种程序的mvc的关键之处：1)action-&gt;model;2)model-&gt;view;3)view-&gt;action<br />
+5.model体现在全局变量的状态上，即当前页面的状态，因为全局变量连贯保持，使model的健康使用成为可能（不同于经典web的location变化，原有全局变量全死的情况）<br />
+6.action-&gt;model的关键在事件响应函数的位置，即model变量的位置。angular的思路是都放在一个对象里，响应函数是其方法，model是其变量。<br />
+7.这个对象就是angular中的controller，意义为一个封闭的边界清晰的范围，对应一个封闭的边界清晰的业务逻辑。<br />
+8.model-&gt;view在angular中是招牌的直接绑定，自动渲染，传统的两件事：定义模板，灌装渲染，后者用户不必关心，只关注前者即可。<br />
+9.view-&gt;action可以通过指令直接绑定到该域的方法上，该方法来操作属于同一对象的成员变量(model)，天经地义。<br />
+10.整个页面作为一个module，页面中关键局部各自作为controller，如果有多个呈现为整页的controller，使用route切换。<br />
+11.route的意义在解决了ajax程序的经典问题，即让地址栏重新可用了，可以存到收藏夹，前进后退。<br />
+12.controller和service解耦的意义与java的controller和service解耦意义相同，即让controller作为一个逻辑上超然、不具体做事的核心概念，具体的业务交给service。<br />
+13.所谓director就是模板，经典的view概念的承载者，肩负从model到html的重任，还负有承接action的责任，承接后调用controller的方法，做action-&gt;model的具体工作。<br />
+14.director可看做html在js中的代理，全权负责关于html的任务，其他人都触及不到html，而只能与director沟通。<br />
+15.过滤器filter就简单了，看做工具即可，用于日期格式化啊什么的。<br />
+16.总之director和filter这俩叫法个人感觉把低级角色说得怪吓人的，其实是负责具体工作的小角色。<br />
+17.吾皇万岁的当然是module，裂土封王的是各个controller，有实权的州郡长官是各个service，director好比王侯身边的文案秘书，地位不低也不可或缺但工作内容单调乏味，至于filter，只是帮秘书打下手的走狗，亏得叫一个这么牛气的名字，这个名字在java里至少是封疆大吏的级别。<br />
+18.综上，angular使区区一个页面成了一个王国，职责明确，层次清晰，理论体系和执行能力上限都极高，这就是它的厉害之处。<br />
+19.对比一下传统页面的地位：只是mvc中v的最后那一环节，由服务器端语言的模板灌入model生成的最终产品，到浏览器之后就只有点小打小闹的js脚本。<br />
+20.&hellip;&hellip;完全不可同日而语，可以看做前端的逆袭，让后端只负责写ajax接口就可以了，后端程序的地位可以理解为数据库长期以来的地位，提供接口供人调用即可。<br />
+21.好处在利用浏览器的性能，就减轻服务器的性能了，这在网络用户越来越多，业务越来越复杂的时代，意义不容小视。<br />
+22.还一个最明显的好处是由于页面不用刷新js全部变量长存，使富客户端的复杂业务变得可能了，而且用户体验当然不是反复刷新整页可比的。</p>
+
+<p>参考：<br />
+1.慕课网上大漠穷秋的教程<br />
+2.书籍《AngularJS权威教程》<br />
+3.网站<a href="http://www.ngnice.com/">http://www.ngnice.com/</a></p>
+
+<p>&nbsp;</p>
+</div>
+</div>
+</body>
+</html>

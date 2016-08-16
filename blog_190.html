@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>主表子表</h1>
+<div><p>当新增或修改的表单对应不止一个表时，除了主表还有子表。</p>
+
+<p>主表和子表可能是一对一或者一对多的关系。</p>
+
+<p>一对一其实就是主表的字段的外部化，只要表单域的name采用不同的约定就行了，比如主表域a.xx，子表域b.xx。</p>
+
+<p>一对多可能通过js添加多行记录，约定要复杂一点：c_1.xx，c_1.yy，c_2.xx，c_2.yy之类。</p>
+
+<p>1或2是哪来的？页面用个hidden当序列，每添加一行序列加一就行。反正这东西就是让后台知道c_1.xx和c_1.yy是一个对象的两个字段，c_2.xx和c_2.yy是另一个对象的字段用的，后台判断完后就丢弃，所以从1开始就行。</p>
+
+<p>当显示修改的表单时怎么办？用js，动态生成页面内容，把元素的name值也生成出来。</p>
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>使用JWPlayer在网页中嵌入视频</h1>
+<div><p><span style="line-height:1.6em">我一直以为在网页中嵌入视频是件复杂的事，一研究才知道原来非常简单。</span></p>
+
+<p>实际就是在页面中嵌入个控件。社区里已有很多解决方案了。jwplayer是最受欢迎的（之一）。<br />
+控件包括js、css和swf文件，swf文件就是播放器，它是控件的一部分，引入控件包跟引入其他的前端控件包方法一样，拷贝到项目路径下即可。<br />
+视频是个flv文件，flv文件就放哪里都行了。个人建议像图片一样放个单独的服务器。</p>
+
+<p>示例程序在<a href="http://page.zidafone.com/jwplayer_demo/">这里</a>，代码已经传到了<a href="https://github.com/qidafang/jwplayer_demo">github</a>上。<br />
+jwplayer本身的文档在<a href="http://support.jwplayer.com/customer/portal/articles/1406723-mp4-video-embed">这里</a>，藏得非常深，个人非常不喜欢这个官网，花里胡哨，张牙舞爪。<br />
+官方文档我还是喜欢朴素简洁的那种。</p>
+
+<p>网页代码及其简单，仅此而已：</p>
+
+<blockquote>
+<p>&lt;!DOCTYPE&gt;<br />
+&lt;html&gt;<br />
+&lt;head&gt;<br />
+&nbsp;&nbsp; &nbsp;&lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=utf-8&quot;&gt;<br />
+&nbsp;&nbsp; &nbsp;&lt;title&gt;use jw&lt;/title&gt;</p>
+
+<p>&nbsp;&nbsp; &nbsp;&lt;script src=&quot;jwplayer/jwplayer.js&quot;&gt;&lt;/script&gt;<br />
+&nbsp;&nbsp; &nbsp;&lt;!-- 并不是每个用户独有的身份码，官网给的唯一的，不用改 --&gt;<br />
+&nbsp;&nbsp; &nbsp;&lt;script&gt;jwplayer.key=&quot;bAoNHra71KE/mHvb0sirT4HeWLTAkpiYa1mVsA==&quot;;&lt;/script&gt;<br />
+&lt;/head&gt;<br />
+&lt;body&gt;<br />
+&nbsp;&nbsp; &nbsp;&lt;div id=&quot;myElement&quot;&gt;Loading the player...&lt;/div&gt;<br />
+&nbsp;&nbsp; &nbsp;&lt;script type=&quot;text/javascript&quot;&gt;<br />
+&nbsp;&nbsp; &nbsp;var playerInstance = jwplayer(&quot;myElement&quot;);<br />
+&nbsp;&nbsp; &nbsp;playerInstance.setup({<br />
+&nbsp;&nbsp; &nbsp; &nbsp; &nbsp;file: &quot;http://img.zidafone.com/test.flv&quot;,<br />
+&nbsp;&nbsp; &nbsp; &nbsp; &nbsp;image: &quot;http://img.zidafone.com/test.jpg&quot;,<br />
+&nbsp;&nbsp; &nbsp; &nbsp; &nbsp;width: 640,<br />
+&nbsp;&nbsp; &nbsp; &nbsp; &nbsp;height: 360,<br />
+&nbsp;&nbsp; &nbsp; &nbsp; &nbsp;title: &#39;Beautiful Woman&#39;,<br />
+&nbsp;&nbsp; &nbsp; &nbsp; &nbsp;description: &#39;This is the most beautiful woman in the world, do you agree?&#39;<br />
+&nbsp;&nbsp; &nbsp;});<br />
+&nbsp;&nbsp; &nbsp;&lt;/script&gt;<br />
+&lt;/body&gt;<br />
+&lt;/html&gt;</p>
+</blockquote>
+</div>
+</div>
+</body>
+</html>

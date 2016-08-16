@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>tomcat集群的session共享</h1>
+<div><p>tomcat集群的session共享，实际上是做两件事情：<br />
+1.apache与tomcat集成<br />
+2.tomcat使用memcached（也可以换用redis，本篇不涉及redis）做session服务器<br />
+<strong>这两件事情实际是相互独立的</strong>，但只有同时做才有意义。<br />
+只做集成而不做session外部化，就将失去session储存用户信息的能力；不做集成只做session外部化，没有实际价值。</p>
+
+<p>apache集成tomcat可以看<a href="http://www.iteye.com/topic/1017961">这里</a>。<br />
+tomcat使用memcached保存session可以看<a href="http://chenzhou123520.iteye.com/blog/1650212">这里</a>和<a href="http://www.iteye.com/topic/1125301">这里</a>。</p>
+
+<p>总结一下，<br />
+apache集成tomcat最关键的事：<br />
+1)apache模块mod_jk.so的下载<br />
+2)配置文件worker.properties的编写<br />
+3)将指定路径分发给tomcat的JkMount指令<br />
+4)tomcat的server.xml中Cluster配置的解除注释，以及多个tomcat的端口和jvm需要设为不同</p>
+
+<p>tomcat使用memcached保存session最关键的事：<br />
+1)下载jar包并放到tomcat的lib目录下，<a href="http://chenzhou123520.iteye.com/blog/1650212">这里</a>讲到的maven依赖方式下载比较方便，个人想出了一个办法在eclipse里建一个maven的war项目，pom.xml中写入引入的依赖，然后clean package，到生成的war的lib中把jar们都拷出来就行了。<br />
+2)context.xml文件内容的修改，注意当memcached只有一个时不能写failoverNodes属性。</p>
+
+<p><strong>总体思路：</strong><br />
+一个apache到多个tomcat，这是分。<br />
+多个tomcat到一个memcached（集群），这是合。<br />
+最后的结果是对于客户来说，好像提供服务的是一个单点服务器，这个体验与没有apache也没有memcached，直接用域名访问tomcat结果是一样的，但多出来了tomcat集群减轻单点压力的好处。</p>
+</div>
+</div>
+</body>
+</html>

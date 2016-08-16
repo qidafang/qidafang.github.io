@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>React的一个简单示例</h1>
+<div><p><span style="line-height:1.6em">React的核心是定义组件类，组件有三个要素：状态、行为、界面。</span></p>
+
+<p>1.渲染状态到界面：状态由组件对象的state属性持有，从状态到界面的渲染工作由组件类的render方法完成，该方法应该使用state属性，该方法的返回值是html片段，即渲染的结果。</p>
+
+<p>2.界面上响应操作：界面渲染出的html组件当然可以编写触发函数，该函数应该改变组件对象的state属性，并调用组件对象的setState方法，该方法的调用将自动触发重新绘制的工作，调用render方法，将组件对象状态的变化反映到界面上。</p>
+
+<p>一个最简单的demo地址<a href="http://page.zidafone.com/demos/react-demo.html" target="_blank">在这里</a>，可以右键源码，写了点简单的注释。</p>
+
+<p>在这个例子中，你看到的整个表格是一个组件，该表格<span style="line-height:1.6em">的状态由一个js对象记录，当点击单元格的时候，改变状态，并重新绘制组件。</span></p>
+
+<p><iframe frameborder="1" height="200" name="react简单示例" scrolling="no" src="http://page.zidafone.com/demos/react-demo.html" title="react简单示例" width="400"></iframe></p>
+
+<p>这demo的业务场景&hellip;&hellip;就是过年和小伙伴协调dota比赛时间，记录每个人都哪天有空。</p>
+
+<p>下一步任务就是在node服务器上，将状态记录到mongoDB。</p>
+</div>
+</div>
+</body>
+</html>

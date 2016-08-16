@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>在阿里云的Linux上安装mysql</h1>
+<div><p>在阿里云的linux服务器上安装mysql，一直是我没信心的事，去年就怎么安都不成功，今天试试又是，最后重装了centos6.5的系统，倒很容易成功了。<br />
+之前可能是因为cent7.0才一直失败。</p>
+
+<p>服务器装好之后直接yum install mysql-server，很容易就安装成功了。<br />
+使用service mysqld start就启动数据库服务器了。<br />
+然后运行mysql_secure_installation，配置一下。<br />
+奇怪的是还是不能用外网访问，还是进入命令行界面改一下user表的host字段，方法是mysql -u root -p，输入密码之后先use mysql，再update user set host = &#39;%&#39; where host = &#39;localhost&#39;;因为在上一步删掉了空名字的用户，这样就可以了，否则条件还要加上and user = &#39;root&#39;。<br />
+这样就可以在外网连接mysql了，不是一般的容易。</p>
+
+<p>本来最讨厌在linux上安东西，现在有了超级简单的yum install，好极了。<br />
+安装之后service xxx start启动也很方便。</p>
+
+<p>找配置文件，find / -name &#39;xx&#39;就能找到，然后我习惯用ftp传回本机，编辑完再传回去&hellip;&hellip;龙神说还是学着用vim更好。<br />
+嗯嗯，该学该学。</p>
+</div>
+</div>
+</body>
+</html>

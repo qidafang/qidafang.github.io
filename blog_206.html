@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>使用maven archetype将已有项目制作成项目骨架，以便使用之生成新项目</h1>
+<div><p>在开始一个新项目的时候，如果想以已有项目为基础，拷贝一个已有项目再改太麻烦了。<br />
+使用<a href="http://maven.apache.org/guides/introduction/introduction-to-archetypes.html" target="_blank">maven archetype</a>是个好选择，自己定义一个项目骨架，之后就可以方便地使用它生成新项目。</p>
+
+<p>用现有的maven项目生成骨架，只需要以下4步：<br />
+1.在现有项目根目录下执行mvn clean archetype:create-from-project，即可生成骨架项目<br />
+2.修改骨架项目代码，把其中需要根据变量渲染的部分，改为使用占位符。<br />
+3.编辑archetype-metadata.xml，把第3步中使用了占位符的模板文件配置为动态文件(filtered=&quot;true&quot;)，并把.java文件配置为需要package层次化(packaged=&quot;true&quot;)。<br />
+4.把骨架项目install到本地仓库。</p>
+
+<p>当使用骨架生成新项目时，非常简单：<br />
+1.cd到要建立新项目的文件夹下，运行mvn archetype:generate -DarchetypeCatalog=local<br />
+2.选择要用的骨架，设置项目的groupId,artifactId,version。即可成功生成新的maven项目。</p>
+
+<p>当然，你还应该有个基础数据库，生成新项目时拷贝一个为新项目使用。<br />
+如果觉得这样做土，骨架项目中放个建表的基础sql也好，还能自定义前缀，如果在archetype-metadata.xml定义前缀变量的话。</p>
+
+<p><strong>参考：</strong>《Maven实战》第18章第2节：编写Archetype</p>
+</div>
+</div>
+</body>
+</html>

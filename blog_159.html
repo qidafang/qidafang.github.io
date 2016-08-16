@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>amaze，一个妹子？</h1>
+<div><p>程序员儿的周末休闲，<br />
+&nbsp; 就是研究点儿前端技术&hellip;&hellip;</p>
+
+<p><a href="http://amazeui.org/"><span style="color:#EE82EE">Amaze</span></a>，&ldquo;一个妹子&rdquo;。<br />
+关键词：国产，开源，前端框架，移动先行。<br />
+一句话概括：类似于<a href="http://www.bootcss.com/">Bootstrap</a>的前端框架。<br />
+Bootstrap有的栅格系统，她有；CSS元素样式，她有；CSS组件，她有；javascript控件，她也有。<br />
+所以啊，Bootstrap的&ldquo;让你的团队省去设计师&rdquo;的功效，一个妹子也有。<br />
+所以我要学习研究她，倒不是因为我要省去设计师，<br />
+真相是我是找不到设计师啊&hellip;&hellip;</p>
+
+<p><strong>1.栅格系统</strong><br />
+Bootstrap（讨厌打大写字母，字母又多，下文简称不死）的栅格系统分12列，妹子也分12列。<br />
+不死的列要放到行里，妹子当然也是。<br />
+不死在列上写数字来定义宽度，妹子当然也是。<br />
+不死可以用偏移量来定义偏移，妹子当然也是。<br />
+妹子多出来一个功能是可以居中，咋实现的？其实就是把浮动取消了，规定左右外边距自动，回归原始的居中。<br />
+妹子多出来另一个功能是等分网格，即在行上写个数字，行里的列就按这个数字等分宽度，每人一份儿。<br />
+这样对等分的情况就好写点儿了，在行上写4就行，而不是在4个列上挨个写3。</p>
+
+<p><strong>2.CSS元素样式</strong><br />
+按钮：颜色，尺寸的类相分离，自由组合，这点不死和妹子是完全一致的，妹子另外还多出了形状，即方角、圆角、圆形这个维度。<br />
+表单：基本的竖排表单/竖排表单中标签和表单项同行/完全横排表单，这三种表单，不死和妹子的划分也完全一致。<br />
+表单项：样式也分为大中小，状态分为成功警告失败，而且可以加图标，不死和妹子完全一致。<br />
+表格：基本样式，隔行变色，鼠标经过效果，单元格样式，不死和妹子完全一致。<br />
+在以上这几个方面，如果你是不死的用户，只要知道不死有的妹子都有，就可以了。</p>
+
+<p><strong>3.CSS组件</strong><br />
+<strong>4.javascript控件</strong><br />
+这两点妹子和不死也非常相像，涵盖的范围基本相同。<br />
+妹子比不死多出一些组件和控件，它们是为移动设备专门编写的，这与她&ldquo;移动优先&rdquo;的声明是一致的。<br />
+当然了不死在版本3也秉承了移动优先的原则，但他没有专门写组件和控件。</p>
+
+<p><br />
+从上面可以看出，妹子基本就是女版的不死（&hellip;&hellip;），另外专注于移动是她从不死手中抢用户量的定位策略（我猜）。<br />
+值得学习的是妹子的<a href="http://amazeui.org/getting-started/html-css-guide"><span style="color:#DDA0DD">html/css规范</span></a>和<a href="http://amazeui.org/getting-started/javascript-guide"><span style="color:#DDA0DD">javascript规范</span></a>，我都收到<a href="http://427studio.net/blog/1/favorite">收藏夹</a>里了，<strong>编码规范</strong>这种东西，怎么强调都不为过。</p>
+
+<div style="border:1px black solid">
+<p><span style="color:#0000FF"><strong>插叙：个人对前端代码规划的感悟&mdash;&mdash;</strong><br />
+后端的代码规范、重构、设计模式都比较成熟完备，实现复杂的功能也容易做出较好的设计，但前端，就我个人而言，规范性还很差，很多时候前端稍复杂一点儿，自己的脚本就失控，功能是实现了，但脚本看着就不开心，充满了坏气味，又不知道怎么写更好，自己摸索着改进呢，又总觉得改进得都比较山寨。<br />
+这是因为项目的结构都是页面刷新的，发生业务后产生整个页面的提交动作，与OPOA的模式截然不同，这就导致了系统中很多很多个页面，每个页面中的脚本都作为该页面的点缀，实现一点儿小功能，在这种规模的使用下，&ldquo;杀鸡焉用牛刀&rdquo;，javascript规范什么的就谈不上了。<br />
+我个人的一点点心得，是页面中MVC的分离，即&ldquo;页面状态&rdquo;的全局变量用于储存状态，&ldquo;响应函数&rdquo;用于绑定到事件上，&ldquo;渲染函数&rdquo;用于将页面状态反映到UI上。<br />
+&ldquo;响应函数&rdquo;和&ldquo;渲染函数&rdquo;是容易混而为一的一个点，就导致比如两个不同的事件影响了同一个状态，这两个事件各自的&ldquo;响应函数&rdquo;中写了重复的&ldquo;渲染代码&rdquo;，这就是没有把&ldquo;渲染函数&rdquo;单独抽离出来的坏处。<br />
+用我的语言，&ldquo;页面状态&rdquo;是model，&ldquo;响应函数&rdquo;是action-&gt;model，&ldquo;渲染函数&rdquo;是model-&gt;view。<br />
+另外还有异步操作的&ldquo;回调函数&rdquo;，它被&ldquo;响应函数&rdquo;调用，它又（有可能）调用其他的&ldquo;回调函数&rdquo;，它又调用&ldquo;渲染函数&rdquo;。<br />
+一个&ldquo;回调函数&rdquo;调用另一个&ldquo;回调函数&rdquo;，比如根据省加载了市之后立刻根据第一个市加载区。<br />
+当然另外还会有些函数，比如&ldquo;工具函数&rdquo;，这是低级别的函数，被&ldquo;响应函数&rdquo;或&ldquo;渲染函数&rdquo;或&ldquo;回调函数&rdquo;调用的。<br />
+这几种函数如果顺序写得乱了，混杂在一起，就容易看着头大。<br />
+另外&ldquo;状态&rdquo;的储存点，既可以是页面的全局变量，也可以是dom元素，该怎么选用，也是有意思又烦人的事情。<br />
+在&ldquo;整页刷新&rdquo;型系统中，脚本一般是基于响应事件的，即用户的一个操作，唤起&ldquo;响应函数&rdquo;，&ldquo;响应函数&rdquo;之内可能进行部分逻辑的处理，即导致&ldquo;页面状态&rdquo;的变化，这个变化分为两种，一是&ldquo;全局变量&rdquo;的变化，直接赋值即可，二是&ldquo;dom中存放的状态&rdquo;的变化，这个状态就需要&ldquo;渲染函数&rdquo;来实现。<br />
+这个过程中，在&ldquo;响应函数&rdquo;之后，&ldquo;渲染函数&rdquo;之前，可能需要进行异步操作，当获得结果后调用&ldquo;回调函数&rdquo;，&ldquo;回调函数&rdquo;中可以修改&ldquo;页面状态&rdquo;，通过修改&ldquo;全局变量&rdquo;或调用&ldquo;渲染函数&rdquo;。<br />
+用分层的思路看，可以划分为&ldquo;响应层&rdquo;&ldquo;业务层&rdquo;&ldquo;渲染层&rdquo;：<br />
+其中&ldquo;响应层&rdquo;只可以调用&ldquo;业务层&rdquo;函数，&ldquo;业务层&rdquo;可以调用其他&ldquo;业务层&rdquo;函数，或调用&ldquo;渲染层&rdquo;函数，&ldquo;渲染层&rdquo;函数不可以调用其他函数。当然，&ldquo;工具函数&rdquo;除外。<br />
+这个划分和后端的分层就很像了，不同的点：<br />
+1)后端的分层是同步的，每层执行完后都返回上一层继续操作，本质是调用栈。即：表现层前半部分方法-&gt;业务层前半部分方法-&gt;持久层方法-&gt;业务层后半部分方法-&gt;表现层后半部分方法。从表现层开始，到表现层结束。<br />
+2)而前端的分层是异步的，每层执行完后不会返回上一层继续操作，本质上是行为队列，即：响应层方法-&gt;业务层方法-&gt;渲染层方法。虽然&ldquo;响应层&rdquo;的事件从UI中来，&ldquo;渲染层&rdquo;的结果到UI中，但它与后端分层有个最大的区别，即开始与结束不是在同一层上发生。<br />
+3)这种结构我姑且为它命名为VMMV，与MVVM不同的是，MVVM强调绑定关系，而VMMV强调事件过程。<br />
+<strong>&mdash;&mdash;插叙结束，有空要研究研究angularjs/backbone这些框架的设计</strong></span></p>
+</div>
+
+<p>另外妹子官网的<a href="http://amazeui.org/getting-started/collections"><span style="color:#DDA0DD">藏品页</span></a>也很棒，收集了一些妹子的创造者们喜欢的好玩意儿。</p>
+
+<p>关于CSS3：参考<a href="http://www.w3school.com.cn/css3/index.asp">W3SCHOOL的教程</a>和<a href="http://www.w3school.com.cn/cssref/index.asp">参考手册</a>。</p>
+</div>
+</div>
+</body>
+</html>

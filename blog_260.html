@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>ruby基础语法</h1>
+<div><p>学不同语言，常将它们的基础语法搞混，例如if后面有没有()，后面是then还是:还是{，结尾是end还是}。</p>
+
+<p>这种事情毫无技术含量又毫无乐趣可言，但极大地影响流畅度，所以这次再看ruby语法，决定把基础语法记下来，方便以后查看。</p>
+
+<p>代码放到了<a href="https://github.com/qidafang/language_study" target="_blank">这里</a>，目前只有ruby，待以后用别的语言时再陆续添加。</p>
+
+<p>内容如下，都是最基础的用法，需要时一看就明白。</p>
+
+<blockquote>
+<p>#参考：《Ruby完全自学手册》第三章、第四章</p>
+
+<p>#常量大写字母开头，变量小写字母开头<br />
+CHANG_LIANG = 1<br />
+bian_liang = 2<br />
+bian_liang = &quot;2&quot;#弱类型</p>
+
+<p><span style="color:#FF0000"><strong>##分支控制</strong></span><br />
+#if<br />
+if 2 &gt; 1 then<br />
+&nbsp; &nbsp; #<br />
+elsif 2&gt;2 then<br />
+&nbsp; &nbsp; #<br />
+else<br />
+&nbsp; &nbsp; #<br />
+end<br />
+#if后置<br />
+puts &quot;if后置&quot; if 2 &gt; 1<br />
+#unless<br />
+unless 2 &gt; 1 then<br />
+&nbsp; &nbsp; #<br />
+else<br />
+&nbsp; &nbsp; #<br />
+end<br />
+#case<br />
+case 1+1<br />
+when 2 then<br />
+&nbsp; &nbsp; #<br />
+when 3 then<br />
+&nbsp; &nbsp; #<br />
+else<br />
+&nbsp; &nbsp; #<br />
+end</p>
+
+<p><span style="color:#FF0000"><strong>##循环控制</strong></span><br />
+#while<br />
+while 1&gt;2<br />
+&nbsp; &nbsp; #<br />
+end<br />
+#until<br />
+until 1&lt;2<br />
+&nbsp; &nbsp; #<br />
+end<br />
+#for<br />
+for i in (1..3)<br />
+&nbsp; &nbsp;#<br />
+end<br />
+#foreach的另一种写法<br />
+(1..3).each do |i|<br />
+&nbsp; &nbsp; #可以用break和next控制，next相当于其他语言的continue<br />
+end</p>
+
+<p><span style="color:#FF0000"><strong>##面向对象</strong></span><br />
+module MyModule#定义模块<br />
+&nbsp; &nbsp; #定义类<br />
+&nbsp; &nbsp; class MyClass#类名首字母大写<br />
+&nbsp; &nbsp; &nbsp; &nbsp; attr_accessor :myAttr#定义实例变量<br />
+&nbsp; &nbsp; &nbsp; &nbsp; def initialize<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; @myAttr2 = &quot;@定义的实例变量&quot;<br />
+&nbsp; &nbsp; &nbsp; &nbsp; end<br />
+&nbsp; &nbsp; &nbsp; &nbsp; public#访问控制级别public/protected/private<br />
+&nbsp; &nbsp; &nbsp; &nbsp; def myMethod#定义实例方法<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; puts &quot;在实例方法中输出&quot; + myAttr + @myAttr2<br />
+&nbsp; &nbsp; &nbsp; &nbsp; end<br />
+&nbsp; &nbsp; end<br />
+&nbsp; &nbsp; #继承<br />
+&nbsp; &nbsp; class MySubClass &lt; MyClass<br />
+&nbsp; &nbsp; end<br />
+&nbsp; &nbsp; #定义模块方法<br />
+&nbsp; &nbsp; def moduleMethod<br />
+&nbsp; &nbsp; &nbsp; &nbsp; puts &quot;MyModule的模块方法&quot;<br />
+&nbsp; &nbsp; end<br />
+end#模块定义的end<br />
+#使用<br />
+myClass = MyModule::MyClass.new#实例化对象<br />
+myClass.myAttr = &quot;实例变量的值&quot;#为实例变量赋值<br />
+myClass.myMethod#调用实例方法<br />
+#动态添加方法<br />
+def myClass.newMethod<br />
+&nbsp; &nbsp; puts &quot;动态添加的方法&quot;<br />
+end<br />
+myClass.newMethod<br />
+#加载另一个文件中声明的模块中的类<br />
+load &#39;ruby_another_module.rb&#39;<br />
+anotherClass = AnotherModule::AnotherClass.new#另一个文件中声明的对象<br />
+anotherClass.print#调用其方法<br />
+#混入<br />
+class UseMixin<br />
+&nbsp; &nbsp; include MyModule<br />
+&nbsp; &nbsp; extend MyModule<br />
+end<br />
+UseMixin.new.moduleMethod#include语句的作用，成为类的实例方法<br />
+UseMixin.moduleMethod#extend语句的作用，成为类的类方法</p>
+
+<p><span style="color:#FF0000"><strong>##代码段</strong></span><br />
+def blockMethod#调用代码段的方法，其中yield表示运行代码段<br />
+&nbsp; &nbsp; yield<br />
+end<br />
+blockMethod {puts &quot;匿名代码段&quot;}<br />
+#带参数的代码段<br />
+def blockMethodWithParam(arg, &amp;b)#定义显式使用代码段的函数<br />
+&nbsp; &nbsp; b.call arg<br />
+end<br />
+block = Proc.new{|x| puts x}#定义非匿名代码段<br />
+blockMethodWithParam(&quot;非匿名代码段&quot;, &amp;block)#使用非匿名代码段<br />
+blockMethodWithParam(&quot;也可以这样使用&quot;){|x| puts x}</p>
+
+<p><span style="color:#FF0000"><strong>##异常处理</strong></span><br />
+begin<br />
+&nbsp; &nbsp; #正常代码运行的地方<br />
+rescue Error#相当于其他语言的catch<br />
+&nbsp; &nbsp; #进行一些调整<br />
+&nbsp; &nbsp; retry#重新尝试执行<br />
+ensure<br />
+&nbsp; &nbsp; #相当于其他语言的finally，无论如何都会运行的地方<br />
+end</p>
+
+<p><span style="color:#FF0000"><strong>##基本类型</strong></span><br />
+#整数<br />
+a=123_456#可以加下划线<br />
+b=0b101010#二进制<br />
+c=0123#八进制<br />
+d=0xaa#十六进制<br />
+e=?a#ascii码<br />
+puts d<br />
+#浮点数略<br />
+#字符串<br />
+str = &quot;hello, world&quot;<br />
+str = %{你好, &quot;world&quot;}#方便含有引号的内容<br />
+str[0] = &quot;我&quot;<br />
+puts str<br />
+#符号略<br />
+#区间<br />
+(1..3).each{|a| puts a}<br />
+#数组<br />
+[1,2,3].each{|a| puts a}<br />
+#字典<br />
+map = {&quot;键甲&quot;=&gt;&quot;键甲的值&quot;, &quot;键乙&quot;=&gt;&quot;键乙的值&quot;}<br />
+puts map[&quot;键甲&quot;]<br />
+#正则表达式<br />
+&quot;ab12cd&quot;.scan(/\d/){|m| puts m}#正则表达式字面量<br />
+puts /\d/.match(&quot;ab12cd&quot;)[0]#match方法</p>
+</blockquote>
+</div>
+</div>
+</body>
+</html>

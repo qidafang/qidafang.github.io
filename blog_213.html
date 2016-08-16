@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>和尚妖怪过河问题，基于状态变化图的穷举</h1>
+<div><p>基于状态变化图的穷举法解决问题的思路：</p>
+
+<p>1.定义状态模型</p>
+
+<p>2.定义行为，注意某个行为对某个状态是否可用的定义，及某个行为应用于某个状态后得到的新状态的定义</p>
+
+<p>3.从初始状态开始，构建状态变化图，注意行为是否可用的判断，及状态是否为最终状态的判断，及新状态是否为已出现过的状态的判断</p>
+
+<p>4.研究构建完成的状态变化图获得结论，注意结论路径中回环的避免</p>
+
+<p>下面是个例子，阅读《算法的乐趣》书籍时做的练笔&mdash;&mdash;</p>
+
+<p>&nbsp;</p>
+
+<blockquote>
+<p>package com.demo.river;</p>
+
+<p>import java.util.ArrayList;<br />
+import java.util.LinkedHashMap;<br />
+import java.util.List;<br />
+import java.util.Map;</p>
+
+<p>/**<br />
+&nbsp;* 和尚妖怪过河问题，《算法的乐趣》书籍学习中的实验<br />
+&nbsp;* 河左岸有仨和尚仨妖怪，有个小船每次能渡一或俩人，如果某岸和尚小于妖怪，则和尚被妖怪吃掉，游戏结束，求全部正确解法<br />
+&nbsp;* 结果所谓四种解法，其实是某两个步骤各有两个方案<br />
+&nbsp;* 步骤甲：第一个妖怪谁送过去？俩方案是和尚送或妖怪送<br />
+&nbsp;* 步骤乙：最后一个妖怪谁接过来？俩方案是和尚接或妖怪接<br />
+&nbsp;* 相乘，得出四种解法<br />
+&nbsp;*/<br />
+public class River{<br />
+&nbsp;&nbsp; &nbsp;//构造状态变化图时使用，记录已出现过的状态<br />
+&nbsp;&nbsp; &nbsp;public Map&lt;String, State&gt; states = new LinkedHashMap&lt;String, State&gt;();<br />
+&nbsp;&nbsp; &nbsp;<br />
+&nbsp;&nbsp; &nbsp;//所有可用行为，策略模式<br />
+&nbsp;&nbsp; &nbsp;public Method[] methods = new Method[]{<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;new G1go(), new G2go(), new B1go(), new B2go(), new GBgo(),<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;new G1back(), new G2back(), new B1back(), new B2back(), new GBback()<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;};</p>
+
+<p>&nbsp;&nbsp; &nbsp;//构造状态变化图时，对某个状态的未来发展进行穷举<br />
+&nbsp;&nbsp; &nbsp;public void build(State s){<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;for(Method m : methods){<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;//行为是否可用<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;if(m.ok(s)){<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;//采用行为后的新状态<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;State newState = m.go(s);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;//新状态是否是已研究过的状态<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;if(!states.containsKey(newState.toString())){<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;states.put(newState.toString(), newState);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;s.nexts.add(newState);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;//如果新状态是未完状态，递归<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;if(!newState.gameover()){<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;build(newState);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;}<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;}else{<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;State existed = states.get(newState.toString());<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;s.nexts.add(existed);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;}<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;}<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;}<br />
+&nbsp;&nbsp; &nbsp;}</p>
+
+<p>&nbsp;&nbsp; &nbsp;//在整个状态变化图构造完成后，研究其中的一段子路径<br />
+&nbsp;&nbsp; &nbsp;public void discus(List&lt;State&gt; ss){<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;State last = ss.get(ss.size() - 1);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;for(State next : last.nexts){<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;if(ss.contains(next)){//不允许出现回路<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;continue;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;}else{<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;//与下一个状态连接形成新的子路径<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;List&lt;State&gt; newList = new ArrayList&lt;State&gt;();<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;newList.addAll(ss);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;newList.add(next);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;if(next.gameover()){<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;if(next.win()){<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;System.out.println(&quot;发现一条胜利路径，长度：&quot; + newList.size());<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;//输出胜利路径的细节<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;for(State step : newList){<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;System.out.println(step.toString());<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;}<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;}else{<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;//发现一条失败路径<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;}<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;}else{//如果下个状态是未完状态，递归<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;discus(newList);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;}<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;}<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;}<br />
+&nbsp;&nbsp; &nbsp;}<br />
+&nbsp;&nbsp; &nbsp;<br />
+&nbsp;&nbsp; &nbsp;public void play(){<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;//构造状态变化树<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;State start = new State(3, 3, 0, 0, true);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;states.put(start.toString(), start);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;build(start);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;//研究状态变化树<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;List&lt;State&gt; states = new ArrayList&lt;State&gt;();<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;states.add(start);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;discus(states);<br />
+&nbsp;&nbsp; &nbsp;}</p>
+
+<p>&nbsp;&nbsp; &nbsp;public static void main(String[] args){<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;River r = new River();<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;r.play();<br />
+&nbsp;&nbsp; &nbsp;}<br />
+&nbsp;&nbsp; &nbsp;<br />
+}</p>
+
+<p>//状态<br />
+class State {<br />
+&nbsp;&nbsp; &nbsp;public int leftGood;//左岸和尚数量<br />
+&nbsp;&nbsp; &nbsp;public int leftBad;//左岸妖怪数量<br />
+&nbsp;&nbsp; &nbsp;public int rightGood;//右岸和尚数量<br />
+&nbsp;&nbsp; &nbsp;public int rightBad;//右岸妖怪数量<br />
+&nbsp;&nbsp; &nbsp;public boolean boatLeft;//船的位置<br />
+&nbsp;&nbsp; &nbsp;<br />
+&nbsp;&nbsp; &nbsp;public List&lt;State&gt; nexts = new ArrayList&lt;State&gt;();//此状态下一步的可能变化状态<br />
+&nbsp;&nbsp; &nbsp;<br />
+&nbsp;&nbsp; &nbsp;public State(int leftGood, int leftBad, int rightGood, int rightBad,<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;boolean boatLeft) {<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;super();<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;this.leftGood = leftGood;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;this.leftBad = leftBad;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;this.rightGood = rightGood;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;this.rightBad = rightBad;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;this.boatLeft = boatLeft;<br />
+&nbsp;&nbsp; &nbsp;}<br />
+&nbsp;&nbsp; &nbsp;<br />
+&nbsp;&nbsp; &nbsp;@Override<br />
+&nbsp;&nbsp; &nbsp;public int hashCode() {<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;final int prime = 31;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;int result = 1;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;result = prime * result + (boatLeft ? 1231 : 1237);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;result = prime * result + leftBad;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;result = prime * result + leftGood;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;result = prime * result + rightBad;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;result = prime * result + rightGood;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;return result;<br />
+&nbsp;&nbsp; &nbsp;}</p>
+
+<p>&nbsp;&nbsp; &nbsp;@Override<br />
+&nbsp;&nbsp; &nbsp;public boolean equals(Object obj) {<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;if (this == obj)<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;return true;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;if (obj == null)<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;return false;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;if (getClass() != obj.getClass())<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;return false;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;State other = (State) obj;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;if (boatLeft != other.boatLeft)<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;return false;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;if (leftBad != other.leftBad)<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;return false;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;if (leftGood != other.leftGood)<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;return false;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;if (rightBad != other.rightBad)<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;return false;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;if (rightGood != other.rightGood)<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;return false;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;return true;<br />
+&nbsp;&nbsp; &nbsp;}</p>
+
+<p>&nbsp;&nbsp; &nbsp;@Override<br />
+&nbsp;&nbsp; &nbsp;public String toString() {<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;return &quot;State [&quot;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;+ &quot;leftGood=&quot; + leftGood<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;+ &quot;, leftBad=&quot; + leftBad<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;+ &quot;, rightGood=&quot; + rightGood<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;+ &quot;, rightBad=&quot; + rightBad<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;+ &quot;, boatLeft=&quot; + boatLeft<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;+ &quot;, gameover=&quot; + gameover()<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;+ &quot;, win=&quot; + win()<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;+ &quot;]&quot;;<br />
+&nbsp;&nbsp; &nbsp;}<br />
+&nbsp;&nbsp; &nbsp;<br />
+&nbsp;&nbsp; &nbsp;//是否是结束状态：胜利达成目标 or 和尚被妖怪吃掉<br />
+&nbsp;&nbsp; &nbsp;public boolean gameover(){<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;return (rightGood == 3 &amp;&amp; rightBad == 3) || (leftBad &gt; leftGood &amp;&amp; leftGood &gt; 0) || (rightBad &gt; rightGood &amp;&amp; rightGood &gt; 0);<br />
+&nbsp;&nbsp; &nbsp;}</p>
+
+<p>&nbsp;&nbsp; &nbsp;//是否是胜利状态<br />
+&nbsp;&nbsp; &nbsp;public boolean win(){<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;return (rightGood == 3 &amp;&amp; rightBad == 3);<br />
+&nbsp;&nbsp; &nbsp;}</p>
+
+<p>}</p>
+
+<p>//行为的接口<br />
+interface Method{<br />
+&nbsp;&nbsp; &nbsp;//对某个状态来说行为是否可用<br />
+&nbsp;&nbsp; &nbsp;public boolean ok(State s);<br />
+&nbsp;&nbsp; &nbsp;//返回对某个状态施加某个行为后的新状态<br />
+&nbsp;&nbsp; &nbsp;public State go(State s);<br />
+}<br />
+////以下是具体的10种行为的定义<br />
+//一个和尚过河<br />
+class G1go implements Method{<br />
+&nbsp;&nbsp; &nbsp;public boolean ok(State s) {<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;return (s.boatLeft &amp;&amp; s.leftGood &gt; 0);<br />
+&nbsp;&nbsp; &nbsp;}<br />
+&nbsp;&nbsp; &nbsp;public State go(State s) {<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;return new State(s.leftGood - 1, s.leftBad, s.rightGood + 1, s.rightBad, false);<br />
+&nbsp;&nbsp; &nbsp;}<br />
+}<br />
+//两个和尚过河<br />
+class G2go implements Method{<br />
+&nbsp;&nbsp; &nbsp;public boolean ok(State s) {<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;return (s.boatLeft &amp;&amp; s.leftGood &gt; 1);<br />
+&nbsp;&nbsp; &nbsp;}<br />
+&nbsp;&nbsp; &nbsp;public State go(State s) {<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;return new State(s.leftGood - 2, s.leftBad, s.rightGood + 2, s.rightBad, false);<br />
+&nbsp;&nbsp; &nbsp;}<br />
+}<br />
+//一个妖怪过河<br />
+class B1go implements Method{<br />
+&nbsp;&nbsp; &nbsp;public boolean ok(State s) {<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;return (s.boatLeft &amp;&amp; s.leftBad &gt; 0);<br />
+&nbsp;&nbsp; &nbsp;}<br />
+&nbsp;&nbsp; &nbsp;public State go(State s) {<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;return new State(s.leftGood, s.leftBad - 1, s.rightGood, s.rightBad + 1, false);<br />
+&nbsp;&nbsp; &nbsp;}<br />
+}<br />
+//两个妖怪过河<br />
+class B2go implements Method{<br />
+&nbsp;&nbsp; &nbsp;public boolean ok(State s) {<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;return (s.boatLeft &amp;&amp; s.leftBad &gt; 1);<br />
+&nbsp;&nbsp; &nbsp;}<br />
+&nbsp;&nbsp; &nbsp;public State go(State s) {<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;return new State(s.leftGood, s.leftBad - 2, s.rightGood, s.rightBad + 2, false);<br />
+&nbsp;&nbsp; &nbsp;}<br />
+}<br />
+//一个和尚一个妖怪过河<br />
+class GBgo implements Method{<br />
+&nbsp;&nbsp; &nbsp;public boolean ok(State s) {<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;return (s.boatLeft &amp;&amp; s.leftBad &gt; 0 &amp;&amp; s.leftGood &gt; 0);<br />
+&nbsp;&nbsp; &nbsp;}<br />
+&nbsp;&nbsp; &nbsp;public State go(State s) {<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;return new State(s.leftGood - 1, s.leftBad - 1, s.rightGood + 1, s.rightBad + 1, false);<br />
+&nbsp;&nbsp; &nbsp;}<br />
+}<br />
+//一个和尚返回<br />
+class G1back implements Method{<br />
+&nbsp;&nbsp; &nbsp;public boolean ok(State s) {<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;return (!s.boatLeft &amp;&amp; s.rightGood &gt; 0);<br />
+&nbsp;&nbsp; &nbsp;}<br />
+&nbsp;&nbsp; &nbsp;public State go(State s) {<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;return new State(s.leftGood + 1, s.leftBad, s.rightGood - 1, s.rightBad, true);<br />
+&nbsp;&nbsp; &nbsp;}<br />
+}<br />
+//两个和尚返回<br />
+class G2back implements Method{<br />
+&nbsp;&nbsp; &nbsp;public boolean ok(State s) {<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;return (!s.boatLeft &amp;&amp; s.rightGood &gt; 1);<br />
+&nbsp;&nbsp; &nbsp;}<br />
+&nbsp;&nbsp; &nbsp;public State go(State s) {<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;return new State(s.leftGood + 2, s.leftBad, s.rightGood - 2, s.rightBad, true);<br />
+&nbsp;&nbsp; &nbsp;}<br />
+}<br />
+//一个妖怪返回<br />
+class B1back implements Method{<br />
+&nbsp;&nbsp; &nbsp;public boolean ok(State s) {<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;return (!s.boatLeft &amp;&amp; s.rightBad &gt; 0);<br />
+&nbsp;&nbsp; &nbsp;}<br />
+&nbsp;&nbsp; &nbsp;public State go(State s) {<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;return new State(s.leftGood, s.leftBad + 1, s.rightGood, s.rightBad - 1, true);<br />
+&nbsp;&nbsp; &nbsp;}<br />
+}<br />
+//两个妖怪返回<br />
+class B2back implements Method{<br />
+&nbsp;&nbsp; &nbsp;public boolean ok(State s) {<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;return (!s.boatLeft &amp;&amp; s.rightBad &gt; 1);<br />
+&nbsp;&nbsp; &nbsp;}<br />
+&nbsp;&nbsp; &nbsp;public State go(State s) {<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;return new State(s.leftGood, s.leftBad + 2, s.rightGood, s.rightBad - 2, true);<br />
+&nbsp;&nbsp; &nbsp;}<br />
+}<br />
+//一个和尚一个妖怪返回<br />
+class GBback implements Method{<br />
+&nbsp;&nbsp; &nbsp;public boolean ok(State s) {<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;return (!s.boatLeft &amp;&amp; s.rightBad &gt; 0 &amp;&amp; s.rightGood &gt; 0);<br />
+&nbsp;&nbsp; &nbsp;}<br />
+&nbsp;&nbsp; &nbsp;public State go(State s) {<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;return new State(s.leftGood + 1, s.leftBad + 1, s.rightGood - 1, s.rightBad - 1, true);<br />
+&nbsp;&nbsp; &nbsp;}<br />
+}</p>
+</blockquote>
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>jackson</h1>
+<div><p>处理json的java库，其实解决的是弱类型和强类型的矛盾。</p>
+
+<p>json={} + []</p>
+
+<p>java=bean + map + list</p>
+
+<p>最常用的也就以上几种类型，json中的{}对应java中的bean和map，bean和map一个强类型一个弱类型，所以对应两个。</p>
+
+<p>强类型好处在有语法检查，代码能提示。</p>
+
+<p>弱类型好处在结构灵活，省去定义各种类的麻烦，一个map打天下。</p>
+
+<p>对于贫血对象，只有名词性的概念，现在倾向于：在业务中有强烈含义的，定义个类来表示这个概念，含义不强烈的，用map蛮好。</p>
+
+<p>现在第三方库很多可以在bean上加注解做些事情，如果贪这个福利就还是定义类。</p>
+
+<p>如果用map，就潜力无限，自己随时可以写些小函数来处理，在这个时候倒比给bean写小函数方便，不用反射的复杂代码。</p>
+
+<p>充血对象当然没得商量，有方法的对象是设计模式的基本，map根本代替不了，不赘。</p>
+
+<p>bean和map考虑了太久，实在各有各的好，用哪个都不算错，不钻OO的牛角尖就好。</p>
+
+<p>&nbsp;</p>
+
+<p>jackson库springside有封装，参考showcase中的demo即可。</p>
+
+<p>自带的文档，基本说明了所有问题：</p>
+
+<p>https://github.com/FasterXML/jackson-databind/</p>
+</div>
+</div>
+</body>
+</html>

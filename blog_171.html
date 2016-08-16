@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>mongodb初识</h1>
+<div><p>1.<br />
+mongodb中文文档<a href="http://docs.mongoing.com/manual-zh/">在这里</a><br />
+官方提供了windows安装程序，在<a href="http://www.mongodb.org/downloads">downloads菜单</a>下面<br />
+<a href="http://docs.mongoing.com/manual-zh/tutorial/install-mongodb-on-windows.html">安装</a>后按<a href="http://docs.mongoing.com/manual-zh/tutorial/insert-documents.html">文档</a>进行命令行的实验</p>
+
+<p>2.<br />
+官方提供的java驱动库<a href="http://mongodb.github.io/mongo-java-driver/">在这里</a>&nbsp;<br />
+它的文档<a href="http://mongodb.github.io/mongo-java-driver/">在这里</a></p>
+
+<p>3.<br />
+最简单的demo<br />
+引入驱动库：</p>
+
+<blockquote>
+<p>&nbsp;&nbsp; &nbsp;&lt;dependency&gt;<br />
+&nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&lt;groupId&gt;org.mongodb&lt;/groupId&gt;<br />
+&nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&lt;artifactId&gt;mongodb-driver&lt;/artifactId&gt;<br />
+&nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&lt;version&gt;3.0.0&lt;/version&gt;<br />
+&nbsp;&nbsp; &nbsp;&lt;/dependency&gt;</p>
+</blockquote>
+
+<p>测试用例：</p>
+
+<blockquote>
+<p>&nbsp;&nbsp; &nbsp;package test.mongodb;</p>
+
+<p>&nbsp;&nbsp; &nbsp;import static com.mongodb.client.model.Filters.*;</p>
+
+<p>&nbsp;&nbsp; &nbsp;import org.bson.Document;<br />
+&nbsp;&nbsp; &nbsp;import org.junit.After;<br />
+&nbsp;&nbsp; &nbsp;import org.junit.Assert;<br />
+&nbsp;&nbsp; &nbsp;import org.junit.Before;<br />
+&nbsp;&nbsp; &nbsp;import org.junit.Test;</p>
+
+<p>&nbsp;&nbsp; &nbsp;import com.mongodb.MongoClient;<br />
+&nbsp;&nbsp; &nbsp;import com.mongodb.client.MongoCollection;<br />
+&nbsp;&nbsp; &nbsp;import com.mongodb.client.MongoDatabase;</p>
+
+<p>&nbsp;&nbsp; &nbsp;public class MongodbTest {<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;private MongoClient client;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;private MongoDatabase database;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;@Before<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;public void before(){<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;client = new MongoClient();<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;database = client.getDatabase(&quot;troy&quot;);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;}</p>
+
+<p>&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;@After<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;public void after(){<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;client.close();<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;}<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;@Test<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;public void test(){<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;MongoCollection&lt;Document&gt; collection = database.getCollection(&quot;hero&quot;);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;collection.drop();<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;Document theHero = new Document(&quot;name&quot;, &quot;ajax&quot;).append(&quot;code&quot;, &quot;1&quot;);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;collection.insertOne(theHero);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;Document the250 = new Document(&quot;name&quot;, &quot;odysseus&quot;).append(&quot;code&quot;, &quot;250&quot;);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;collection.insertOne(the250);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;long count = collection.count();<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;Assert.assertEquals(&quot;个数不对&quot;, 2, count);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;Document fromDb = collection.find(eq(&quot;code&quot;, &quot;250&quot;)).first();<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;Assert.assertEquals(&quot;二百五的名字不对&quot;, &quot;odysseus&quot;, fromDb.get(&quot;name&quot;));<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;}<br />
+&nbsp;&nbsp; &nbsp;}</p>
+</blockquote>
+
+<p>4.</p>
+
+<p>关系型数据库是&ldquo;表装着行&rdquo;，mongo是&ldquo;集合装着文档&rdquo;，本质都是一回事儿。</p>
+
+<p>区别在，一个文档有哪些属性是未知的（不同于关系型数据库中一行数据有哪些字段由表规定），而且文档属性可以是一个对象（不同于关系型数据库中属性只能是基本数据类型）</p>
+</div>
+</div>
+</body>
+</html>

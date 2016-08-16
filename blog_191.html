@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>jquery学习</h1>
+<div><p><span style="color:#FF0000">白云一片去悠悠，青枫浦上不胜愁。谁家今夜扁舟子？何处相思明月楼？</span></p>
+
+<p><strong>起手式：</strong><br />
+用jquery不是因为不会用原生javascript，自认个人的javascript水平还算可以，程序中需要的地方基本都有能力用javascript实现，用jquery只是图方便，就像重视spring mvc不代表不会用servlet一样。<br />
+而且个人看法，在掌握原生javascript之前不建议学jquery，正如掌握servlet前不建议学spring mvc或struts一样，所以特别感谢当初实习的那段时光。</p>
+
+<p><strong>正文：</strong><br />
+在目前的B/S系统开发中，jquery的重要性怎么强调都不为过。<br />
+个人jquery用了也有四五年，但始终感觉是只会皮毛，大部分的使用是简化getElementById，以及进行ajax操作。<br />
+工欲善其事，必先利其器，何况是jquery这种国之神器，所以今天的工作是强化jquery能力。<br />
+什么叫强化呢？意思包括：1.对重要的部分，固化到本能里，2.对不重要的部分，记住它们的存在，需要的时候能想起来有这回事，再去具体研究。</p>
+
+<p><strong>选择器：</strong><br />
+核心中的核心。<br />
+大部分情况下基本css选择器（id/class/标签）就够用。<br />
+属性选择器个别时候也是利器，尤其是按name=xx选择表单元素，可以减少很多表单元素的id的设定，还可以在页面初始化的时候，将json中的键值对们方便地赋予表单元素。<br />
+<strong>过滤器：</strong><br />
+个人喜欢把带冒号的选择器称为过滤器。<br />
+像:visible或者:checked这种如果用到就会知道有多舒服。<br />
+如果需要的话也可以自定义过滤器，demo<a href="http://page.zidafone.com/jquery/">看这里</a>。<br />
+<strong>筛选方法：</strong><br />
+以前一直忽视了其重要性的栏目。<br />
+is/not(..)用于判断某件事情比$(..).length&gt;0更优雅。<br />
+filter(..)在结果集中进行过滤可以类比为sql中的where。<br />
+find(..)在是父节点下查找子节点的利器。<br />
+其他筛选方法以及文档处理函数可以看做对dom api的封装。<br />
+<strong>命令：</strong><br />
+通过一些选择器选到一些元素之后最重要的当然是用它们做点什么。<br />
+attr()方法可以用于存取有值的属性甚至自定义属性，而prop()用于处理checked/selected/disabled这类值只能为true或false的属性。<br />
+val()方法不仅input[type=text]可用，连select/checkbox/radio都能用，舒服死人。<br />
+html()方法和text()方法都是对原生的innerXXXX进行简化。<br />
+jquery让我比较喜欢的一点是，方法名尽量短而且小写，并且读写函数同名重载，get/set敲多了也不开心。<br />
+addClass/removeClass/css用于控制页面样式，比xx.style.xx方便点。<br />
+<strong>事件：</strong><br />
+绑定事件用.click(xx)比写到html中更好，还可以绑定多个事件。<br />
+触发事件trigger模拟用户操作。<br />
+如果只想触发函数而不想让页面发生变化，比如调用复选框的点击事件函数却不想让页面复选框选中状态发生变化，triggerHandler就是为这个需求准备的。<br />
+如果页面初始化时绑定了事件，担心之后动态添加的节点不会被绑定上，可以用on绑定到body上，当某些子元素上的事件冒泡到body上，body判断事件是来源于这种子元素，再执行响应方法，这有点&ldquo;请求分发&rdquo;的感觉，body是请求分发的单点，子元素选择符是请求分发的路由；<br />
+<strong>ajax：</strong><br />
+$.get和$.post的好处不用赘述。<br />
+当脚本代码抽到独立的js文件而不是写在html里，请求路径的拼法，一可以采用相对路径，二可以在页面中var ctx = &quot;${ctx}&quot;赋到全局变量里，js文件中用ctx来拼装。<br />
+如果采用rest风格的接口，有情怀的话都会希望更原教旨一些，后台定义成接收PUT/DELETE方法，那脚本中的写法，一是可以用$.ajax发送真的PUT/DELETE请求，二是post一个url中含有_method=put这种约定的请求，需要后台的支持，把这种url的POST请求理解为PUT请求。<br />
+$.getJson可以用来进行跨域的ajax请求即jsonp，使用方法简单到几乎跟$.get没区别，你写一个匿名的回调函数，jquery会自动给它发明个名字如ww传给他域的服务器。他域服务器返回给你的&ldquo;脚本&rdquo;里就是ww({有用的数据});这样的形式，脚本加入你的页面中后自动执行，就把有用的数据传到你的回调函数里了。<br />
+serialize和serializearray方法用于将表单内容序列化太美了，比如异步保存草稿，直接序列化一个json扔给后台，后台直接把它保存起来，显示页面时后台将这json赋给页面，页面脚本再渲染到表单中，由于强大的[name=xx]选择器和给力的val()方法的存在，使这个渲染过程异常轻松。<br />
+<strong>事件：</strong><br />
+stopPropgation阻止事件向上冒泡，preventDefault阻止默认事件发生，我之前居然以为这俩是同一个方法，囧。<br />
+<strong>工具：</strong><br />
+$.each用于for..in操作，比自己写for(xx in xx)方便点，还能避免手滑敲成for(xx : xx)。<br />
+$.extend用于将两个对象合并，一个对象作为base对象，另一个对象作为&Delta;对象，可以用于实现继承，也可以用于将默认参数和用户设的参数合并。<br />
+$.parseJSON是json串转对象的工具方法，不知道为什么没有提供逆运算，如果不需要支持低版本浏览器还是用JSON.stringfy和JSON.parse吧。<br />
+（JSON是ECMAScript5的语法，了解更多<a href="http://www.zhangxinxu.com/wordpress/2012/01/introducing-ecmascript-5-1/">点这里</a>，浏览器支持情况<a href="http://kangax.github.io/compat-table/es5/">看这里</a>。<br />
+<strong>扩展：</strong><br />
+jquery插件的编写提供了无限的可能性，即使只是定义个全局函数，定义到jquery也比污染全局变量好，比如$.log代替console.log，就像后台喜欢用个L.println代替System.out.println一样。<br />
+最基本的插件编写的demo<a href="http://page.zidafone.com/jquery/">看这里</a>。</p>
+</div>
+</div>
+</body>
+</html>

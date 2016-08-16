@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>android混合开发，webview的java与js互操作</h1>
+<div><p>android原生应用，用webview加载应用中的网页，并且java代码与js代码可以互相操作。</p>
+
+<p>这是混合开发的基石，最基本也最重要的东西，实验代码<a href="https://github.com/qidafang/testHybrid" target="_blank">在这里</a>。</p>
+
+<p>概括说说&mdash;&mdash;</p>
+
+<p><strong>java调js：</strong>调用webView.load(&quot;javascript:someFunction()&quot;);</p>
+
+<p>这样可以调用webView里页面上的全局方法。这不是什么新鲜东西，你在网页中也可以这么做，试试在浏览器地址栏输入javascript:alert(&quot;427studio&quot;);也可以在浏览器地址栏里调用全局方法。</p>
+
+<p><strong>js调java：</strong>调用webView.addJavascriptInterface(somePOJO, &quot;varName&quot;);</p>
+
+<p>让一个java对象成为webview里面网页的window对象的varName属性，就好像执行了window.varName = somePOJO一样，因为window是全局上下文，js即可以用访问全局变量的方式访问这个java对象了，然后调用这个对象的函数即可，如果somePOJO这个对象有个public void doIt()方法，则可以这样调用它：someButton.onclick=function(){varName.doIt();}</p>
+
+<p><strong>具体的代码：</strong>看<a href="https://github.com/qidafang/testHybrid/blob/master/src/com/example/testhybrid/MainActivity.java" target="_blank">这里</a>和<a href="https://github.com/qidafang/testHybrid/blob/master/assets/webviews/js/index.js" target="_blank">这里</a>，都非常基本，简要列出如下：</p>
+
+<p>1.activity，调js方法那里手痒痒抽了个方法，图简单直接拼&quot;javascript:jsDoIt(&#39;&quot; + xx + &quot;&#39;);&quot;也没啥。</p>
+
+<p>对了，loadUrl时，加载安卓程序assets包里的资源，以<span style="color:#FF0000"><em>file:///android_asset/</em></span>开头，如file:///android_asset/index.html表示要加载assets包里的index.html文件。</p>
+
+<blockquote>
+<p>package com.example.testhybrid;</p>
+
+<p>import android.annotation.SuppressLint;<br />
+import android.app.Activity;<br />
+import android.app.Fragment;<br />
+import android.os.Bundle;<br />
+import android.os.Handler;<br />
+import android.os.Message;<br />
+import android.view.LayoutInflater;<br />
+import android.view.View;<br />
+import android.view.ViewGroup;<br />
+import android.webkit.JavascriptInterface;<br />
+import android.webkit.WebView;</p>
+
+<p>public class MainActivity extends Activity {</p>
+
+<p>&nbsp; &nbsp; @Override<br />
+&nbsp; &nbsp; protected void onCreate(Bundle savedInstanceState) {<br />
+&nbsp; &nbsp; &nbsp; &nbsp; super.onCreate(savedInstanceState);<br />
+&nbsp; &nbsp; &nbsp; &nbsp; setContentView(R.layout.activity_main);</p>
+
+<p>&nbsp; &nbsp; &nbsp; &nbsp; if (savedInstanceState == null) {<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; getFragmentManager().beginTransaction()<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; .add(R.id.container, new PlaceholderFragment())<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; .commit();<br />
+&nbsp; &nbsp; &nbsp; &nbsp; }<br />
+&nbsp; &nbsp; }<br />
+}</p>
+
+<p>class PlaceholderFragment extends Fragment {</p>
+
+<p>&nbsp;&nbsp; &nbsp;WebView webView;<br />
+&nbsp;&nbsp; &nbsp;<br />
+&nbsp; &nbsp; public PlaceholderFragment() {<br />
+&nbsp; &nbsp; }</p>
+
+<p>&nbsp; &nbsp; @SuppressLint(&quot;SetJavaScriptEnabled&quot;) @Override<br />
+&nbsp; &nbsp; public View onCreateView(LayoutInflater inflater, ViewGroup container,<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Bundle savedInstanceState) {<br />
+&nbsp; &nbsp; &nbsp; &nbsp; View rootView = inflater.inflate(R.layout.fragment_main, container, false);<br />
+&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;<br />
+&nbsp; &nbsp; &nbsp; &nbsp; webView = (WebView)rootView.findViewById(R.id.webView1);</p>
+
+<p>&nbsp; &nbsp; &nbsp; &nbsp; webView.getSettings().setJavaScriptEnabled(true);<br />
+&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;<br />
+&nbsp; &nbsp; &nbsp; &nbsp; Handler handler = new Handler(){<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;@Override<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;public void handleMessage(Message msg) {<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;String str = msg.getData().getString(&quot;str&quot;);<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;doJs(&quot;jsDoIt&quot;, str.replaceAll(&quot;\\d&quot;, &quot;&quot;));<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;}<br />
+&nbsp; &nbsp; &nbsp; &nbsp; };<br />
+&nbsp; &nbsp; &nbsp; &nbsp; <span style="color:#FF0000">webView.addJavascriptInterface(new MyJavascriptInterface(webView, handler), &quot;javaObject&quot;);</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;<br />
+&nbsp; &nbsp; &nbsp; &nbsp; webView.loadUrl(&quot;<span style="color:#FF0000">file:///android_asset/</span>webviews/index.html&quot;);<br />
+&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;<br />
+&nbsp; &nbsp; &nbsp; &nbsp; return rootView;<br />
+&nbsp; &nbsp; }<br />
+&nbsp; &nbsp;&nbsp;<br />
+&nbsp; &nbsp; <strong><span style="color:#FF0000">//调用js方法</span></strong>，第一个参数是js方法名，后面的参数是js方法的参数列表<br />
+&nbsp; &nbsp; void doJs(String function, Object... params){<br />
+&nbsp; &nbsp; &nbsp;&nbsp; &nbsp;StringBuilder result = new StringBuilder();<br />
+&nbsp; &nbsp; &nbsp;&nbsp; &nbsp;result.append(&quot;javascript:&quot;).append(function).append(&quot;(&quot;);<br />
+&nbsp; &nbsp; &nbsp;&nbsp; &nbsp;for(int i = 0; i &lt; params.length; i++){<br />
+&nbsp; &nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;result.append(&quot;&#39;&quot;).append(params[i].toString()).append(&quot;&#39;&quot;);<br />
+&nbsp; &nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;if(i &lt; params.length - 1){<br />
+&nbsp; &nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;result.append(&quot;,&quot;);<br />
+&nbsp; &nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;}<br />
+&nbsp; &nbsp; &nbsp;&nbsp; &nbsp;}<br />
+&nbsp; &nbsp; &nbsp;&nbsp; &nbsp;result.append(&quot;)&quot;);<br />
+&nbsp; &nbsp; &nbsp;&nbsp; &nbsp;String jsStr = result.toString();<br />
+&nbsp; &nbsp; &nbsp;&nbsp; &nbsp;<span style="color:#FF0000">webView.loadUrl(jsStr);</span><br />
+&nbsp; &nbsp; }<br />
+}</p>
+
+<p><span style="color:#FF0000">//要用来被js调用的java对象</span><br />
+class MyJavascriptInterface{<br />
+&nbsp;&nbsp; &nbsp;<br />
+&nbsp;&nbsp; &nbsp;MyJavascriptInterface(WebView wv, Handler h){<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;this.theWebView = wv;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;this.handler = h;<br />
+&nbsp;&nbsp; &nbsp;}<br />
+&nbsp;&nbsp; &nbsp;<br />
+&nbsp;&nbsp; &nbsp;WebView theWebView;<br />
+&nbsp;&nbsp; &nbsp;Handler handler;<br />
+&nbsp;&nbsp; &nbsp;<br />
+&nbsp;&nbsp; &nbsp;<strong><span style="color:#FF0000">//要用来被js调用的java方法</span></strong><br />
+&nbsp;&nbsp; &nbsp;@JavascriptInterface<br />
+&nbsp;&nbsp; &nbsp;public void javaDoIt(final String str){<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;Message msg = new Message();<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;Bundle bundle = new Bundle();<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;bundle.putString(&quot;str&quot;, str);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;msg.setData(bundle);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;handler.sendMessage(msg);<br />
+&nbsp;&nbsp; &nbsp;}</p>
+
+<p>}</p>
+</blockquote>
+
+<p>网页结构不赘，javascript代码：</p>
+
+<blockquote>
+<p>//html按钮点击触发<br />
+function theBtnOnClicked(){<br />
+&nbsp;&nbsp; <strong>&nbsp;<span style="color:#FF0000">//调用java方法</span></strong><br />
+&nbsp;&nbsp; &nbsp;javaObject.javaDoIt(&quot;427studio&quot;);<br />
+}</p>
+
+<p><strong><span style="color:#FF0000">//要用来被java程序调用的js方法</span></strong><br />
+function jsDoIt(str){<br />
+&nbsp;&nbsp; &nbsp;document.getElementById(&#39;theBtn&#39;).innerText += str;<br />
+}</p>
+</blockquote>
+
+<p>&nbsp;</p>
+
+<p><strong>====2015年12月10日10点更新====</strong></p>
+
+<p>昨天在博客园有人指点，&ldquo;安卓也用监听url比较好，因为可以和iOS用同一个页面。&rdquo;这敢情好！</p>
+
+<p>起来尝试了一下，挺简单的，java部分这样就行</p>
+
+<blockquote>
+<p><br />
+&nbsp; &nbsp; &nbsp; &nbsp; WebViewClient webViewClient = new WebViewClient(){<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;@Override<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;public boolean shouldOverrideUrlLoading(WebView view, String url) {<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;if(url.startsWith(&quot;java://&quot;)){<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;String functionAndParam = url.substring(7);<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;if(functionAndParam.startsWith(&quot;doIt&quot;)){<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;//..被调用的java代码运行于此<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;}<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;return true;<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;}else{<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;view.loadUrl(url);<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;return false;<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;}<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;}<br />
+&nbsp; &nbsp; &nbsp; &nbsp; };<br />
+&nbsp; &nbsp; &nbsp; &nbsp; webView.setWebViewClient(webViewClient);<br />
+&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</p>
+</blockquote>
+
+<p>js部分当然还是这样</p>
+
+<blockquote>
+<p>//html按钮点击触发<br />
+function theBtnOnClicked(){<br />
+&nbsp;&nbsp; &nbsp;//不再用这种方法<br />
+&nbsp;&nbsp; &nbsp;//javaObject.javaDoIt(&quot;427studio&quot;);</p>
+
+<p>&nbsp; &nbsp;&nbsp;//改用这种方法<br />
+&nbsp;&nbsp; &nbsp;location.href = &quot;java://doIt&quot;;<br />
+}</p>
+</blockquote>
+
+<p>这样相同的页面，想调本地方法时，用统一的代码就可以了（都是url伪协议），当然，具体的协议名称、方法名、参数列表要约定好，以便java和swift分头处理。</p>
+</div>
+</div>
+</body>
+</html>

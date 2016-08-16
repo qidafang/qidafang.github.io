@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>不学linux不行了</h1>
+<div><p>猩猩问买什么服务器，觉得说只能用windows怪丢脸，就说centos就行。
+linux在校期间就开始入门，到现在56年了！还是在入门阶段，每年都入门几次，然后依次放弃。总感觉陌生。不放心。其实有什么！
+xshell远程连上，xftp把下好的tar.gz包传过去，然后添环境变量什么的，jdk就安好了。mysql和tomcat更简单，yum一两条指令的事。
+让其然是简单的事，一搜教程照做就ok，知其所以然才麻烦，所以再次在京东下单了鸟哥私房菜，明天起努力学之。</p>
+
+<p>记下最近用的技术。
+依然是springside和自己封的底层，metronic的后台，涛哥写的代码生成器，前年的东西，用着确实蛮不错。
+爬虫就是简单的定时任务 + http客户端抓取网页源码 + jsoup解析，然后到数据库找实体，如没有则考虑创建之，有则考虑更新之。
+前台bootstrap做基础框架，自己写html结构和css，javascript和jquery这些再熟不过的东西用着都觉得脸红，好像6年来都没进步。</p>
+
+<p>过几天龙神帮我弄nagios监控，我也得好好学学linux操作和运维，这是进步的点。maven和bootstrap也可以再次熟悉一下。还有spring。
+然后网站稳定了问问猩猩要不要搞app吧，这才是检验自己进步程度的点，总不能全栈了半天，核心技能还是前台展示和后台增删改查吧，太low了。</p>
+
+<p>就这么简单的功能，对我这么个人，结果都没敢直接用php算了，还是选了最熟悉的java，这是技术人的通病呢，还是明智的节约时间、减少风险的行为呢？
+陌生技术要有书才敢用，只看网文总觉得自己是山寨的感觉，也该搞本php的书了吧，python和ruby呢？这又是两个入门了几年依然陌生的新语言。
+啊，还有nodejs，还有angular，objective-c？swift？知道语言这东西也没必要弄得多熟，用到时拿本手册解决问题就足矣，但这样隔靴搔痒的感觉真很不爽啊。
+最好还是都实际用用。</p>
+
+<h1>2016.4.18添加：</h1>
+
+<p>买了《鸟哥的linux私房菜》两本，但还是嫌厚了，对新手还是<a href="http://billie66.github.io/TLCL/book/zh/index.html">这本在线电子书</a>比较好，简明实用，不啰嗦。赞赞。</p>
+
+<p>其实最需要的无非是：</p>
+
+<ol>
+<li>用xshell和xftp，远程登录，及用ftp传文件</li>
+<li>文件系统的操作，ls/cd/pwd</li>
+<li>配置文件的查看和修改，less/vim</li>
+<li>应用程序的安装，或者ftp传tar再解压，或者yum直接安。编译安装make install暂时忽略。</li>
+<li>yum安装之后service xxx start启动程序，解压的方式则用其自带脚本./xxx.sh启动。</li>
+<li>top等命令查看系统状态，并进行杀死进程之类操作</li>
+</ol>
+
+<p>以上这些都是一条命令的事，非常简单，记不住百度一下也很方便。别想得太难了。（给自己打打气）
+当然还是要不断积累，那就遇到新问题都更新到这篇里。</p>
+
+<h2>安装jdk：</h2>
+
+<p>从官网下载压缩包，ftp传到服务器上/usr/local/java目录，解压；</p>
+
+<pre><code>tar -zxvf xxx.tar.gz
+</code></pre>
+
+<p>在ext/profile中添加环境变量，然后应用之。</p>
+
+<pre><code>JAVA_HOME=/usr/java/jdk1.7.0_45
+JRE_HOME=/usr/java/jdk1.7.0_45/jre
+PATH=$PATH:$JAVA_HOME/bin:$JRE_HOME/bin
+CLASSPATH=:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar:$JRE_HOME/lib
+export JAVA_HOME JRE_HOME PATH CLASSPATH
+
+source /etc/profile
+</code></pre>
+
+<h2>安装tomcat：</h2>
+
+<p>从官网下载压缩包，ftp传到服务器上/usr/local/tomcat目录，解压；</p>
+
+<p>在catalina.sh改jvm参数；</p>
+
+<p>用ftp把项目war传到webapps目录；</p>
+
+<p>./startup.sh启动之。</p>
+
+<h2>安装mysql：</h2>
+
+<p>图省事直接yum安装之。</p>
+
+<p>然后就可以service mysqld start启动。</p>
+
+<p>mysql进入命令行，修改user表使远程机器可以访问。</p>
+
+<p>然后service mysqld restart重启。</p>
+
+<p>然后远程连接它建表。</p>
+
+<h2>系统状态</h2>
+
+<p>基本操作如ls, cd, pwd, less, vi感觉很够用了。</p>
+
+<p>top查看系统状态。</p>
+
+<p>重新部署war之前，./shutdown.sh关闭tomcat，但可能进程依然存活。</p>
+
+<pre><code>ps -ef | grep tomcat
+</code></pre>
+
+<p>查看进程，如果有残留的tomcat进程则杀死它：</p>
+
+<pre><code>kill -9 (进程号)
+</code></pre>
+
+<p>如果重新启动服务器了，之后先启动mysql：</p>
+
+<pre><code>service mysqld start
+</code></pre>
+
+<p>然后启动tomcat：</p>
+
+<pre><code>./startup.sh
+</code></pre>
+
+<p>如果需要则启动apache：</p>
+
+<pre><code>service httpd start
+</code></pre>
+
+<h1>2016.4.19添加：</h1>
+
+<h2>tomcat日志：</h2>
+
+<p>默认日志输出很多，在conf/logging.properties中修改，把FINE提高为WARNING或更高</p>
+
+<p>日志级别：SEVERE > WARNING > INFO > CONFIG > FINE > FINER > FINEST</p>
+
+<h2>缓存设置</h2>
+
+<p>在conf/context.xml的context节点下添加如下信息，解决日志输出WARNING说的缓存空间不够的问题：</p>
+
+<pre><code>&lt;Resources cachingAllowed="true" cacheMaxSize="100000"/&gt;
+</code></pre>
+
+<h2>jxm监控tomcat：</h2>
+
+<p>参考<a href="http://www.cnblogs.com/sunxucool/p/4059040.html">这里</a>。</p>
+
+<p>1.在bin/catalina.sh开头注释的下面写：</p>
+
+<pre><code>JAVA_OPTS="(**jvm参数们**) -Dcom.sun.management.jmxremote -Djava.rmi.server.hostname=(服务器ip) -Dcom.sun.management.jmxremote.port=(端口) -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=true"
+</code></pre>
+
+<p>2.然后修改jdk中jmx的账户：</p>
+
+<pre><code>cd /(你的jdk路径)/jre/lib/management
+mv jmxremote.password.template jmxremote.password
+chmod 600 jmxremote.access jmxremote.password
+vi jmxremote.password
+</code></pre>
+
+<p>3.将最后两行解除注释，并设置密码：</p>
+
+<pre><code>monitorRole (密码)
+controlRole (密码)
+</code></pre>
+
+<p>4.将端口加入防火墙信任列表：</p>
+
+<pre><code>vi /etc/sysconfig/iptables
+</code></pre>
+
+<p>加入新的一行：</p>
+
+<pre><code>-A RH-Firewall-1-INPUT -p tcp -m state --state NEW -m tcp --dport (第1步时设置的端口) -j ACCEPT
+</code></pre>
+
+<p>服务器端配置完毕，重启tomcat，在本地jdk的bin目录下点开jconsole或jvisualvm，使用IP、端口、账号、密码连接监控。</p>
+
+<p>服务器端配了jmx监控后，重启tomcat时，在./shutdown.sh之后，除了ps -ef | grep tomcat看下残留进程，用kill -9 (进程号)杀掉之外，netstat -antup | grep (jmx端口号)看一下占用端口的进程，再kill -9 (进程号)杀掉，然后再./startup.sh，也许能减少些麻烦。</p>
+
+<p>另外，我<a href="http://page.427studio.net/blog/blog_215.html">之前这篇博客</a>可以参照着看。</p>
+
+<h1>2016.4.25日添加</h1>
+
+<h2>使用collectd采集并展示系统性能指标</h2>
+
+<p>在服务器上部署了<a href="https://collectd.org/">collectd</a>来采集系统性能指标，用<a href="https://github.com/httpdss/collectd-web">collectd-web</a>工具，以web服务的方式展示之，使可以在浏览器中观看图表。</p>
+
+<p>参考了<a href="http://www.drupal001.com/2012/07/system-monitor-collectd/">这篇文章</a>（只用其中的安装collectd部分，后面的cgp也可用，但展示效果没有collectd-web好）和<a href="http://network.51cto.com/art/201505/475518_1.htm">这篇文章</a>（只用其中的安装collectd-web部分，是翻译的<a href="http://www.tecmint.com/install-collectd-and-collectd-web-to-monitor-server-resources-in-linux/">这篇</a>，后者不知道不翻墙能不能看）。</p>
+
+<h3>安装collectd：</h3>
+
+<pre><code>yum install collectd.x86_64 collectd-apache collectd-ping collectd-nut collectd-snmp collectd-mysql collectd-rrdtool
+</code></pre>
+
+<p>启动collectd：</p>
+
+<pre><code>/etc/init.d/collectd start
+</code></pre>
+
+<p>安装之后，数据文件在这里：</p>
+
+<pre><code>/var/lib/collectd/
+</code></pre>
+
+<h3>安装collectd-web：</h3>
+
+<pre><code>yum install git
+yum install rrdtool rrdtool-devel rrdtool-perl perl-HTML-Parser perl-JSON
+cd /usr/local/
+git clone https://github.com/httpdss/collectd-web.git
+cd collectd-web/
+chmod +x cgi-bin/graphdefs.cgi
+</code></pre>
+
+<p>创建文件/etc/collectd/collection.conf，将内容写为：</p>
+
+<pre><code>datadir: "/etc/collectd/collectd-web/"
+</code></pre>
+
+<p>编辑runserver.py脚本，将127.0.0.1改为0.0.0.0</p>
+
+<p>最后<code>./runserver.py &amp;</code>（最后的&amp;表示在后台运行，否则阻塞当前命令行）启动服务器，在xxx.xxx.xxx.xxx:8888访问。</p>
+
+<p>要关闭直接<code>killall python</code>得了。</p>
+
+<p>更好的方法是参考<a href="http://network.51cto.com/art/201505/475518_3.htm">这里</a>，使用start/stop方式管理collectd-web服务器，注意python和bash脚本的端口一致。</p>
+
+<pre><code>collectd-server start
+collectd-server stop
+collectd-server status
+</code></pre>
+
+<p>这样就专业多了。</p>
+
+<h2>使用Yammer Codehale监视java应用状态</h2>
+
+<p>collectd是用来监视系统总体性能指标，而<a href="http://metrics.dropwizard.io/3.1.0/">Yammer Codehale</a>深入到程序内部，对系统进行细致入微的监视。</p>
+
+<p>当前使用：网站访问人数计数。</p>
+
+<p>添加maven依赖：</p>
+
+<pre><code>&lt;dependency&gt;
+    &lt;groupId&gt;io.dropwizard.metrics&lt;/groupId&gt;
+    &lt;artifactId&gt;metrics-core&lt;/artifactId&gt;
+    &lt;version&gt;3.1.0&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre>
+
+<p>主要代码：</p>
+
+<pre><code>public class Metrics {
+
+    public static final Counter requestCounter;//计数器
+
+    static{
+        MetricRegistry metricRegistry = new MetricRegistry();
+
+        //报告器，这里使用JmxReporter，则可以用jvisualvm远程连，以MBean的方式查看计数器中的数值
+        JmxReporter reporter = JmxReporter.forRegistry(metricRegistry).build();
+        reporter.start();
+
+        //初始化计数器
+        requestCounter = metricRegistry.counter("requestCounter");
+    }
+
+}
+</code></pre>
+
+<p>之后就可以在业务代码适当的地方使用如下代码进行计数器加一、减一和取值了：</p>
+
+<pre><code>Metrics.requestCounter.inc();
+Metrics.requestCounter.dec();
+Metrics.requestCounter.getCount();
+</code></pre>
+
+<p>因为使用的是JmxReporter，所以可以用jvisualvm或jconsole连接看MBean了，如果jvisualvm中没有MBean标签则菜单栏工具-插件添加之。</p>
+
+<h1>2016.4.27添加</h1>
+
+<h2>以主从复制的方式备份数据库</h2>
+
+<p>目的：做数据库备份，避免出故障导致数据丢失。</p>
+
+<p>方法：用网站服务器做主机，新买一台云服务器做从机，做主从复制。</p>
+
+<h3>0.从机安装mysql</h3>
+
+<pre><code>yum install mysql-server
+
+service mysqld start
+
+/usr/bin/mysqladmin -u root password 'ROOT密码'
+
+mysql -u root -p
+</code></pre>
+
+<p>登录mysql后并设置访问权限：</p>
+
+<pre><code>use mysql;
+
+update user set host = '%' where host = 'localhost' and user = 'root';
+</code></pre>
+
+<p>至此从机上的mysql安装成功，并可以被外网访问。虽然毫无技术含量，但因为背不住，每次现百度也怪烦的，所以还是记一下。</p>
+
+<h3>1.保证主从服务器的版本、当前数据一致</h3>
+
+<p>如果主服务器是使用中，则应停掉使用之的应用，将数据同步到从服务器上（我是在navicat里数据传输，不知道有没更好方法），待主从复制配置完毕后再启动应用。</p>
+
+<h3>2.停掉主从服务器，修改配置文件</h3>
+
+<pre><code>service mysqld stop
+
+vi /etc/my.cnf
+
+[mysqld]
+log-bin=mysql-bin
+server-id=(取IP最后一段)
+</code></pre>
+
+<h3>3.启动主从服务器</h3>
+
+<pre><code>service mysqld start
+</code></pre>
+
+<h3>4.在主服务器上建立奴隶账号</h3>
+
+<pre><code>GRANT REPLICATION SLAVE ON *.* to '奴隶账号'@'%' identified by '奴隶密码';
+</code></pre>
+
+<h3>5.在主服务器上查看master状态</h3>
+
+<pre><code>show master status;
+</code></pre>
+
+<p>将<code>File</code>和<code>Position</code>的值记下来，之后有用。</p>
+
+<h3>6.在从服务器上配置主人信息</h3>
+
+<pre><code>change master to master_host='主服务器IP',master_user='奴隶账号(第4步设的)',master_password='奴隶密码(第4步设的)',master_log_file='主人File(第5步查看到的)',master_log_pos=主人Position(第5步查看到的);
+</code></pre>
+
+<h3>7.启动从服务器奴隶功能</h3>
+
+<pre><code>start slave;
+</code></pre>
+
+<h3>8.查看从服务器奴隶状态</h3>
+
+<pre><code>show slave status;
+</code></pre>
+
+<p>观看<code>Slave_IO</code>和<code>Slave_SQL</code>是否都为YES，如果是，则配置成功。
+如果有NO，则查看<code>LAST_IO_ERROR</code>和<code>LAST_SQL_ERROR</code>的报错信息。</p>
+
+<pre><code>stop slave;
+</code></pre>
+
+<p>停掉奴隶功能，重新进行数据同步/第6步配置主人信息/其他工作，使配置正确，再进行第7步启动。直到配置正确。</p>
+
+<h3>9.测试</h3>
+
+<p>在主服务器上进行添加、删除表等功能，观察从服务器上是否也添加、删除了表，如果达到同步，则表明主从复制成功。</p>
+
+<h2>定时任务执行脚本，备份mysql</h2>
+
+<p>思路：在从机上定时备份mysql数据到物理文件上，以防万一。</p>
+
+<h3>0.准备文件夹</h3>
+
+<pre><code>mkdir /bak
+mkdir /bak/bakmysql
+mkdir /bak/bakmysqlold
+</code></pre>
+
+<h3>1.建立脚本</h3>
+
+<pre><code>touch /bak/bakmysql/backup.sh
+chmod 755 /bak/bakmysql/backup.sh
+vi /bak/bakmysql/backup.sh
+
+#!/bin/sh 
+cd /bak/bakmysql
+echo "You are in bakmysql directory"
+mv bakmysql* /bak/bakmysqlold
+echo "Old databases are moved to bakmysqlold folder"
+Now=$(date +"%d-%m-%Y") 
+File=bakmysql-$Now.sql 
+mysqldump -uroot -p'password' db_bbs &gt; $File 
+echo "Your database backup successfully completed"
+SevenDays=$(date -d -7day  +"%d-%m-%Y") 
+if [ -f /bak/bakmysqlold/bakmysql-$SevenDays.sql ] 
+then
+rm -rf /bak/bakmysqlold/bakmysql-$SevenDays.sql 
+echo "You have delete 7days ago bak file "
+else
+echo "7days ago bak file not exist "
+fi
+</code></pre>
+
+<p>注意mysqldump一行的用户名、密码、数据库名改为自己的</p>
+
+<h3>2.设置定时任务</h3>
+
+<pre><code>vi /etc/crontab
+</code></pre>
+
+<p>添加定时任务（每天0点0分，root用户运行backup.sh）：</p>
+
+<pre><code>0 0 * * * root /bak/bakmysql/backup.sh
+</code></pre>
+
+<p>重启crontab：</p>
+
+<pre><code>service crond restart
+</code></pre>
+</div>
+</div>
+</body>
+</html>

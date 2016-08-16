@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>React初识</h1>
+<div><p><span style="line-height:1.6em">react的立身之本：四个字&ldquo;<strong>基于组件</strong>&rdquo;。</span></p>
+
+<p>可以在脑海里回顾一下VB/安卓等面向组件的开发语言。</p>
+
+<p>组件，有状态，有行为。<br />
+组件是个对象，其状态就是其属性，其行为就是其方法，另外它还有模板，模板用于将组件渲染成dom。<br />
+组件是dom之上的一个抽象层，dom是组件的绘制目标。</p>
+
+<p>组件以类XML语法的形式声明。<br />
+除了定义组件模板的时候之外的任何时候，你都可以把组件看做最底层元素，你的一切事件最终应该体现在组件状态的改变。<br />
+组件状态即model，与模板结合，渲染成view，这个model-&gt;view的过程是几乎自动的（调setState方法时触发，所以改变状态要用这方法改变）。<br />
+偶尔需要透过组件这一层去直接操作dom，这在语法上也有支持。</p>
+
+<p>其实有点像extjs：富客户端，在dom上封装抽象，业务代码跟组件打交道即可，不和dom打交道。</p>
+
+<p>它火，一是程序员们对新形式native app的憧憬，二是出自名门facebook。<br />
+当业务代码只和组件打交道了，底层dom被偷梁换柱成别的结构就成为可能，这样web app的性能缺陷就有了改善的机会。</p>
+
+<p>至于flux，其实就是先action-&gt;model，再model-&gt;view，这早就是几乎本能的原则了。为什么说React不是mvc而只是view？因为它的状态都是组件的状态而非全局的状态，flux的意义在为全局状态与view的关系制定了标准。</p>
+
+<p><strong>参考：</strong><br />
+阮一峰的博文《<a href="http://www.ruanyifeng.com/blog/2015/03/react.html">React 入门实例教程</a>》<br />
+<a href="http://facebook.github.io/react/docs/tutorial.html">React官网的教程</a><br />
+<a href="http://www.zhihu.com/question/23444167">知乎上关于React[库]和Angular[框架]的帖子</a></p>
+</div>
+</div>
+</body>
+</html>

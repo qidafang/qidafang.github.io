@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>solr应用于博客搜索</h1>
+<div><p>solr使用的两个点，一是查索引，二是改索引。 查索引： java端使用solrj库，连接作为一个独立web项目的solr服务，本质是webservice。 搜索到的结果可以高亮，见BlogService的search方法，solrj的api可以再研究研究。 搜索结果显示成list，点击标题进入具体资源页，将搜索结果的id拼装到url即可。 改索引： 发布博客时进行重建索引，只需让程序访问一下solr的/dataimport?command=full-import即可。</p>
+</div>
+</div>
+</body>
+</html>

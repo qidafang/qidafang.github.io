@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>spring支持的websocket</h1>
+<div><p>必须说明：这篇博文只用于自己记录，使用spring的websocket支持一定要看<a href="http://docs.spring.io/spring/docs/current/spring-framework-reference/html/websocket.html">官方文档</a>，权威又简明，不推荐看不专业又啰嗦的国产博文。</p>
+
+<p>已尝试了两种方法，当然，不管哪种方法都要先添加maven依赖：</p>
+
+<blockquote>
+<p>&lt;dependency&gt; &nbsp;<br />
+&nbsp; &nbsp;&lt;groupId&gt;org.springframework&lt;/groupId&gt; &nbsp;<br />
+&nbsp; &nbsp;&lt;artifactId&gt;spring-websocket&lt;/artifactId&gt; &nbsp;<br />
+&lt;/dependency&gt; &nbsp;<br />
+&lt;dependency&gt; &nbsp;<br />
+&nbsp; &nbsp;&lt;groupId&gt;org.springframework&lt;/groupId&gt; &nbsp;<br />
+&nbsp; &nbsp;&lt;artifactId&gt;spring-messaging&lt;/artifactId&gt; &nbsp;<br />
+&lt;/dependency&gt; &nbsp;</p>
+
+<p>&lt;dependency&gt;<br />
+&nbsp; &nbsp; &lt;groupId&gt;javax.websocket&lt;/groupId&gt;<br />
+&nbsp; &nbsp; &lt;artifactId&gt;javax.websocket-api&lt;/artifactId&gt;<br />
+&nbsp; &nbsp; &lt;version&gt;1.0&lt;/version&gt;<br />
+&lt;/dependency&gt;</p>
+</blockquote>
+
+<p>&nbsp;</p>
+
+<p><strong>第一种方法，对应文档中的25.2这一节：</strong><br />
+1)声明个Handler组件：</p>
+
+<blockquote>
+<p>@Component<br />
+public class MyHandler extends TextWebSocketHandler {</p>
+
+<p>&nbsp; &nbsp; @Override<br />
+&nbsp; &nbsp; public void handleTextMessage(WebSocketSession session, TextMessage message) {<br />
+&nbsp; &nbsp; &nbsp; &nbsp; try {<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;session.sendMessage(message);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;} catch (IOException e) {<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;e.printStackTrace();<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;}<br />
+&nbsp; &nbsp; }</p>
+
+<p>}</p>
+</blockquote>
+
+<p>2)在spring配置文件中配置该组件，注意要写在springmvc的配置文件中而不是spring主配置文件中：</p>
+
+<blockquote>
+<p>&nbsp;&nbsp; &nbsp;&lt;!-- websocket配置1 --&gt;<br />
+&nbsp; &nbsp; &lt;websocket:handlers&gt;<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &lt;websocket:mapping path=&quot;/myHandler&quot; handler=&quot;myHandler&quot;/&gt;<br />
+&nbsp; &nbsp; &lt;/websocket:handlers&gt;</p>
+</blockquote>
+
+<p>当然，添加这段配置之前要在xml的根节点beans节点上补充这个声明让spring认识websocket前缀：</p>
+
+<blockquote>
+<p>&nbsp;&nbsp; &nbsp;xmlns:websocket=&quot;http://www.springframework.org/schema/websocket&quot;</p>
+</blockquote>
+
+<p>3)这就OK了</p>
+
+<p><br />
+<strong>第二种方法，对应文档中的25.4这一节：</strong><br />
+实际是参考了官方的<a href="http://spring.io/guides/gs/messaging-stomp-websocket/">引导文档</a>（一定要看），然后基于参考手册把java配置改为xml配置了。<br />
+1)在某个controller中声明：</p>
+
+<blockquote>
+<p>&nbsp; &nbsp; @MessageMapping(&quot;/say&quot;)<br />
+&nbsp; &nbsp; @SendTo(&quot;/topic/greetings&quot;)<br />
+&nbsp; &nbsp; public String greeting(String message) throws Exception {</p>
+
+<p>&nbsp; &nbsp; &nbsp; &nbsp;<span style="color:#FF0000"> //勘误：本方法的参数和返回值不能用String，应该自己声明一个dto（标准java bean命名），springmvc会自动转码为json</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; return message;<br />
+&nbsp; &nbsp; }</p>
+</blockquote>
+
+<p>2)在springmvc配置文件中添加：</p>
+
+<blockquote>
+<p>&nbsp;&nbsp; &nbsp;&lt;websocket:message-broker application-destination-prefix=&quot;/app&quot;&gt;<br />
+&nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&lt;websocket:stomp-endpoint path=&quot;/hello&quot;&gt;<br />
+&nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&lt;websocket:sockjs /&gt;<br />
+&nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&lt;/websocket:stomp-endpoint&gt;<br />
+&nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&lt;websocket:simple-broker prefix=&quot;/topic&quot; /&gt;<br />
+&nbsp;&nbsp; &nbsp;&lt;/websocket:message-broker&gt;</p>
+</blockquote>
+
+<p>3)测试的页面太长了就不贴了，到<a href="http://spring.io/guides/gs/messaging-stomp-websocket/">这里</a>找吧，在页面的中下部分。<br />
+如果懒得找就看官方提供的示例程序中<a href="https://github.com/spring-guides/gs-messaging-stomp-websocket/blob/master/complete/src/main/resources/static/index.html">测试页面</a>。</p>
+
+<p><strong>总结：</strong><br />
+websocket的意义在让浏览器和服务器保持长连接。<br />
+在websocket之前如果想保持长连接，或者采用轮询的方法，或者采用服务器端阻塞的方法，显然都浪费性能。<br />
+如果用服务器端阻塞的话，编程中读请求（阻塞的）和写请求（由用户操作触发）也是分开的。<br />
+websocket直接就分开它们俩了，浏览器随时可以向服务器中写指令，服务器也随时可以向浏览器写指令，两者都有触发函数监听对方。<br />
+这是对无状态的http协议非常重要的补充。<br />
+html5技术很大方面就是让B/S自带富客户端编程元素，比如本地存储，长连接这些，这也是单页面程序兴起的重要原因。<br />
+真正是一个页面就是一个程序，有界面显示，有操作控件，有临时数据，有持久数据，有与服务器保持的连接。</p>
+</div>
+</div>
+</body>
+</html>

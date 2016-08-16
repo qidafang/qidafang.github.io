@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>iReport and jasperRe</h1>
+<div><p>iReport与jasperReports太火了，sourceforge上下载居然是每周几千。 原理是iReport作为可视化编辑器，编辑报表，产生报表文件。 java程序中使用jasperReports库操作上一步产生的报表文件，并负责进行数据库连接，报表文件+数据库连接=最后看到的页面。 用我习惯性的说法就是，报表文件中定义了从数据库连接取m的方法，又定义了v的模板，然后数据-&gt;m，再m-&gt;v。 附说学习iReport和jasperReport的过程，各个步骤解耦，将很多要学习的点拆分后再学习，方便理解和攻克。 先是iReport制作报表，从下载iReport开始，到用iReport产生了能预览显示结果报表文件为止。 再是jasperReports在java程序中处理上一步的报表，jar包手动拷贝到将j2se项目，jdbc连，main方法测试控制台输出html。 再是控制台输出变为在页面输出，使用servlet。 最后引入maven项目中，手动拷jar改为maven依赖，jdbc连接改为从spring数据源获取，main方法改为单元测试调试，servlet输出改为spring mvc输出。 晚上继续研究另一种报表技术。</p>
+</div>
+</div>
+</body>
+</html>

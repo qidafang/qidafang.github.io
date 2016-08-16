@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>java容器的那点事儿</h1>
+<div><p>书上那么复杂的继承关系图就不贴了，简单回顾一下jdk容器世界的面貌：<br />
+道生一：数据结构 -&gt; 容器<br />
+一生二：容器 -&gt; collection &amp; map<br />
+二生三：collection &amp; map -&gt; list &amp; set &amp; map<br />
+三生万物：list &amp; set &amp; map -&gt; 各种实现</p>
+
+<p>理论上，用数组可以解决一切问题。<br />
+容器的意义，在于让解决问题的思路更清晰，操作更容易，说白了就是简化编程。怎么简化的？<br />
+从数组到list，是从有限到无限；从list到set，是从可重复到不可重复；从set到map，是从无主键到有主键。<br />
+从list到set时放弃了顺序性，可以在set或map上通过添加sorted特性得到。<br />
+想从插入顺序变为自然顺序，可以在set或map上通过添加tree特性得到；而list可以调用Collections.sort方法。</p>
+
+<p>考察最五脏俱全的标准容器treemap，会发现它几乎是数据库的一张表，k是主键，v是内容，k有序而且是自然顺序。<br />
+如果把它拿到jdk外部，就是键值型nosql数据库了，可以用于缓存，也可以用于持久化。<br />
+这里谈论的是容器，并不限于jdk的自带类，它包含任何有容器概念的编程元素。<br />
+本质上，它们就是数据结构的落实。<br />
+本质上，它们就是对存储空间（内存/磁盘什么的）的利用方式。<br />
+jdk自带类，缓存，nosql数据库，关系型数据库，甚至文件系统，概莫能外。</p>
+
+<p>当你要用一个容器时，首先考虑，封在线程内部，还是跨线程共享？如果是前者，就在方法里声明局部变量，用jdk的自带类。<br />
+如果是后者，考虑要不要持久化？如果不要，就用各种缓存系统。<br />
+再问一个问题，要不要跨jdk使用这些缓存？如果要，就用分布式缓存系统，比如memcached，redis什么的；如果不要，用ehcached什么的就可以了。<br />
+甚至声明一个static ConcurrentHashMap也不是不可以，如果不需要最大数量啊过期时间啊这些有用的特性。<br />
+如果要持久化，那就是非关系型数据库，甚至文件系统来选择了；特点在落脚到磁盘上，分歧在数据的组织形式。</p>
+
+<p>数据结构是算法的土壤，数据结构是算法的天堂。<br />
+用对了数据结构，绝对能让你的算法代码思维清晰，逻辑严密，性能优良，外观优美，最重要的一点是，短。</p>
+
+<p>视线回到list/set/map这哥仨。<br />
+首先把set排除掉，它完全是list或map的变形，在javascript里，需要用set的时候我们用list，在java里，set的底层是map。<br />
+list和map的区别，map的主键可以任意定义数据类型，list的事实主键只能是下标。<br />
+list=map&lt;int,obj&gt;。set=map&lt;obj,null&gt;。<br />
+这些是逻辑上的关系，当然实现时采用的数据结构各有不同。</p>
+
+<p>线程安全的类的意思是，如果别的对象每次只调该对象的一个方法，那在调用这个方法的问题上，无论怎么并发都不会出错。<br />
+本质是private字段和synchronized方法的结合，谁调谁就锁对象，当然安然无恙。<br />
+但安全是安全了，性能又出问题，一个人调，一堆人等着，如果在servlet的doGet方法上写sync(this){..}，servlet也可以线程安全，但谁会这么做呢？<br />
+改进思路1)不是什么操作都锁，比如CopyOnWriteArrayList做的；2)如果要锁也只锁局部而不锁整体，比如ConcurrentHashMap做的那样。<br />
+改进的原则是以让一些操作变得更慢为代价，让另一些操作变得更快，这样进化过的类，由程序员在合适的时机使用。<br />
+技术上不能提升的，加入业务上的知识，得到提升，这就是这种进步的本质。实际是把程序员的对业务场景的了解作为加数了。<br />
+创造偏科的类，扬长避短地使用它们。</p>
+
+<p><strong>当一个类看起来已达到完美的时候，怎么提升它？<br />
+答：让它偏科，然后扬长避短地使用。</strong></p>
+
+<p>治众如治寡，分数是也。&mdash;&mdash;《孙子兵法》<br />
+无所不备，则无所不寡。&mdash;&mdash;《孙子兵法》<br />
+分工，劳动技巧因专一而进步。&mdash;&mdash;《国富论》</p>
+
+<p>关于API，从《Thinking in java》理解思想，从《Core Java》学习api，从《Effective Java》获得最佳实践，是这三本书的正确读法。<br />
+所以，需要参考的话，看《Core Java》的章节。</p>
+
+<p>另外当然可以参考<a href="http://calvin1978.blogcn.com/articles/collection.html">偶像的博文</a>。</p>
+</div>
+</div>
+</body>
+</html>

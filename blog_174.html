@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>tomcat学习</h1>
+<div><p><strong>参考：</strong>书籍《深入剖析tomcat》</p>
+
+<p><a href="http://mirrors.cnnic.cn/apache/tomcat/tomcat-7/v7.0.61/src/apache-tomcat-7.0.61-src.zip">tomcat7源码</a>，注意导入源码时系统jdk必须是1.6，否则ant报错。</p>
+
+<p><strong>一图流：tomcat的立身之本</strong></p>
+
+<p><img alt="" src="http://img.zidafone.com/427studio/d73a7927-d2ac-45fc-8b96-38b4e32df48c.png" style="height:509px; width:634px" /></p>
+
+<p>图中的英文单词都是运行的tomcat中拥有的组件，其中engine/host/context/wrapper是容器。</p>
+
+<p>一般engine和host都只有一个，每个context对应一个应用，每个wrapper对应一个servlet。</p>
+
+<p>connector和容器同属service，关系是connector从连接中创造request和response对象，传入容器让它工作。</p>
+
+<p>每个容器拥有一个管道，管道拥有1或多个阀，管道和阀的关系就像过滤器链和过滤器的关系。一个管道中最关键的阀负责调用下一级容器，这就构成了一个完整的顺序结构：顶级阀A-&gt;顶级阀B-&gt;顶级核心阀-&gt;次级阀A-&gt;次级阀B-&gt;次级核心阀-&gt;三级阀A...</p>
+
+<p>最后一级容器即wrapper容器其下级就是filter和servlet了，以后的故事将由应用程序员书写。</p>
+
+<p>对每个到来的请求，connector会创建一个线程，该线程负责处理与该请求的连接，connector是个甩手掌柜，所以才能呼天喝地，指东打西，居其极而运四方。这是请求分发器和帝王们的一致属性，参考大舜的垂拱而治。</p>
+
+<p>分层的核心是，上层人少，只分发业务不具体处理，越往下层，人越多，每个人负责的领域越小，工作越具体。设计合理的程序的组织结构与实际社会中的组织结构是一致的，因为这是合理的。孙子曰：治众如治寡，分数是也；斗众如斗寡，形名是也。</p>
+</div>
+</div>
+</body>
+</html>

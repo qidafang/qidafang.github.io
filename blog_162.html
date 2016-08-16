@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>angularjs的精华demo</h1>
+<div><p><strong>参考：</strong></p>
+
+<p><a href="http://docs.angularjs.cn/api">AngularJS英文文档</a><br />
+书籍《<a href="http://item.jd.com/11522200.html?cu=true&amp;utm_source=baidu-search&amp;utm_medium=cpc&amp;utm_campaign=t_262767352_baidusearch&amp;utm_term=19132143723_0_2e03ffbfaf754b21a7429f27105c5859">AngularJS权威教程</a>》</p>
+
+<p>演示地址：<a href="http://427studio.net/desk">点击这里</a>，请右键查看页面及js源代码。</p>
+
+<p><strong>演示内容：</strong><br />
+1.使用路由<br />
+2.使用自定义指令<br />
+3.定义controller<br />
+4.定义service，并注入到controller<br />
+5.使用ajax访问rest接口</p>
+
+<p><strong>体会：</strong><br />
+1.<br />
+angularjs等框架的本质，就是前端与后端的权责蛋糕的重新分配<br />
+在经典的web中，页面只是结果，由服务端渲染后发到浏览器，就傻呆呆地静止不动。<br />
+后来，有了ajax，页面的功能丰富了起来。<br />
+现在，出现angularjs之类框架，发誓要把后端的权力全夺过来才罢休，&ldquo;后端，要不你扮演数据库得了&rdquo;。<br />
+2.<br />
+因为这等的雄心壮志，它的架构就必须丰富强大，之前后端架构的先进和复杂，它都要有。<br />
+后端有MVC框架，我也要有；<br />
+后端有表现层、业务层、持久层，我也要有；<br />
+后端有依赖注入，我也要有&hellip;&hellip;<br />
+3.<br />
+路由的本质，是夺取不同url访问后端的不同方法的战斗。<br />
+4.<br />
+指令的本质，是后端的模板语言的自定义标签。<br />
+过滤器的本质，是后端模板语言里的小小的渲染函数。<br />
+我听得到angularjs的笑声：后端法力无边的filter概念，我仅仅拿来做函数，你奈我何？<br />
+5.<br />
+controller的本质，是为充血scope对象提供出生环境的子宫。<br />
+没错，又一个在后端威力巨大的概念被夺权了。<br />
+在后端，贫血的实体对象地位最低，到了angular，它终于回到了它该在的位置。<br />
+6.<br />
+scope与页面局部的对应关系，<a href="http://427studio.net/blog/1/161">前篇博文</a>已讲，不赘。<br />
+7.<br />
+service的本质，是业务逻辑，这点与后端语言是一致的。<br />
+8.<br />
+依赖注入当然不是后端的专利，前端的组件天然是单例，注入起来更加自如。<br />
+9.<br />
+如果后端的门面方法只用于提供rest的api服务，把它看做以前的数据库级别的数据提供者也不过分。<br />
+那angularjs的$http等ajax方法，就合适拿来类比后端的持久层了。<br />
+区别在，这个&ldquo;持久&rdquo;操作是异步的，而这个操作获得结果之后，往往要用返回的数据做点事情。<br />
+回调函数写在哪？<br />
+当然是写在表现层里，在表现层操作$scope对象才天经地义。<br />
+所以，要把回调函数一层一层地传到最后。<br />
+后端的调用顺序：表现层前逻辑-&gt;持久逻辑-&gt;表现层后逻辑<br />
+前端的调用顺序：表现层前逻辑-(表现层后逻辑)-&gt;持久逻辑<br />
+11.<br />
+angularjs本质中的本质，是模型和表现浑然一体，合二为一，你中有我，我中有你，是为双向绑定。<br />
+它们分离地是那么清晰，而结合地又是那么紧密。<br />
+叹为观止。<br />
+12.<br />
+angularjs适用的范围，当然是交互丰富的&ldquo;应用型&rdquo;软件。<br />
+没错，可以称为软件，单页面软件，富客户端软件，跑在浏览器里的C/S程序。<br />
+13.<br />
+与传统网站技术相比，angularjs们的亮点，一是页面状态常存化，二是用户体验流畅化，三是网络交互精简化。<br />
+凡是有必要交互的，都要交互；凡是没必要交互的，都不要交互。<br />
+考虑到流量，这场夺权大战已经未战先胜了。<br />
+14.<br />
+这将是一个前端的大时代。</p>
+</div>
+</div>
+</body>
+</html>

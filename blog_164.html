@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>想办法学点mysql运维能力</h1>
+<div><p>今天翻了几本书&mdash;&mdash;</p>
+
+<p>1.《mysql技术内幕<img alt="crying" src="http://427studio.net/static/ckeditor/plugins/smiley/QQexpression/14.gif" style="height:24px; width:24px" title="crying" />》<br />
+2.《mysql技术必知必会<img alt="crying" src="http://427studio.net/static/ckeditor/plugins/smiley/QQexpression/14.gif" style="height:24px; width:24px" title="crying" />》<br />
+薄薄的，简洁明了，程序员看的入门书，这两本有一本，平时工作就够用了。<br />
+3.《mysql性能调优与架构设计<img alt="enlightened" src="http://427studio.net/static/ckeditor/plugins/smiley/QQexpression/15.gif" style="height:24px; width:24px" title="enlightened" />》<br />
+步入运维知识，几个关键的点：设计，监控，备份，切割。<br />
+4.《高性能mysql<img alt="yes" src="http://427studio.net/static/ckeditor/plugins/smiley/QQexpression/17.gif" style="height:24px; width:24px" title="yes" />》<br />
+可怕的大部头，《XX权威指南》性质的书。</p>
+
+<p>&nbsp;</p>
+
+<p>心得：<br />
+1.首先考虑保持默认配置，能不折腾就不折腾，调优调不好是坑自己<br />
+2.没有银弹，网文博文不可靠，还是要亲自做性能测试，边改配置边观察<br />
+3.最好的备份就是主从复制<br />
+4.主从复制同时还是读写分离的基础<br />
+5.也是出了问题能方便地解决的基础<br />
+6.怎么知道出没出问题？就要监控<br />
+7.逻辑上的&ldquo;数据库&rdquo;，物理上可能是多个服务，一到多的变化可能来自主从复制，也可能来自垂直/水平切割<br />
+8.重点的重点是表结构的定义，选好数据类型，做好冗余<br />
+9.更上一层的重点是业务逻辑的明确，可能数据库绞尽脑汁难以解决的由业务导致的问题，那业务本身可以改变<br />
+10.以上这些点目前就做了个主从复制，接下来要做读写分离，水平/垂直切割，性能监控的实践<br />
+11.说到性能监控，可能又要用到nagios，说到nagios，免不了又要用linux<br />
+12.唉，讨厌的linux...</p>
+</div>
+</div>
+</body>
+</html>

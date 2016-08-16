@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>本地json文件的编辑器，node-webkit开发的exe程序</h1>
+<div><p>在昨天的<a href="http://427studio.net/blog/1/253" target="_blank">dota契合度计算器</a>中，用到了<strong>dota英雄数据</strong>和<strong>dota玩家数据</strong>这两个数据库，为了便于网页应用使用，这两个数据库的存储格式是json，即heros.json和players.json这两个文件。</p>
+
+<p>json文件的好处是用文本编辑器可以打开，但坏处是不像数据库那样有图形化界面方便操作。英雄有100多个，玩家也有十几个，每个英雄和玩家的属性都有十几二十项，在文本编辑器里拖来拖去太麻烦了，不能一目了然。</p>
+
+<p>而且英雄有个tags属性，这属性实际是用逗号分隔的字符串，如&quot;远程,智力,法师,爆发&quot;，这个串的编辑是我目前主要要做的事，在文本编辑器里拖动太蠢了，就想要做个exe程序，由于这个编辑器要处理的是json格式数据，采用node-webkit技术，用javascript语言完成是最合适的，不由得感叹技术多学点儿就好像多开了几扇窗户，而不会只有锤子遇到什么都当钉子来砸。</p>
+
+<p>实现起来并不困难，代码<a href="https://github.com/qidafang/dota_player_hero_calculate/tree/master/editor" target="_blank">在这里</a>，当然要放到node-webkit的壳子里运行，可以参考<a href="http://427studio.net/blog/1/246" target="_blank">我的这篇博客</a>。</p>
+
+<p>界面如图：</p>
+
+<p><img alt="" src="http://img.zidafone.com/427studio/040738b0-9a53-4985-a55c-eb11418500cb.png" style="height:539px; width:1020px" />然后顺手把玩家编辑器也给做了，只是在英雄标签编辑器的基础上改了改，界面如下：</p>
+
+<p><img alt="" src="http://img.zidafone.com/427studio/9a9f0d06-88bf-428b-80cb-80e495c4ff8e.png" style="height:187px; width:1164px" />设定好了英雄和玩家的指标，就可以用算法计算玩家的契合英雄了：</p>
+
+<p><img alt="" src="http://img.zidafone.com/427studio/47a4c586-a53e-4cb5-91ed-f0f86dd52842.png" style="height:300px; width:321px" /></p>
+
+<p>计算出了杜哥最适合用的前15名英雄，还是比较准确的。处理好的数据和计算用的页面<a href="http://page.zidafone.com/demos/dota-player/" target="_blank">在这里</a>，源码<a href="https://github.com/qidafang/dota_player_hero_calculate/tree/master/page" target="_blank">在这里</a>。</p>
+
+<p>欢迎使用和提修改意见，尤其是关于英雄指标和算法的，目前的还是觉得有缺陷，例如沉默术士和天怒法师都有&ldquo;沉默&rdquo;技能，显然两者是不同的，但没想好该怎么区分。</p>
+
+<p>&nbsp;</p>
+
+<p><strong>12月2日晚上更新：</strong></p>
+
+<p>增加了计算最佳搭配的算法，即假如一共有10个人，想从中选5个人打5个位置组成团队，怎么搭配最合理？</p>
+
+<p>一个不太难的算法，但折腾了我一下午，是不是该强化一下算法了？</p>
+
+<p>算出的5个最佳阵容，其中前四个并列得分最高，联系现实想想挺有意思的。</p>
+
+<p><img alt="" src="http://img.zidafone.com/427studio/c9d3090a-5994-4d37-a846-8c3864218cb1.png" style="height:145px; width:1213px" /></p>
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>rest接口学习</h1>
+<div><p>write once, use anywhere是程序员永恒的梦想。<br />
+尽管这个梦想在跨平台的问题上屡屡碰壁，却在编程的问题上总能成功。<br />
+自信的程序员甚至喊出了don&#39;t repeat yourself的口号，从那时起，重复的东西就成了丢人的存在。</p>
+
+<p>rest接口的立身之本，也在于可以同时为浏览器和移动端甚至第三方应用提供ajax或web service服务。<br />
+所以在移动互联网大火之后，rest这个本来默默无闻的概念一飞冲天。</p>
+
+<p><strong>一图流：rest的立身之本</strong></p>
+
+<p><img alt="" src="http://img.zidafone.com/427studio/5e1b6d48-f942-4e5b-a87d-4532db568dc3.png" style="height:451px; width:555px" /></p>
+
+<p>因为要采用rest接口了，浏览器端的富逻辑就是必然，所以是rest成就了angular等mv*框架，mv*的火，是建立在rest的火的基础上的。<br />
+由于后端是统一的，移动应用的功能空间和浏览器应用的功能空间就是相同的，所以浏览器应用的规模和风格会与移动应用相类，这也有要保持风格一致的原因。<br />
+如果节省成本甚至不做移动应用，浏览器应用在手机浏览器里跑当移动应用使，所以响应式框架和移动UI框架最近也大火。<br />
+如果把浏览器应用套个壳，作为可安装的APP，就成了基于html5的移动应用了，这又是write once, run anywhere的跨平台尝试，诱惑在于少一半工作量，困境在于效率和调底层api能力。<br />
+这也是facebook的react仅仅有个思路和预期，就关注者云集的原因。</p>
+
+<p>同样是接口，rest的好处在json看着比xml舒服多了，而且浏览器能秒懂。<br />
+而且本身就是编程规范，路径的定义，http方法的运用，状态码的运用，都已经被规定好，省去大家各自自行定义规范的风险和不协调性。<br />
+而且这个规范非常优雅，语义性极强，长度短到极致，名词动词天生分离，这些好处懂的都懂。<br />
+关于规范可以<a href="https://github.com/bolasblack/http-api-guide">看这里</a>。</p>
+
+<p>====下面说说在java项目中的具体实践====</p>
+
+<p><strong>服务端：</strong><br />
+接口编写方面，<a href="http://docs.spring.io/spring/docs/4.2.0.BUILD-SNAPSHOT/spring-framework-reference/html/mvc.html#mvc-ann-restcontroller">spring mvc对rest的支持</a>非常好，编写rest controller的难度不比编写不同controller难度大。<br />
+在安全性上，要兼顾浏览器和客户端两种情况，前者基于session，后者基于token，所以写个shiro的filter，先检查是否有登录用户（session），如果没有再尝试则获得token并构造成Token对象交予Realm尝试登录。</p>
+
+<p><strong>rest接口测试：</strong><br />
+<a href="https://github.com/swagger-api/swagger-ui">swagger测试工具</a>又美观又好用，而且可以和spring mvc集成，通过读取controller信息，自动生成接口信息，可惜的是<a href="http://springfox.github.io/springfox/docs/current/">文档</a>太缺乏了，个人折腾了好几个小时才成功，而且用的还是较老的1.0.2版本。<br />
+它本身是一些静态的html等文件，需要指定一个url的js变量，这个url是获取接口信息的入口，swagger-springmvc生成的地址是项目根目录下/api-docs路径。<br />
+swagger-springmvc会获取符合指定的路径的spring mvc配置信息，以每个controller为一组，每个方法为一个接口，生成接口list的json信息，swagger页面异步读取信息后展示成既是文档又是调试工具的页面。</p>
+
+<p><strong>浏览器ajax：</strong><br />
+ajax调用采用<a href="https://git.oschina.net/anylain/jquery.rest.client">jquery rest</a>这个小库方便很多。</p>
+
+<p><strong>客户端web service：</strong><br />
+java项目用spring提供的RestTemplate很方便，可以编写以对象为参数的方法。</p>
+
+<p><strong>参考：</strong><br />
+阮一峰的博文<a href="http://www.ruanyifeng.com/blog/2011/09/restful.html">《理解RESTful架构》</a><br />
+还是阮一峰的<a href="http://www.ruanyifeng.com/blog/2014/05/restful_api.html">《RESTful API 设计指南》</a><br />
+不认识作者的<a href="https://github.com/bolasblack/http-api-guide">《HTTP 接口设计指北》</a><br />
+服务端技术参考<a href="https://github.com/springside/springside4/wiki">SpringSide</a>的演示<br />
+shiro部分参考今年是龙年的<a href="http://jinnianshilongnian.iteye.com/blog/2041909">《无状态Web应用集成》</a></p>
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>使用nginx做反向代理和负载均衡</h1>
+<div><p><strong>1.反向代理</strong><br />
+反向代理非常简单，把location块里的内容改成proxy_pass http://localhost:8080/;这种就行，<br />
+甚至可以用其他域名主机，如proxy_pass http://zidafone.com/;</p>
+
+<p><strong>2.负载均衡</strong><br />
+负载均衡比apache简单太多了吧&hellip;&hellip;<br />
+先在http块里加入：<br />
+&nbsp; &nbsp; upstream <span style="color:#FF0000">myapp1</span> {<br />
+&nbsp; &nbsp; &nbsp; &nbsp; least_conn;<br />
+&nbsp; &nbsp; &nbsp; &nbsp; server localhost:8080;<br />
+&nbsp; &nbsp; &nbsp; &nbsp; server localhost:9080;<br />
+&nbsp; &nbsp; }<br />
+再把location块内容改为：<br />
+&nbsp; &nbsp; location / {<br />
+&nbsp; &nbsp; &nbsp; &nbsp; proxy_pass http://<span style="color:#FF0000">myapp1</span>;<br />
+&nbsp; &nbsp; }<br />
+这样就可以了。<br />
+负载均衡的官方文档<a href="http://nginx.org/en/docs/http/load_balancing.html">在这里</a>。</p>
+
+<p>做负载均衡还可以将一个域名解析到两个ip，如在域名解析管理处将test2.zidafone.com解析到182.92.64.91，再添一个解析到182.92.10.238，ping这个域名就会随机使用一个ip。<br />
+实验时可以用ipconfig/flushdns清除dns再进行实验。<br />
+这样只要多个主机采用同一个memcached做session服务器就ok了。<br />
+参考《实战nginx》的第6章和《高性能linux服务器构建实战》第1章。</p>
+
+<p>第四层负载均衡将一个internet上合法注册的ip地址映射为多个内部服务器的ip地址，对每次tcp连接请求动态使用其中一个内部ip地址，达到负载均衡的目的。<br />
+第七层呢，指的就是http转发，nginx就属于这种。</p>
+
+<p><strong>感想：</strong><br />
+nginx太太太太简单好用了，初见时的怪异和晦涩的感觉完全是自己吓自己。<br />
+<span style="color:#FF0000">很多东西都是这样，看着像一座山那么大吓人，但你又不需要把这山吃掉啊，只需要挪挪上面的一朵小花。</span><br />
+安啦。</p>
+
+<p><strong>参考：</strong><br />
+《实战nginx》<br />
+《高性能linux服务器构建实战》第1章<br />
+<a href="http://wiki.nginx.org/NginxChs">nginx中文wiki</a>，本来担心太老了，看了下最近更新是2015年，放心了<span style="color:#FF0000"><strong>（推荐）</strong></span><br />
+<a href="http://wiki.nginx.org/NginxChs">nginx官网英文文档</a></p>
+</div>
+</div>
+</body>
+</html>

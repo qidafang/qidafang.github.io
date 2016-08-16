@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>ckeditor添加插入flv视频的插件</h1>
+<div><p>昨天写在网页中播放flv的博文的时候，想在博文中插入视频，但是发现无法实现。<br />
+因为用的编辑器是ckeditor，决定自己写个插件插入视频。<br />
+官方的教程在<a href="http://docs.ckeditor.com/#!/guide/plugin_sdk_intro">这里</a>，写得很好，又简明又清楚。</p>
+
+<p>写一个插件需要建立的文件夹和文件如图所示：<br />
+<img alt="" src="http://img.zidafone.com/427studio/3c5e16ed-956a-452b-93c7-5b899f85fb4f.png" style="height:105px; width:140px" /><br />
+主目录video（此目录名即插件名）要放到ckeditor的plugins文件夹下，其中包含最主要的文件plugin.js。<br />
+如果需要对话框，则需要dialogs文件夹和与插件同名的js文件，本例中即video.js。<br />
+图标放在icons文件夹下，命名为xxx.png，大小为16*16像素。</p>
+
+<p>主文件plugin.js内容如下：</p>
+
+<blockquote>
+<p>CKEDITOR.plugins.add( &#39;video&#39;, {<br />
+&nbsp;&nbsp;&nbsp; icons: &#39;video&#39;,<br />
+&nbsp;&nbsp;&nbsp; init: function( editor ) {<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;editor.addCommand( &#39;video&#39;, new CKEDITOR.dialogCommand( &#39;videoDialog&#39; ) );</p>
+
+<p>&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;editor.ui.addButton( &#39;Video&#39;, {<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;label: &#39;视频&#39;,<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;command: &#39;video&#39;,<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;toolbar: &#39;insert&#39;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;});</p>
+
+<p>&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;CKEDITOR.dialog.add( &#39;videoDialog&#39;, this.path + &#39;dialogs/video.js&#39; );<br />
+&nbsp;&nbsp;&nbsp; }<br />
+});</p>
+</blockquote>
+
+<p>其中涉及&ldquo;video&rdquo;的地方基于约定都要与插件名保持一致，不要挑战这个约定，毫无必要且毫无意义。</p>
+
+<p>弹出对话框文件video.js内容如下：</p>
+
+<blockquote>
+<p>CKEDITOR.dialog.add( &#39;videoDialog&#39;, function ( editor ) {<br />
+&nbsp;&nbsp; &nbsp;return {<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; title: &#39;视频属性&#39;,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; minWidth: 400,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; minHeight: 200,</p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; contents: [<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id: &#39;flv&#39;,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; label: &#39;VIDEO URL&#39;,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; elements: [<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;{<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;type: &#39;text&#39;,<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;id: &#39;flvLink&#39;,<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;label: &#39;输入视频路径&#39;,<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;validate: CKEDITOR.dialog.validate.notEmpty( &quot;视频路径不能为空！&quot; )<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;}<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ]<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ],</p>
+
+<p>&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;onOk: function() {<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;var dialog = this;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;var url = dialog.getValueOf(&#39;flv&#39;, &#39;flvLink&#39;);</p>
+
+<p>&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;var video = editor.document.createElement( &#39;video&#39; );<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;video.setAttribute(&#39;src&#39;, url);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;editor.insertElement( video );<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;}<br />
+&nbsp;&nbsp;&nbsp; };<br />
+});</p>
+</blockquote>
+
+<p>其中contents定义对话框中的选项卡和表单项，onOk是点击对话框的&ldquo;确定&rdquo;按钮时触发的回调函数。<br />
+显然onOk这个函数是重中之重。最关键的有两个步骤：<br />
+1)从对话框表单中取值，即示例代码中的var url = dialog.getValueOf(&#39;flv&#39;, &#39;flvLink&#39;);<br />
+2)向编辑器中插入内容，即示例代码中的editor.insertElement( video );<br />
+这两个步骤要根据具体需要自行实现。</p>
+
+<p>插件编写完成后在页面js中显式引入之即可：</p>
+
+<blockquote>
+<p>&nbsp;&nbsp; &nbsp;CKEDITOR.replace( &#39;editor&#39;, {<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;language: &#39;zh-cn&#39;,<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;extraPlugins : &#39;video&#39;<br />
+&nbsp;&nbsp; &nbsp;} );</p>
+</blockquote>
+
+<p>示例代码已上传到<a href="https://github.com/qidafang/ckeditor_plugin_demo">github</a>。<br />
+<strong>TODO:</strong>目前只能插入指定url的视频，视频上传没做，可以仿照图片上传的功能来实现。</p>
+
+<p>
+<video controls="controls" src="http://img.zidafone.com/test.flv">&nbsp;</video>
+</p>
+
+<p>&nbsp;</p>
+</div>
+</div>
+</body>
+</html>

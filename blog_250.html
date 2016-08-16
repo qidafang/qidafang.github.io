@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>HTML5游戏引擎Phaser初体验</h1>
+<div><p>一个小小的游戏<a href="http://page.zidafone.com/demos/nve-du/" target="_blank">在这里</a>，试试看能不能过关？提示一下，方向键走路，空格键发炮，每发炮弹消耗12个积分，变大情况下可以发炮。</p>
+
+<p><img alt="" src="http://img.zidafone.com/427studio/fe3eb944-73af-4c2d-a8e6-3edbd8c72432.png" style="height:736px; width:737px" /></p>
+
+<p>每秒60次的循环重绘，在其中判断精灵之间发生的接触，以及玩家的输入。</p>
+
+<p>世界，精灵，镜头，触发事件，行走图，动画，总能想起十年前就认识但是一直没玩太好的RPG Maker，这次找行走图素材，习惯地还是找66RPG的网站，这套曹操传的赵云行走图，也是RPG Maker风格的，好在<a href="https://github.com/photonstorm/phaser" target="_blank">Phaser</a>也可以用。</p>
+
+<p>不过这图还是改了一下，用PS打开，绘制参考线，从原图取内容画到新图上，为的是去掉每帧之间的空白间隔，当然还去了背景。</p>
+
+<p>游戏基础结构是<a href="https://github.com/photonstorm/phaser/tree/master/resources/tutorials" target="_blank">Phaser官方的教程</a>，该官网被墙也是够奇怪的。摸索的时候参考<a href="https://github.com/photonstorm/phaser/tree/master/docs" target="_blank">官方文档</a>，教程和文档都需要在github上检出项目，部署到自己的http服务器上再访问。</p>
+
+<p>这个人总结的<a href="http://www.grycheng.com/?cat=335" target="_blank">中文资料</a>比英文的好看一些，但最好的学习方法还是打洞<a href="http://phaser.io/examples" target="_blank">去官网看示例</a>，演示和源码在同一个网页上展示，非常便于理解。除了打洞之外理论上也可以检出<a href="https://github.com/photonstorm/phaser-examples" target="_blank">示例项目的github</a>，在本地的http服务器上跑，但我没弄成功，可能是wamp版本低了。</p>
+
+<p>&ldquo;引擎&rdquo;这个词听起来非常高大上，其实理解成框架就行了，它接管了控制权，生命周期定义好了，你在其中写具体逻辑就行了，动画和物理引擎什么的都提供了支持，能让开发者专注于自己这游戏与众不同的地方，这也是一切优秀框架的共同点。</p>
+
+<p>觉得美中不足的是虽然有API文档和DEMO们，但是没有把体系架构说明白的综述，可能在它官方收费的书里有讲。</p>
+
+<p>&nbsp;</p>
+
+<p>====</p>
+
+<p>更新：在学习phaser时，感到示例不好用，简单改造了一下，并写了点中文注释，源码地址<a href="https://github.com/qidafang/phaser_demo_study/tree/master" target="_self">在这里</a>。</p>
+</div>
+</div>
+</body>
+</html>

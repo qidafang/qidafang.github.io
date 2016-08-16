@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>理解网页样式的思路</h1>
+<div><p>由于个人前端网页样式能力比较生疏，免不得要常看看优秀网页的设计，进行学习，好在网上最不缺的就是优秀网页。</p>
+
+<p>简单总结下，当看到一个网页之后，点开开发者控制台，理解页面标签的思路。</p>
+
+<p>以<a href="http://amazeui.org/"><span style="color:#DDA0DD">amazeui</span></a>为例。</p>
+
+<p>1.<br />
+现在基本没人用table布局了，但布局依然采用table布局时的思路，因为先行，后列，将页面切割成多个矩形块，是理所当然的。<br />
+2.<br />
+矩形内套矩形，变化无穷，但总结起来，无非两个要点：<br />
+1)呈父子关系的两个矩形，前者是后者的父元素<br />
+2)呈兄弟关系的两个矩形，互相成上下或左右关系，即是两行，或者两列。<br />
+除此之外的关系较特殊，暂时不考虑。<br />
+3.<br />
+在同一父元素下，呈两行的子元素，往往是流布局的两个块。<br />
+块的特点是：上下摆放，占满一行。<br />
+比如body标签内的页头，主体，页尾，是最常见的顶级行。<br />
+4.<br />
+在同一父元素下，呈两列的子元素，往往是两个浮动的块。<br />
+浮动的特点是，可以将多个块级元素放到同一行中。<br />
+最经典的就是多栏布局。主体和侧边栏，分别浮动。<br />
+比如<a href="http://amazeui.org/examples/sidebar.html"><span style="color:#DDA0DD">这个页面</span></a>的边栏和主体，采用的是两个浮动的块级元素。<br />
+5.<br />
+当一个元素内部只有行内元素，即可将它看做页面结构中的叶子节点。<br />
+行内元素在纵向上移动的可能性，来自父元素的左右padding和text-align属性。<br />
+6.<br />
+行内元素分为行内替换元素和行内非替换元素。<br />
+非替换元素默认没有块级元素的性质，如指定宽高、设定内外边距。<br />
+如果有这样的需要，则将其设定为行内框（display:inline-block），这样将变成替换元素，而且对于其子元素而言，它像一个块级的容器。<br />
+7.<br />
+当一行的内容是从左到右连贯的，即可以采用行内元素。<br />
+而如果需要分开左对齐的元素和右对齐的元素，则应该使用浮动的块级元素。<br />
+例如<a href="http://amazeui.org/examples/login.html"><span style="color:#DDA0DD">这个页面</span></a>的版权部分，采用的是行内元素。<br />
+而其上方的登录按钮和忘记密码按钮，则采用的是浮动的块级元素。<br />
+8.<br />
+当要决定行内元素的垂直位置，需要注意其内容块高度、其行高、及其垂直对齐方式。<br />
+9.<br />
+当矩形们的关系决定了之后，就该根据业务含义，选取适当的有语义的标签。<br />
+比如<a href="http://amazeui.org/examples/admin-index.html"><span style="color:#DDA0DD">这个页面</span></a>的左侧菜单，采用的就是ul和li标签，而不是也能实现效果的div标签。<br />
+而页头和页尾分别采用的是header标签和footer标签，清楚地表明了该元素的业务含义。<br />
+而<a href="http://amazeui.org/examples/blog.html"><span style="color:#DDA0DD">这个页面</span></a>右侧的栏中的每一项，采用的是section标签。<br />
+而页面的翻页按钮虽然采用的是div，但其类名中的pagination单词表明了元素的用途。<br />
+这是因为当css规范中没有定义的元素，只能用div的同时，amazeui的建议是让其类名尽量语义化。<br />
+10.<br />
+当页面的结构和采用的元素确定后，要注意保证页面元素之间的距离和对齐关系。<br />
+这是《<a href="http://zidafone.com/share/note/136">写给大家的设计书</a>》中强调的四大基本原则中的对齐和亲密性两个原则。<br />
+而重复和对比这两个原则，则限制不同元素的内容的样式。<br />
+11.<br />
+例如<a href="http://amazeui.org/examples/blog.html"><span style="color:#DDA0DD">这个页面</span></a>的两篇文章，其结构是完全一致的（标题、作者、发表日期、正文、配图）。<br />
+其好处是保证了同类内容的样式一致性&mdash;&mdash;为html编写相同的dom结构，定义相同的类属性。<br />
+而且动态页面也非常容易实现，只需要将相同的内容置于循环体内，遍历输出即可。<br />
+另外页面中的组件也往往保持样式的一致或相似性，如<a href="http://amazeui.org/examples/login.html"><span style="color:#DDA0DD">这个页面</span></a>中部的三个图标，它们的高度和内边距是一样的。<br />
+采用css，重复原则非常容易达成。<br />
+12.<br />
+而对比原则的满足，则取决于页面的业务含义：哪部分应该大，哪部分应该小，哪部分颜色应该鲜明，哪部分颜色应该黯淡。<br />
+当从业务上确定了这些问题，通过css实现它们也是非常轻松的。</p>
+</div>
+</div>
+</body>
+</html>

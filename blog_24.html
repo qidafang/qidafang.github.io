@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>git和nagios</h1>
+<div><p>这个博客有较好的git教程，廖雪峰的官方网站http://www.liaoxuefeng.com/ 1.工作区-&gt;暂存区-&gt;版本库 2.本地库-&gt;远程库，相互传输就是push/pull 3.github上，下载压缩包目的是使用，fork目的是做出贡献 4.具体的讲做贡献的方式：将感兴趣的开源库fork成自己的远程库，将自己的远程库pull到自己的工作区，修改后push到自己的远程库，发起pull request请求合并到该开源项目 用oschina的git托管自己的网站，突然发现它的git挂了。己所不欲，勿施于人，当别人的服务出了差错，就该想想自己的程序也该写得更好，更何况，人家是免费的，而你是收钱的。 下午学习用nagios监控服务器。 参考资料：http://www.cnblogs.com/mchina/archive/2013/02/20/2883404.html 需要在一台linux上安装nagios，在其上进行配置，来远程监听服务器，如果是监听windows服务器，则需要在windows服务器上安装一个客户端，该客户端俗点理解就是linux服务器安插进来的奸细，通过它来向linux汇报情报。 在linux上安装nagios，参考上面提的资料，其中安apache和php的过程为了简单，改成用阿里云的一键安装lamp的包了，一键安装的方法在阿里云的帮助里可以找到，终于nagios配置好了，监听页面在http://123.57.134.186/nagios/，用户名zidafone。 其中配各种.cfg文件是最烦的，好在用/usr/local/nagios/bin/nagios -v /usr/local/nagios/etc/nagios.cfg检查的报错信息比较清楚，照着改就行，因为在linux下编辑文本不熟悉，ftp传到本地桌面，改完再ftp传回去，麻烦死了。 怎么服务器的内存占了98%啊&hellip;&hellip; 老板说了一个需求，说可以用kinect做，搜了一下，是体感游戏的编程，好像很有趣，有书可以买，可以研究研究。博客园的这个博客http://www.cnblogs.com/yangecnu/category/373950.html不错</p>
+</div>
+</div>
+</body>
+</html>

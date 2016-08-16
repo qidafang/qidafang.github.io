@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>使用node-webkit开发exe窗口程序</h1>
+<div><p><strong><span style="line-height:1.6em">====关于原生程序与壳中程序的议论begin====</span></strong></p>
+
+<p>在所有用户windows机器上都能直接跑的程序，如果不采用微软系的语言，如VB，C++，C#等，而采用Java，Python，Ruby之类的语言开发，最终的结果在体积上一定远大于微软系语言开发的程序，因为这些语言不具备直接生成exe执行文件的能力，都需要额外的中间层来提供环境，而这个中间层的体积往往不小。<br />
+最直观的道理就是，java程序只能在装有java虚拟机的机器上跑，如果你想突破这个限制，让它跑在任何一台机器上，那你必须把虚拟机打包在你的程序里一并提供给用户，最终还是改变不了要跑在虚拟机里的命运，唯一的好处是不用客户手动安装虚拟机了，其他语言同理。<br />
+这就是原生程序与加壳程序的区别，原生程序的优点在针对特定平台编译，体积小，速度快，而加壳程序因为必须把壳引入到用户机器中，体积臃肿，加壳程序的优点在可以用程序员自己舒服的语言开发，而且甚至可以跨平台开发&mdash;&mdash;发布的时候针对不同的平台加不同的壳就OK了，java的招牌式口号&ldquo;一次编写，处处运行&rdquo;前提正是其程序都是壳中程序，不同的壳（即java虚拟机）向上暴露的接口都是一样的，这样壳中程序可以在安稳的环境中编写。<br />
+在微软系的语言中.NET是个有意思的角色，严格讲它编写出的程序也是壳中程序，但这个壳是微软的&ldquo;官方壳&rdquo;，不管你用到的第一个使用.net壳的windows程序是什么，微软会引导你下载安装这个壳，之后一劳永逸，你再使用其他的壳中程序就不用再下载了。在这个角度上看，.net官方壳几乎与windows操作系统融为一体了，共同构成了应用程序的下层基础，把应用程序看做直接基于平台的原生程序也无妨了。<br />
+至于java开发的桌面程序，由于始终是小众奇葩的存在，而且不是微软官方支持的，如果你只发布官方程序，对非程序员的用户来说，下载安装jdk和配置环境变量实在是过于复杂，所以为了方便用户安装，你只得把虚拟机一并打包进发布的程序中，这造成程序的体积大大加大了，增加服务器磁盘占用、下载流量、下载时间、用户磁盘占用&mdash;&mdash;总之是缺点多多。其他语言如python、ruby等桌面程序的开发同理。<br />
+在手机开发中，用html5开发的手机应用可以一次开发、两次打包，分别成为安卓和苹果的APP，与之前提到的所有问题最大的不同在于，html5的界面程序可以不存放于用户本地，而存放于远端的服务器上，这带来的好处是减少文件大小和方便版本升级，而且web前端的人才实力和数量决定了用web技术做程序界面是个好主意。唯一的问题是，由于壳的存在，这种中转的方式必然导致程序性能不如原生程序，这个问题是一切壳中程序共有的，甚至.net也无法避免。只是，<span style="color:#FF0000">相对于壳带来的当然损失，程序员实力问题导致的性能差异是更主要的原因，在不是&ldquo;只要用壳就一定不行&rdquo;的情况下，程序员的架构能力和编码能力才是程序性能好坏的最大决定因素</span>，总结说就是壳中程序的性能输在了起跑线上，但还有机会治疗。<br />
+这两天学习的node-webkit技术，是使用javascript语言编写桌面程序的技术，容易想到想达成这个目的，必须解决两个问题，一是javascript在操作系统中的运行环境，二是javascript在操作系统中显示图形界面的解决方案。第一个问题的解决者是Node.js，而第二个问题的解决者是webkit，因此这项技术理所当然地命名为了node-webkit。<br />
+正如用html5做安卓苹果应用、用nodejs做服务器端开发一样，这项技术的出现带来的好处，一是让前端程序员有了做windows界面程序的可能性，二是让前端美工有了做windows界面的可能性。我个人感觉最有趣的一点，由于这个技术栈中没有任何技术需要编译，html和css是声明式语言，而javascript是解释型语言，这意味着可以随时在文件夹中点开源码，改变我的exe程序的内容。<br />
+可以把node-webkit提供的文件们看做一个exe程序模板，模板中镂空的部分即&ldquo;程序界面和逻辑&rdquo;需要程序员根据业务来填空，控制流还是在node-webkit手里，它在某些时候看看你的&ldquo;填空&rdquo;，说&ldquo;哦原来你要这样啊可以&rdquo;，然后执行下去。这是典型的&ldquo;框架&rdquo;的工作，它从你手里抢来了控制权，控制反转，你沦为编写局部代码的凡人。一切壳的职责都是如此，它给了你灵活自由的DIY发挥空间，但你只能在这个空间内施展才华。<br />
+你施展才华的方式，就是编写html文件和javascript代码。由于nodejs的存在，你除了编写浏览器脚本还能编写与操作系统和网络相关的脚本，以及你需要的一切。<span style="color:#FF0000">Node.js在服务端已经无所不能，你的桌面程序也无所不能，服务端能引用的库，你当然都可以使用。而你在B/S中能实现的前端样式和布局，由于webkit的存在，也都能在你的桌面程序中大展身手。</span><br />
+<strong>====关于原生程序与壳中程序的议论end====</strong></p>
+
+<p><strong>总之：</strong><br />
+上面说得有点啰嗦，总之node-webkit提供了足够的可能性，让熟练的前端工作者足以开发出自己想要的桌面程序。<br />
+上一个个人的练习程序：一个最简陋的文本编辑器，代码<a href="https://github.com/qidafang/427Editor_by_node_webkit">在这里</a>，使用方法为下载源码后放到node-webkit的文件夹里，运行nw.exe即可，nw.exe会找到package.json，按照其中的定义展示程序。程序界面如下：</p>
+
+<p><img alt="" src="http://img.zidafone.com/427studio/d5cd1fda-5ed5-48a9-a3a7-6471c792e06a.png" style="height:625px; width:806px" /></p>
+
+<p><strong>参考资料：</strong><br />
+<a href="https://nodejs.org/api/" target="_blank">Node.js的API</a>,介绍了官方模块的用法。<br />
+<a href="https://github.com/nwjs/nw.js" target="_blank">node-webkit的github地址</a><br />
+<a href="http://www.cnblogs.com/xuanhun/tag/node-webkit/" target="_blank">node-webkit的中文参考资料</a></p>
+
+<p><strong>Node.js入门书籍：</strong><br />
+《Node.js开发指南》<br />
+《Node.js实战》</p>
+</div>
+</div>
+</body>
+</html>

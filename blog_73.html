@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>OAuth2.0，以及关于rest的思考</h1>
+<div><p>阮一峰的博文<a href="http://www.ruanyifeng.com/blog/2014/05/oauth_2_0.html" target="_blank">《理解OAuth2.0》</a>非常好，简洁易懂，推荐。</p>
+
+<p>关于rest，阮一峰也有博文<a href="http://www.ruanyifeng.com/blog/2014/05/restful_api.html" target="_blank">《RESTful API设计指南》</a>和<a href="http://www.ruanyifeng.com/blog/2011/09/restful.html" target="_blank">《理解RESTful架构》</a>，都该一看。</p>
+
+<p>&nbsp;</p>
+
+<p>个人一点未必对的记录：</p>
+
+<ol style="list-style-type:decimal">
+	<li>
+	<p>原本有俩问题，一是每个网站都要注册麻烦，二是万一网站不靠谱密码会泄露。</p>
+	</li>
+	<li>
+	<p>另一件事是，如果网站需要访问母站的资源，必须让网站知道母站的密码，不放心。</p>
+	</li>
+	<li>
+	<p>OAuth2.0就是为了解决这些问题的，特点有三：</p>
+	</li>
+	<li>
+	<p>特点甲：网站能获取用户在母站的资源。</p>
+	</li>
+	<li>
+	<p>特点乙：网站获取用户在母站上的资源之前，必须经过用户的许可，用户需要输入用户名密码。</p>
+	</li>
+	<li>
+	<p>特点丙：用户输入的用户名密码，网站没机会得知。</p>
+	</li>
+	<li>
+	<p>四种方案的第一种也是推荐的一种略述：</p>
+	</li>
+	<li>
+	<p>第一步：网站引导浏览器到母站的授权登录页</p>
+	</li>
+	<li>
+	<p>第二步：母站验证用户名密码后给浏览器一个重定向地址，引导到网站的回调页，该重定向地址还包含一个母站产生的授权码参数。</p>
+	</li>
+	<li>
+	<p>第三步：网站对重定向地址的处理，是立刻用授权码参数联络母站。</p>
+	</li>
+	<li>
+	<p>第四步：母站根据授权码参数，给网站发放一个token。</p>
+	</li>
+	<li>
+	<p>第五步：这个token对网站至关重要，它是用户已成功登陆该网站的标志，要保存起来，如存到session里，同时网站程序将用户登陆状态设为已登录，这些事忙完后，给浏览器一个重定向地址，引导用户到&ldquo;你已经登陆了，该干嘛干嘛去&rdquo;的地址。</p>
+	</li>
+	<li>
+	<p>两个关键点：网站没机会知道用户名密码，用户不知道token。</p>
+	</li>
+	<li>
+	<p>以后用户的操作，网站根据session中存的token信息和母站交互即可。</p>
+	</li>
+</ol>
+
+<p>&nbsp;</p>
+
+<p>一些别的思考：</p>
+
+<ol style="list-style-type:decimal">
+	<li>
+	<p>鉴于社交平台的火爆情况，做网站只能第三方登录算了，彻底避免密码从这里泄露的危险。</p>
+	</li>
+	<li>
+	<p>母站分为认证服务器和资源服务器的话，认证服务器专门认证，当网站访问资源服务器，资源服务器也要请示认证服务器，把网站提交的token给认证服务器鉴定，是否已登录，如果已登录认证服务器给资源服务器该用户的id，资源服务器还要根据该id鉴定，登录用户是否与所请求的资源的拥有者一致。</p>
+	</li>
+	<li>
+	<p>资源服务器当然用rest的webservice是最好的。rest最适合的场景也就是这。真正能完美表现rest的精神。即纯名词、纯资源的世界。也就是把自己当做数据库的技术的一部分来使用，作为数据库的增删改查api的承担者。</p>
+	</li>
+	<li>
+	<p>如果功能超过增删改查而更丰富，标准rest就不堪胜任，所以真正的web程序只能叫rest风格，即url、http方法、返回码之类的运用风格与rest类似。</p>
+	</li>
+	<li>
+	<p>但绝大多数人没搞懂标准rest与rest风格的区别。</p>
+	</li>
+	<li>
+	<p>区别一：场景。标准rest适用且仅适用于增删改查式的webservice，即当数据库使；rest风格则适用于一切web场景，浏览类or交互类均可。</p>
+	</li>
+	<li>
+	<p>区别二：用法。标准rest严格遵照rest的概念和约束，不可以进行发挥或通融；rest风格则按需求而定，运用之妙存乎一心。</p>
+	</li>
+	<li>
+	<p>网络上最无聊和糊涂的人，乐于用标准rest来要求适合使用rest风格的场景，教条，僵化，生搬硬套，挥舞大棒打人。</p>
+	&lt;/</li>
+</ol>
+</div>
+</div>
+</body>
+</html>

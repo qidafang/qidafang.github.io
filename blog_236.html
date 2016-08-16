@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>初学android的第一个习作</h1>
+<div><p><a href="http://git.oschina.net/zidafone/android_studio_427">项目源码在这里</a>，因为github上传速度太差，传到了oschina的git托管上。</p>
+
+<p><br />
+<strong>1.项目结构及技术点</strong></p>
+
+<p><a href="http://git.oschina.net/zidafone/android_studio_427/blob/master/src/com/zidafone/studio427/MainActivity.java">主页面</a><br />
+使用FragmentTabHost，5个标签各对应一个fragment，一个fragment即是一个具体的标签页。如&ldquo;博客&rdquo;标签对应的标签页为BlogFragment。</p>
+
+<p><a href="http://git.oschina.net/zidafone/android_studio_427/blob/master/src/com/zidafone/studio427/fragment/BlogFragment.java">博客标签页</a><br />
+技术点：ListView的使用<br />
+技术点：通过Intent启动一个Activity<br />
+技术点：使用httpClient和JSON包访问rest api<br />
+<a href="http://git.oschina.net/zidafone/android_studio_427/blob/master/src/com/zidafone/studio427/activity/BlogDetailActivity.java">博客显示页</a><br />
+技术点：使用webview展示网页，网页的html是编程指定的字符串</p>
+
+<p><a href="http://git.oschina.net/zidafone/android_studio_427/blob/master/src/com/zidafone/studio427/fragment/FavouriteFragment.java">收藏标签页</a><br />
+<a href="http://git.oschina.net/zidafone/android_studio_427/blob/master/src/com/zidafone/studio427/activity/WebViewActivity.java">收藏显示页</a><br />
+技术点：使用webview展示页面，指定网页的url来加载</p>
+
+<p><a href="http://git.oschina.net/zidafone/android_studio_427/blob/master/src/com/zidafone/studio427/fragment/BookFragment.java">书单标签页</a></p>
+
+<p><a href="http://git.oschina.net/zidafone/android_studio_427/blob/master/src/com/zidafone/studio427/fragment/NoteFragment.java">便签标签页</a><br />
+技术点：本地数据库的查改操作<br />
+技术点：<a href="http://git.oschina.net/zidafone/android_studio_427/blob/master/src/com/zidafone/studio427/adapter/NoteAdapter.java">ListView的自定义adapter</a><br />
+技术点：<a href="http://git.oschina.net/zidafone/android_studio_427/blob/master/res/layout/item_note.xml">相对布局</a><br />
+<a href="http://git.oschina.net/zidafone/android_studio_427/blob/master/src/com/zidafone/studio427/activity/NoteFormActivity.java">便签表单页</a><br />
+技术点：本地数据库的增删操作<br />
+技术点：系统服务的调用</p>
+
+<p><a href="http://git.oschina.net/zidafone/android_studio_427/blob/master/src/com/zidafone/studio427/fragment/ManageFragment.java">管理标签页</a><br />
+技术点：<a href="http://git.oschina.net/zidafone/android_studio_427/blob/master/src/com/zidafone/studio427/activity/LoginActivity.java">登录页使用本地配置文件保存用户名密码</a><br />
+技术点：<a href="http://git.oschina.net/zidafone/android_studio_427/blob/master/res/layout/activity_login.xml">登录页的表格布局</a><br />
+<a href="http://git.oschina.net/zidafone/android_studio_427/blob/master/src/com/zidafone/studio427/activity/manage/FavoriteListActivity.java">收藏管理列表页</a><br />
+技术点：访问rest api的删除操作<br />
+<a href="http://git.oschina.net/zidafone/android_studio_427/blob/master/src/com/zidafone/studio427/activity/manage/FavoriteFormActivity.java">收藏管理表单页</a><br />
+技术点：访问rest api的增改操作</p>
+
+<p><br />
+<strong>2.关于技术点的体会</strong></p>
+
+<p>布局文件是与调用者无关的一个单纯的xml文件，代表一个控件树，类似写在&lt;script type=&quot;text/plain&quot;&gt;标签中的html片段，只是一段静态文本，被动地等待被调用。调用者会根据这段xml文本中声明的树状结构，在程序中生成控件对象树，控件对象树才是与用户打交道的。<br />
+布局方式最常用的是线性布局，可以跨屏幕分辨率良好显示，纵向线性布局嵌套横向嵌套布局，则很像网页的div布局，先从上到下，再从左到右。表格布局很像网页中的table布局，确保同列元素的对齐。相对布局对应的就是网页中脱离文档流的元素，与之不同的是它可以要求控件相对一个兄弟节点。</p>
+
+<p>FragmentTabHost实现的标签页效果作为主页面，其各个标签页都是Fragment，在标签页中进行操作显示的新页面，则是Activity。新页面操作完后在代码中关闭，或者在新页面时用户点击后退，都会让该新页面出栈，返回到上一个页面，如果关闭的页面是表单页，其上一个页面是列表页，则列表页需要在重新显示的时候刷新数据，使用Activity生命周期中的方法。<br />
+使用ListView显示列表页，可以使用原始的Adapter，每行显示一段字符串，如果要显示更丰富的信息，需要自定义Adapter和自定义行内布局样式，Adapter使用实体类名作为布局参数，在响应函数里方便地使用下标获得实体做想做的一切。<br />
+使用WebView显示网页，可以自己指定网页内容字符串，或者指定一个url让WebView直接加载，前者就像xxDiv.innerHTML=&quot;xx&quot;，后者则像xxIFrame.src=&quot;xx&quot;。相比之下，前者比后者更细腻一点，可以编程决定字符串的内容。当然，能想到的最细腻的方式，是使用Jsoup库控制dom节点，最后产生html字符串给WebView加载。</p>
+
+<p>本地数据，除了最暴力的文件读写外，本地配置文件和本地数据库是可用的选择。前者适合存储一些类似全局变量的数据，但是是持久化的（非持久化的存在public static就好了，例如登录时的token，也可以存在全局上下文里）；后者适合存储有类和实体性质的数据，因为可以写SQL，操作方式无限类似jdbc。<br />
+远程数据，rest api的访问采用自带的httpClient和JSON库可以方便实现，自己封装了一个<a href="http://git.oschina.net/zidafone/android_studio_427/blob/master/src/com/zidafone/studio427/api/RestHelper.java">简单的工具类</a>，参数非常类似jquery.post等方法，接受路径、参数、成功失败两个callback函数，其中失败指的是服务器返回4xx或5xx状态码，而不是程序中抛出Exception。<br />
+关于线程和回调，java web程序员可能不太习惯，在ajax成功后修改页面显示是自然而然的，但是在安卓中，耗时操作如访问api的请求必须放到新线程进行，而新线程不允许修改UI，必须在主线程声明一个Handler，新线程调用该Handler的sendMessage，可以把这个Handler看做回调函数。</p>
+
+<p><br />
+<strong>3.自学感想和下周任务</strong></p>
+
+<p><strong>在java web的自学时，使用servlet和jdbc实现了增删改查的那天，对自己是个质变，这意味着之后的任何进展，都是在这天的基础上的优化和封装。因为这天的成绩意味着三点，一是具备了对UI的控制力，二是打通了与数据库之间的通道，三是掌握了重要的原生API。（最重要的是，有了控制感和信心）</strong>有了这个底子，日后的各种类库和框架，只会越来越简单。<br />
+所以这周的进展是比较满意的，虽然页面依然很丑，数据连接方法尚未重构到最优，很多参数和方法还不了解。但达到了战略目的：以原生API实现增删改查的功能，以及对最常用的技术进行摸底。目前项目中没有引入任何第三方库，下个星期的任务，就是把玩最流行的最好的第三方库，通过使用之和阅读源码，来反过来增强对基础API的了解。我java web的学习就是这么过来的。<br />
+下个星期的周末，会在github上有个思而勤工作室app2.0版的源码，其中包含对一些好用的第三方库的使用的代码。</p>
+
+<p>上个图？嗯，欢迎点击战国那篇&mdash;&mdash;</p>
+
+<p><img alt="" src="http://img.zidafone.com/427studio/a00fb4ef-c3a5-445f-ba97-67372f2cd39b.png" style="height:1280px; width:720px" /></p>
+
+<p>apk安装包<a href="http://test1.zidafone.com/studio427.apk">在这里</a>下载。</p>
+</div>
+</div>
+</body>
+</html>

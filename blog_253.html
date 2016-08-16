@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>dota玩家与英雄契合度的计算器，python语言scrapy爬虫的使用</h1>
+<div><p>演示地址<a href="http://page.zidafone.com/demos/dota-player/" target="_blank">在这里</a>，代码<a href="https://github.com/qidafang/dota_player_hero_calculate" target="_blank">在这里</a>。</p>
+
+<p>一个dota玩家与英雄契合度的计算器（<a href="http://page.zidafone.com/demos/dota-player/" style="box-sizing: border-box; color: rgb(64, 120, 192); text-decoration: none; background-color: transparent;">查看效果</a>），包括两部分代码：</p>
+
+<p><strong>1.python的scrapy爬虫，总体思路是page-&gt;model-&gt;result，从网页中提取数据，组成有意义的数据结构，再拿这数据结构做点什么。</strong></p>
+
+<p>在这个项目中，爬虫的用处是从<a href="http://db.dota.uuu9.com/" style="box-sizing: border-box; color: rgb(64, 120, 192); text-decoration: none; background-color: transparent;">游久网dota数据库</a>上抓取dota英雄和物品的数据和照片存到本地磁盘，数据存为json格式，方便在网页应用中直接使用。</p>
+
+<p><strong>2.网页应用，使用dota英雄数据、自己编写的小伙伴们的特征数据、自己编写的契合度计算公式，来计算对每个小伙伴来说最契合他的英雄。</strong></p>
+
+<p>算法主要用到的英雄数据是【英雄标签】和【英雄事务评分】，前者说明了该英雄是近战还是远程，主属性是什么，是否能打辅助、Gank、后期等，后者则是对该英雄在Dps、Gank、Support等方面的能力的打分。</p>
+
+<p>这两个数据都来自网络，抓取到本地之后做了一些调整，例如将原来的&ldquo;眩晕&rdquo;&ldquo;控制&rdquo;两个标签改为了&ldquo;小控&rdquo;&ldquo;小团控&rdquo;&ldquo;团控&rdquo;三个标签，&ldquo;后期&rdquo;标签变为&ldquo;后期&rdquo;&ldquo;大后期&rdquo;两个标签，增加了&ldquo;不稳定&rdquo;&ldquo;多线&rdquo;&ldquo;特殊&rdquo;等特点， 这让计算出的契合度更准确了一点，当然这也远远不是尽善尽美，例如同样是减速，冰女和暗牧的减速当然不同，但还没做更进一步的细分。</p>
+
+<p>另外，对英雄的标签也进行了一些修改和补充，这个工作也还没做完。</p>
+
+<p>我都是边计算契合度，边发现需要改的地方，改的目的就是使计算出的结果与实际情况相符，但又不是硬去凑这个数字。</p>
+
+<p>&nbsp;</p>
+
+<h2><strong>说说技术吧</strong></h2>
+
+<p>只有爬虫值得一说，网页那部分只是做实验和玩儿的，没太多可说，算法自行参考代码就好。</p>
+
+<p>scrapy爬虫，非常强大，基本的需求都覆盖到了，逻辑流程也已经定义好了，只需要程序员在特定的点编写特定角色组件的定义代码。 这种方式很熟悉，每个框架都是这么玩的，控制流是定义好的，而且在它的手里，只有涉及业务的地方需要程序员给出自己的实现。</p>
+
+<p>这个<a href="http://scrapy-chs.readthedocs.org/zh_CN/latest/index.html" style="box-sizing: border-box; color: rgb(64, 120, 192); text-decoration: none; background-color: transparent;">中文文档</a>还是不错的，跟着其中的教程写helloworld，跑通了之后一点点改你的helloworld，遇到困难的地方就查文档，或者百度一下。</p>
+
+<p><strong>关键类：scrapy爬虫类，item模型类，pipeline处理器类。</strong></p>
+
+<blockquote>
+<p>爬虫组件从指定的url获取html字符串，并解析dom，从中采集信息，构造item对象</p>
+
+<p>框架将构造好的item对象交给处理器组件，处理器组件根据item对象内容，进行处理</p>
+</blockquote>
+
+<p>在本例中就是：</p>
+
+<blockquote>
+<p>爬虫从dota网站抓取html字符串，解析dom获得英雄的名称、图片路径、英雄详细页面url，以及物品的名称、图片路径</p>
+
+<p>爬虫又从英雄详细页面抓取html字符串，解析dom获得英雄的标签和各种数据</p>
+
+<p>每个英雄的名称、图片路径、标签、各种数据构成英雄模型对象</p>
+
+<p>每个物品的名称、图片路径构成物品模型对象</p>
+
+<p>保存图片处理器将英雄图片和物品图片存到本地磁盘，并根据英雄名称、物品名称，进行重命名（重命名之前是无意义的名称）</p>
+
+<p>保存英雄数据处理器将英雄数据存到本地磁盘的一个文本文件中，并组成json格式 7 保存物品数据处理器将物品数据存到本地磁盘的一个文本文件中，并组成json格式</p>
+</blockquote>
+
+<p>显然前2步是抓取和解析，其后两步是做成模型对象，最后三步是处理模型对象。 顺序非常清楚。</p>
+
+<p>由于我python不熟，都是边写代码边查，基本语法，库的使用，可能有的地方写得比较蠢，请不要在意这些细节。</p>
+
+<p>&nbsp;</p>
+
+<h2><strong>英雄数据的格式</strong></h2>
+
+<blockquote>
+<pre>
+<code>    {
+      &quot;blue_add&quot;: 1.75, <span style="color:#008000">//智力成长（蓝色的是智力&hellip;&hellip;）</span>
+      &quot;gank&quot;: 7.2, <span style="color:#008000">//gank能力评分</span>
+      &quot;speed&quot;: 315, <span style="color:#008000">//初始速度</span>
+      &quot;id&quot;: &quot;132&quot;, <span style="color:#008000">//英雄id</span>
+      &quot;blue&quot;: 19, <span style="color:#008000">//初始智力</span>
+      &quot;armor&quot;: 7.22, <span style="color:#008000">//初始护甲</span>
+      &quot;excute_after&quot;: 0.51, <span style="color:#008000">//施法后摇</span>
+      &quot;support&quot;: 5.1, <span style="color:#008000">//support能力评分</span>
+      &quot;green_add&quot;: 3.2, <span style="color:#008000">//敏捷成长</span>
+      &quot;attack_after&quot;: 0.6, <span style="color:#008000">//攻击后摇</span>
+      &quot;ballistic&quot;: 0, <span style="color:#008000">//弹道速度</span>
+      &quot;war&quot;: 8.1, <span style="color:#008000">//团战能力评分</span>
+      &quot;red&quot;: 15, <span style="color:#008000">//初始力量（红色）</span>
+      &quot;tags&quot;: &quot;敏捷,近战,后期,减速&quot;,<span style="color:#008000">//标签们 </span>
+      &quot;hp&quot;: 435, <span style="color:#008000">//初始生命</span>
+      &quot;attack_before&quot;: 0.3,<span style="color:#008000">//攻击前摇 </span>
+      &quot;attack_max&quot;: 54, <span style="color:#008000">//初始攻击上限</span>
+      &quot;name&quot;: &quot;恐怖利刃&quot;, <span style="color:#008000">//英雄名称</span>
+      &quot;dps&quot;: 8.9, <span style="color:#008000">//dps能力评分</span>
+      &quot;meat&quot;: 6.0, <span style="color:#008000">//肉盾能力评分（meat哈哈）</span>
+      &quot;attack_min&quot;: 48, <span style="color:#008000">//初始攻击下限</span>
+      &quot;red_add&quot;: 1.9, <span style="color:#008000">//力量成长</span>
+      &quot;excute_before&quot;: 0.5, <span style="color:#008000">//施法前摇</span>
+      &quot;range&quot;: 128, <span style="color:#008000">//攻击距离</span>
+      &quot;green&quot;: 22, <span style="color:#008000">//初始敏捷（绿色）</span>
+      &quot;mp&quot;: 247, <span style="color:#008000">//初始魔法</span>
+      &quot;push&quot;: 8.5<span style="color:#008000">//push能力评分</span>
+    }
+</code></pre>
+</blockquote>
+
+<p>（英语水平见笑啦）</p>
+
+<p>来个图&mdash;&mdash;</p>
+
+<p><img alt="" src="http://img.zidafone.com/427studio/db1b2b08-cc6c-492b-8c28-db5188dbb4f5.png" style="height:597px; line-height:20.7999992370605px; width:679px" /></p>
+</div>
+</div>
+</body>
+</html>

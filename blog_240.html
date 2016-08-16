@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>iOS，破冰！</h1>
+<div><p><span style="color:rgb(0, 0, 0); font-family:hannotatesc-w5; font-size:12px">iOS，破冰！</span></p>
+
+<div>今年学的技术，以iOS自学为成本最高昂：花几千块买了台mac mini电脑，又前后买了6本书籍，从头到尾是30天时间，当然，这30天里穿插了dota、生病、出行、读《布局天下》、楚汉历史、《基督山伯爵》，这样算来，花费的时间倒不多。但到现在才达到&ldquo;破冰&rdquo;的地步，可见是很艰难的。</div>
+
+<div>全新的操作系统，全新的语言（c，obj-c，swift），全新的ide：结构，热键，调试方式都与用惯了的eclipse不同。所以学ios和学android比，难度大了不少，而且不是技术含量的难度，而是外围的问题需要解决，这就让人很压抑和憋气，例如下载xcode，刚好是在xcode爆出病毒的时候，国内网盘下载全都无效，从官网下载却经常莫名其妙地中断，并且不能继续。而之前为了学iOS花200多块(笑)买的iphone4，又不能用于调试，因为xcode支持的最低版本是iphone4s。书籍的源码，又常常因为xcode更新太快而不能使用。这些事情都很荒唐又无谓，但很耽误事情和影响心情&mdash;&mdash;尤其是对于没有收入、需要跟老妈借钱的人来说。</div>
+
+<div>好在这些问题都过去了，或者说习惯了。书籍的选择，最后最满意的还是关东升的《iOS开发指南》，这种培训班级别的书籍或许会被人鄙视，但对于&ldquo;想快速学一本新语言&rdquo;的人来说，它讲的都是必备的东西。换句话说，这本书最契合我当时的&ldquo;知识起点&rdquo;和&ldquo;知识终点&rdquo;：我已经会的东西，它都不讲；我暂时不需要会的东西，它也不讲；讲的都是我不会又需要会的知识。</div>
+
+<div>在这本书之前读的《iOS8应用开发入门经典》，我的评价是：有用的东西讲了不少，但最让人感觉爽快的点都没讲。比如讲数据存储，它既不讲本地数据库的存储，也不讲远程rest交互，这就让人感觉好不痛快。而且，在最前面压抑了好几章不写helloworld，先讲预备知识，这虽然让人感觉冷静稳健，但毕竟憋得慌。</div>
+
+<div>至于再之前读的《objective-c编程》和《iOS编程》这两本书，在决定用纯swift编程后，有点后悔花时间读这俩书了，但有的书的意义不在于对你有帮助，而在于消灭你的不安，例如读了《objective-c编程》</div>
+
+<div>之后，至少在不得不接触objective-c代码的时候，不用过于因陌生而恐惧。至于《iOS编程》，个人很不喜欢，因为作者的存在感过强了，他不是根据读者的需要谋篇布局，而是以自己的意识流为线索，这显得很自以为是、自说自话。</div>
+
+<div>另外两本《iOS开发进阶》和《Swifter》，是国内大牛写的，目前我的阶段还用不上，也没法评价好坏，只能说入门阶段不用急着买。对这两本书的评价等我再学得深入点儿再进行。</div>
+
+<div>&nbsp;</div>
+
+<div>入门时候需要的其实很简单：</div>
+
+<div>1)ide的基本操作，例如怎样新建一个项目，怎样调试它，怎样新建一个类，怎样使用新建的类等等。</div>
+
+<div>2)单界面功能的实现，包括把控件绑定到controller的属性上，控件被触发时调用controller的方法。这两点iOS的开发环境直接提供了解决方案，通过拖拽就能实现绑定。这就使得例如&ldquo;有一个输入框和一个按钮，当点击按钮时将按钮文字设为输入框的文字&rdquo;这样的功能容易实现。</div>
+
+<div>实际有界面的程序都有这个需求，即程序要有个变量保持控件，控件被触发时调用程序中定义的某个方法，方法体里可以通过保持控件的那个变量对控件属性进行变化。例如网页中的&mdash;&mdash;</div>
+
+<div>var $btn = $(&ldquo;#theBtn&rdquo;);</div>
+
+<div>$btn.click(function(){</div>
+
+<div>&nbsp; &nbsp; $btn.text(&quot;xx&quot;);</div>
+
+<div>});</div>
+
+<div>或者android中的在初始化activity时，通过findViewById获得控件，强制转型后赋给该activity的实例属性，再指定该控件触发时的回调函数（使用匿名内部类），该函数内部使用保存控件对象的实例属性来改变控件的属性。这些手工操作很讨厌，所以有的ioc框架实现了注解方式指定&ldquo;控件绑定&rdquo;和&ldquo;触发回调&rdquo;。</div>
+
+<div>&ldquo;控件绑定&rdquo;和&ldquo;触发回调&rdquo;，在iOS中现在是自带的功能了，&ldquo;界面&rdquo;和&quot;controller类&quot;的对应关系，也被强制规定了。在网页中的mvvm框架的使用时，&quot;某个页面片段&quot;与&quot;某个js对象&quot;的对应是约定的，但理论上网页还是可以使用基本js方式进行功能实现，这就有了代码混乱的危险。iOS通过强制规定的方式，一了百了地消除了这个危险。</div>
+
+<div>&ldquo;约定&rdquo;成为&ldquo;规定&rdquo;，这不是剥夺程序员的自由权利，因为&ldquo;约定&rdquo;已是久经检验的最佳实践，在此之外的&ldquo;自由&rdquo;是散漫无理、毫无意义的。</div>
+
+<div>3)从单界面到多界面，在网页中，程序中控制界面跳转是request.getRequestDispatcher.forward之类的方法，在android中，则是使用intent，要传递的数据在intent中赋值，在目标activity中从intent中取值，这类似servlet中的request.setAttribute。到了iOS中，打开一个新界面与android类似，也是创建一个新的界面对象并将其压入栈顶，到要关闭这个界面时将这个对象出栈。但是传值的需求由于没有intent这个载体，只能将值直接赋予目标controller的属性。就是说，相比android，iOS的界面初始化函数，获取传来的参数，不再是从&ldquo;方法入参&rdquo;中获取，而是从&ldquo;实例变量&rdquo;中获取，这有点像java web中spring mvc框架和struts2框架的区别，个人感觉iOS的做法（和struts2一样）是不合适的。</div>
+
+<div>参数从入参中取得，是天经地义的，实例变量不该是放置参数的地方。</div>
+
+<div>除了这种手动跳转、新界面入栈的方式之外，iOS还将常见的其他多场景关系做了自带实现，如tab选项卡、nav导航方式的跳转，这种预设类似&ldquo;语法糖&rdquo;，没它也可以，但有它就方便许多。将&ldquo;经过实践证明确实需要的&rdquo;功能作为基础库的一部分提供，是所有语言进步的当然方式，就像json等库成为android基础库的一部分一样。</div>
+
+<div>4)连接到数据源。与html5和android一样，iOS也可以与本地的sqlite数据库交互，这种&ldquo;本地持久化&rdquo;的需求当然是广泛存在的。同时，还有些需求，不需要关系型数据库这样沉重的方式，只需要以键值对的方式存储，这在html5（5之前就是cookie的用武之地）、android、iOS当然也都提供了支持。这两种支持就像服务器端开发提供关系型数据库和nosql数据库一样，各有各的用处。</div>
+
+<div>除了本地持久化，与服务器的交互当然也是必不可少的，交互方式rest还是最流行的。android和iOS提供的方案都很好用，反而是天经地义使用json的网页存在个跨域的问题，这是个挺搞笑的事情：我提供一个rest接口，谁的客户端都可以使用，我自己网站的js也可以访问，但别人网站的js不行&mdash;&mdash;他们如果想访问，就要解决跨域问题。</div>
+
+<div>&nbsp;</div>
+
+<div>以上四点解决了，可以说&rdquo;iOS已经破冰了&ldquo;，实际它们对应的还是servlet/jdbc/ajax三个技术，即表现层问题、持久层问题、异构系统交互问题这三大问题，任何技术，把这三个问题解决了，其他的都是&ldquo;锦上添花&rdquo;的问题。</div>
+
+<div>但为了解决这几个问题，足足花了我一个月的时间！这既有熟悉新语言、新环境的成本，也有iOS和swift演进太快，书籍和网络资料容易过时的原因。</div>
+
+<div>那么，从明天开始，开始开发&ldquo;思而勤工作室&rdquo;的ios版客户端，就像开发&ldquo;思而勤工作室&rdquo;的android客户端一样，我希望当它开发完毕之后，能对iOS开发更有信心。</div>
+</div>
+</div>
+</body>
+</html>

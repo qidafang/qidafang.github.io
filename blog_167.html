@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>《大型网站技术改进》系列博文学习</h1>
+<div><p>这个<a href="http://www.cnblogs.com/sharpxiajun/category/325369.html">系列博文</a>的<a href="http://www.cnblogs.com/sharpxiajun/">博主的博客</a>当然要加到<a href="http://427studio.net/blog/1/favorite">收藏夹</a>里了。<br />
+用了几个小时，喝了不知几大杯水，从1通读到21，感想就是：累死我了，躺躺去。<br />
+还有：干货太足了，每个方面都值得学习。</p>
+
+<p><strong>一句话总结：对难以承受的强度，能不做就不做（在更前面的层做缓存），如果一定要做就拉小伙伴一起做（集群），总之不难为自己（垂直扩容总有瓶颈）。</strong></p>
+
+<p><br />
+下面是我记的提纲：<br />
+<a href="http://www.cnblogs.com/sharpxiajun/p/4237704.html">第一篇</a><br />
+1.多服务器-&gt;单数据库<br />
+2.session问题的解决：session服务器&gt;session粘滞&gt;session拷贝<br />
+*思而注：此处大于号意为&ldquo;优于&rdquo;，当然所谓优于指一般情况，没有银弹<br />
+3.功能性网站读&lt;=写；浏览型网站读&gt;&gt;写<br />
+4.几个架构思路：读写分离，缓存，搜索引擎<br />
+<a href="http://www.cnblogs.com/sharpxiajun/p/4240419.html">第二篇</a><br />
+1.传统分布式有容灾，memcached无容灾，所谓容灾就是保存多份<br />
+2.缓存意义在内存快于硬盘，搜索意义在随机访问能力<br />
+3.垂直拆分：大表拿出来<br />
+4.水平拆分：大表变多表<br />
+<a href="http://www.cnblogs.com/sharpxiajun/p/4251714.html">第三篇</a><br />
+1.简单技术优先于复杂技术<br />
+2.要数据库的存储不要计算，用其长处，不用其余<br />
+3.垂直拆分问题解决办法<br />
+1)join-&gt;单独的数据层服务<br />
+2)事务-&gt;业务解决优于技术解决<br />
+<a href="http://www.cnblogs.com/sharpxiajun/p/4262983.html">第四篇</a><br />
+1.水平拆分问题解决<br />
+1)主键：单字段，不同步长/不同起始/哈希求余(UUID不可取)<br />
+2)查询：见下文<br />
+3)外键：不要外键<br />
+4)新增：基于主键<br />
+<a href="http://www.cnblogs.com/sharpxiajun/p/4265853.html">第五篇</a><br />
+1.演进路线：单库-&gt;读写分离-&gt;垂直拆分-&gt;水平拆分，缓存和搜索引擎随时切入<br />
+2.读写分离目的在读和写互不影响，可以分开针对优化<br />
+3.业务手段优先于技术手段<br />
+4.新技术手段优先于冒险改造老的<br />
+<a href="http://www.cnblogs.com/sharpxiajun/p/4271353.html">第六篇</a><br />
+1.先拆读写关系，分别对它们优化<br />
+2.数据库连接数也是宝贵资源<br />
+3.狭义水平拆分，各表被使用方法相同；广义水平拆分，各表被不同业务使用<br />
+4.狭义水平拆分场景：数据量巨大<br />
+<a href="http://www.cnblogs.com/sharpxiajun/p/4279946.html">第七篇</a><br />
+1.硬件重要<br />
+2.水平扩展重视平均<br />
+<a href="http://www.cnblogs.com/sharpxiajun/p/4280337.html">第八篇</a><br />
+1.容灾非常关键<br />
+（===至此存储部分完结，以下web部分）<br />
+<a href="http://www.cnblogs.com/sharpxiajun/p/4282789.html">第九篇</a><br />
+1.最佳优化手段：缓存<br />
+2.apache的esi:动静结合<br />
+3.js模板意义：极度静，唯数据动<br />
+<a href="http://www.cnblogs.com/sharpxiajun/p/4285085.html">第十篇</a><br />
+1.动静分离意义：静的可以更接近浏览器<br />
+2.动静分离前推步骤：<br />
+1)动态服务器位置：java模板语言的布局功能-&gt;<br />
+2)静态服务器位置：apache的SSI和ESI-&gt;<br />
+3)浏览器位置：javascript mvc<br />
+<a href="http://www.cnblogs.com/sharpxiajun/p/4287011.html">第十一篇</a><br />
+1.决定哪些属于静哪些属于动至关重要<br />
+2.CDN的意义：缩短距离<br />
+<a href="http://www.cnblogs.com/sharpxiajun/p/4289298.html">第十二篇</a><br />
+1.ESI带缓存能力<br />
+<a href="http://www.cnblogs.com/sharpxiajun/p/4291003.html">第十三篇</a><br />
+1.CSI缺点：不利爬虫，速度未必快<br />
+2.同步异步混搭非常流行<br />
+3.用好浏览器缓存<br />
+<a href="http://www.cnblogs.com/sharpxiajun/p/4300441.html">第十四篇</a><br />
+1.控制台在前端比在后端合理<br />
+<a href="http://www.cnblogs.com/sharpxiajun/p/4304526.html">第十五篇</a><br />
+1.服务端只提供数据<br />
+2.单页面应用问题：无URL，解决方法为锚用作路由<br />
+3.后端只负责数据，存在安全问题、业务复杂用js较难写问题<br />
+<a href="http://www.cnblogs.com/sharpxiajun/p/4307203.html">第十六篇</a><br />
+1.前后端分离不等于浏览器、服务器的划分，重点是引入nodejs（未理解）<br />
+<a href="http://www.cnblogs.com/sharpxiajun/p/4307739.html">第十七篇</a><br />
+1.控制器分前后两个，js控制器负责逻辑，后端控制器负责API<br />
+<a href="http://www.cnblogs.com/sharpxiajun/p/4309976.html">第十八篇</a><br />
+1.反向代理的意义<br />
+1)隐藏应用服务器<br />
+2)负载均衡<br />
+3)应用服务器可伸缩<br />
+4)缓存静态资源<br />
+<a href="http://www.cnblogs.com/sharpxiajun/p/4314387.html">第十九篇</a><br />
+1.前端优化方案<br />
+*思而注：参看雅虎的14条军规，及书籍《构建高性能web站点》，可以用firefox的yslow插件查看满足原则情况<br />
+2.服务端异步技术，即采用消息中间件<br />
+<a href="http://www.cnblogs.com/sharpxiajun/p/4316840.html">第二十篇</a><br />
+*思而注：我笔记写的是略&hellip;&hellip;继续前一篇内容<br />
+<a href="http://www.cnblogs.com/sharpxiajun/p/4319444.html">第二十一篇</a><br />
+1.缓存的静态文件要更新可以更新版本号</p>
+
+<p>&nbsp;</p>
+
+<p>呼呼呼&hellip;&hellip;光把记到纸上的提纲敲到屏幕里就畅爽不已，可见作者的水平实为我辈楷模。<br />
+什么叫全栈？这就叫全栈。</p>
+
+<p><strong>一点心得：</strong><br />
+1.数据库注重读写分离，应用注重动静分离<br />
+2.读写分离要点在专注，压力过大，分而治之<br />
+3.动静分离要点在距离，常变读取，少变缓存<br />
+4.健壮性要点在备胎，主力挂了有人补上<br />
+5.重复第一点：当活儿多得干不过来，思路一是分而治之，二是有必要吗？减轻的都是单点的任务量<br />
+&mdash;&mdash;这不止是架构的思路，也是人生的思路。</p>
+
+<p>为学，日益；为道，日损。&mdash;&mdash;《道德经》</p>
+</div>
+</div>
+</body>
+</html>

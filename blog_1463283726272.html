@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>objective-c</h1>
+<div><p>遇到新语言，尽管陌生东西很多，其实万变不离其宗，任何一种新语言，无非几大看点：</p>
+
+<p>1.基础语法 2.基础库 3.基础组件 4.基础切换 5.语法糖之类 6.常用库</p>
+
+<ol>
+<li>基础语法包括数据类型、选择循环、面向对象</li>
+<li>基础库包括字符串、日期、容器</li>
+<li>基础组件包括单页程序中使用的，最常见的即文本框、按钮、标签、图片</li>
+<li>基础切换指多页程序中各个页的协作方式：怎样跳转，怎样传数据</li>
+<li>语法糖之类指超出朴素c/java等语言的方便语法，如lambda表达式等</li>
+<li>常用库指实际生产中最常用的库，如现在rest交互流行，则http请求，json解析是特别常用的，另外对app来说还有最流行的第三方组件，如下拉刷新，日期选择（对android来说），对传统bs程序来说可能包括jquery这种页面库，apache-commons这种工具库，等等。</li>
+</ol>
+
+<p>对objective-c和swift来说，最大特点在于有个存在感极强的ide即xcode，这算个额外的学习点。</p>
+
+<p>除了这些语法知识外，再知道了项目的基本组织方式，基本就大功告成了。
+对app来说组织方式太简单了：
+1.单个页面，天然的mvc，页面对象中既持有页面组件(v)，又持有页面数据(m)，又担负响应操作的责任(action->m, m->v)。
+2.多个页面，几种固定的切换方式（普通弹出、选项卡、导航），及数据在父页面和子页面之间的双向传输
+所以苹果人直接把这些万年不变的东西设到语言内部了，在storyboard中拉拉扯扯就完成页面间的协作，简单，侵入性强，对程序员来说，可能不满意这种“被反转”的夺权行为（就像以前用extjs时的不爽一样），所以尽量“去storyboard化”，尽量采用编程方式实现，找回自己习惯的虽然麻烦了但是控制力更强了的编程体验。</p>
+
+<h2>1.基础语法</h2>
+
+<p>数据类型
+选择循环
+面向对象</p>
+
+<h2>2.基础库</h2>
+
+<p>NSString
+     字符串字面量@“xx"
+     日志输出NSLog(@“%@ is best!”, @“guo");
+     stringWithFormat
+NSDate
+     [NSDate date]
+     NSDate *now = [[NSDate alloc] init];
+NSArray
+    NSArray *dateList = [NSArray arrayWithObjects:now, tomorrow, yesterday, nil];
+    [dateList objectAtIndex:0]
+    [dateList count]
+    NSMutableArray * dateList = [NSMutableArray array];
+    [dateList addObject:now]
+    [dateList insertObject: yesterday atIndex:0]
+NSDictionary
+    NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
+    [dict setObject:person forKey:@“k”];
+    [dict objectForKey:@“k”];</p>
+
+<h2>3.基础组件</h2>
+
+<p>UIView等
+    UIButton
+    UITextField
+    UITextView
+    UILabel
+    UIImageView
+    UIWebView
+使用storyboard或编程方式</p>
+
+<h2>4.基础切换</h2>
+
+<p>基本切换：从某个按钮，按住ctrl，鼠标拖拽到目标页面上，在弹出中选择show
+    presentViewController显示页面
+    dismissViewControllerAnimated弹出页面
+UINavigationController
+    self.navigationController在controller中获得导航控制器
+    pushViewController显示页面
+    popViewControllerAnimated弹出页面
+UITabbarController
+    self.tabBarController在controller中获得选项卡控制器
+    设置selectedIndex的值，切换页面</p>
+
+<h2>5.语法糖之类</h2>
+
+<p>范畴
+     《Objective-c》编程 第31章
+块block
+     《Objective-c》编程 第32章
+监听</p>
+
+<h2>6.常用库</h2>
+
+<p>rest controller</p>
+
+<h1>一些demo代码：</h1>
+
+<p>（第一个controller：）</p>
+
+<pre><code>- (IBAction)btnOnclick:(id)sender {
+    Person *p = [[Person alloc] init];//实例化对象
+    p.id = 2;
+    NSLog(@"hiha, %d", [p doubleId]);//调用实例方法
+
+    //定义block和使用block
+    int (^myBlock)(int) = ^(int a){
+        return a * a;
+    };
+    l(@"%d", myBlock(p.doubleId));//使用define指令
+
+    //基础库
+    NSString *str = @"str";
+    NSDate *date = [NSDate date];
+    //使用数组
+    NSArray *array = [NSArray arrayWithObjects:date, nil];
+    date = [array objectAtIndex:0];
+    NSUInteger count = [array count];
+    l(@"%lu", (unsigned long)count);
+    //使用字典
+    NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
+    [dict setObject:date forKey:str];
+    NSDate *dateInDict = [dict objectForKey:str];
+    l(@"%@", dateInDict);
+
+    //编程方式初始化新页面，传参，并跳转
+    MyViewController2 *ctrl2 = [self.storyboard instantiateViewControllerWithIdentifier: @"ctrl2"];
+    [ctrl2 setMyTitle:@"hiha"];
+    [self presentViewController:ctrl2 animated:false completion:nil];
+}
+</code></pre>
+
+<p>（第二个controller：）</p>
+
+<pre><code>- (void)setMyTitle:(NSString*)t {
+    //编程方式添加组件
+    UIButton *btn = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
+    UILabel *lbl = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
+    lbl.text = t;
+    [btn addSubview:lbl];
+    [btn addTarget:self action:@selector(btnOnclick:) forControlEvents: UIControlEventTouchUpInside];//点击事件
+    [self.view addSubview: btn];
+}
+-(void)btnOnclick: (id)sender{
+    //退出当前页面
+    [self dismissViewControllerAnimated:true completion:nil];
+}
+</code></pre>
+
+<p>如上，单页面中的组件元素、多页面间的跳转，都使用编程方式实现，对storyboard的依赖非常小，解耦之后，很松散，控制力很强，感觉很好。
+对storyboard的依赖仅剩在，要把controller在storyboard中画，并与controller类绑定，并指定id，之后实例化controller对象时使用该对象。</p>
+</div>
+</div>
+</body>
+</html>

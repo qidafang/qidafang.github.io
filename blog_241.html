@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>iOS的第一个习作</h1>
+<div><p>代码<a href="https://github.com/qidafang/iOS_427studio" target="_blank">在这里</a>，对git还是使用不熟练，好在github新建项目后体贴地提示是不是要执行这样两句&mdash;&mdash;</p>
+
+<div>
+<p>这两句我肯定是背不住的，所以记一下。</p>
+
+<blockquote>
+<p>git remote add origin https://github.com/qidafang/iOS_427studio.git<br />
+git push -u origin master</p>
+</blockquote>
+
+<p>思而勤工作室的手机app，ios版开发比android还顺利一点，记录一下用到的知识：</p>
+
+<p><strong>1)表现层</strong></p>
+
+<p>故事板做界面+controller类，用着很舒服的组合。而且基础库自带了标签结构和导航结构。</p>
+
+<p>界面拖拽式生成，<a href="https://github.com/qidafang/iOS_427studio/blob/master/studio427/FavoriteManageListController.swift">controller</a>中的<strong>两大关键元素（代表界面元素对象的实例属性、响应界面元素操作的实例方法）</strong>也拖拽生成。</p>
+
+<p>简便到如此，以至于嫌controller过于简洁了，干脆让它实现界面元素的数据源接口和代理接口，为了实现相应方法，对应该元素数据的集合对象也必须是controller的实例属性了，当然这也是天经地义，controller持有model是理所当然的。</p>
+
+<p>界面组件，标签按钮文本框的使用就不说了，webview分别演示了<a href="https://github.com/qidafang/iOS_427studio/blob/master/studio427/BlogDetailController.swift">指定html</a>和<a href="https://github.com/qidafang/iOS_427studio/blob/master/studio427/FavoriteDetailController.swift">指定url</a>两种用法。</p>
+
+<p><strong>2)rest</strong></p>
+
+<p>因为实例简单，省去业务逻辑层，直接说数据层。当然，数据层指的不是狭义的&ldquo;关系型数据库&rdquo;，而是广义的与所有形式数据源打交道都算，在这个项目里分成两部分：rest和dao，分别用于与服务器和本地数据库打交道。</p>
+
+<p>因为<a href="https://github.com/qidafang/iOS_427studio/blob/master/studio427/FavoriteManageListRest.swift">rest类</a>的异步使用方法是在回调函数里进行后续动作，而&ldquo;后续动作&rdquo;是对界面进行修改，比如从服务器上抓取数据来填充界面上的列表，所以rest层类需要持有controller类的对象，在回调函数中好修改controller类的属性（即代表页面数据的model属性）、调用controller对象的方法（如让表格重新加载内容的reload方法）。</p>
+
+<p>从分层角度看，这种&ldquo;下层类了解上层类的存在&rdquo;是不合理的，更合理的应该是controller实现某个接口例如RestCaller，该接口定义一个onRestOk(data:NSObject)这样的函数，controller实现的该方法体从data中获得rest传来的数据，然后执行逻辑；rest类声明一个var caller:RestCaller实例变量，在回调函数中调用该caller.onRestOk(有用的数据)；controller类使用rest类时即这样：</p>
+
+<blockquote>
+<p>let rest:SomeRest = SomeRest();</p>
+
+<p>rest.caller = self;</p>
+
+<p>rest.doQuery(xxxx);</p>
+</blockquote>
+
+<p>这是一种解耦的思路，由于时间就不实现了。至于http请求、json处理，这些基础类库的使用也不说了。</p>
+
+<p><strong>3)dao</strong></p>
+
+<p>虽然项目是用swift写的，但在dao这块还是不得不用objective-c，让我很高兴objective-c的学习还是有用。不过除此之外想想，俩语言不得不混用实在不是好事。</p>
+
+<p>因为用的是基础语法，<a href="https://github.com/qidafang/iOS_427studio/blob/master/studio427/NoteDao.swift">非常类似java的jdbc那一套</a>，打开连接，准备sql，赋予参数，执行，遍历结果什么的，不用多说。用到的全局函数类似php的用法，面向对象程序员看了，优越感油然而生。</p>
+
+<p>示例程序是<a href="https://github.com/qidafang/iOS_427studio/blob/master/studio427/NoteListController.swift">列表的增删改查</a>，与android类似，列表是基础库，<a href="https://github.com/qidafang/iOS_427studio/blob/master/studio427/NoteTableCell.swift">单元格自行实现</a>，单元格对象需要持有数据，因为在点击格里删改按钮时需要知道点的是哪一行，删除之后肯定需要让controller刷新数据，所以让单元格对象持有了controller的引用（为了省事还让它持有了dao单例）。在增改打开<a href="https://github.com/qidafang/iOS_427studio/blob/master/studio427/NoteDetailController.swift">表单页面</a>的时候，需要在表单controller知道自己是增还是改，而且持有要改的对象的数据，这都是最理所当然的了。</p>
+
+<p><strong>4)总结</strong></p>
+
+<p>有了上面1)2)3)这三样技术，综合使用就&ldquo;运用之妙，存乎一心&rdquo;了，因为是练手，没有进行形而上的设计和封装，比如提炼基础类和接口。对小项目来说，可能降级到粗浅一点的抽象级别还更舒服一些，杀牛用杀牛刀，杀鸡用杀鸡刀。</p>
+
+<p>这就像当servlet和jdbc（再加上基础html，css，javascript）会用了之后，剩下的都是锦上添花的进步，之后的进步的最大收获在设计和思想上。而我个人因为有java的长期训练，倒是不需要做&ldquo;在ios上花大量时间练习来进步到有思想的境界&rdquo;这一工作（笑），毕竟像《企业应用架构模式》之类的书的伟大，不是仅仅限于某个语言和某个领域的，幸运的是这些书我读过（<a href="http://427studio.net/blog/1/36">个人书单</a>）。</p>
+
+<p>这一个月左右（总时间超过一个月，但净时间不到）不算短，也不算长，毕竟是两种语言、好几本书、全新的操作系统（mac不好用！）和ide。虽然不算长，也到此为止了，因为据<u>爱老师</u>说混合开发是主流，那ios原生技术了解到基础，并且有能力随时学习别的基础，就足够了，以后用混合开发的时候，不至于迷惑：&ldquo;哎呀我不懂ios原生开发，搞混合开发有点摸黑。&rdquo;。</p>
+
+<p>最后上个图~</p>
+
+<p>&nbsp;</p>
+</div>
+
+<div>
+<p><img alt="" src="http://img.zidafone.com/427studio/02c55786-a8e1-4d8b-a234-c1cf644974ff.png" style="height:960px; width:640px" /></p>
+</div>
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>requireJS</h1>
+<div><p>requireJS，网上资料很多，阮一峰的这三篇博客推荐看看：<br />
+http://www.ruanyifeng.com/blog/2012/10/javascript_module.html<br />
+http://www.ruanyifeng.com/blog/2012/10/asynchronous_module_definition.html<br />
+http://www.ruanyifeng.com/blog/2012/11/require_js.html<br />
+<br />
+个人未必对的理解：<br />
+1.java中maven和spring的意义在依赖配置化。<br />
+2.依赖的问题当然不是java独有，js也有。<br />
+3.js相比java较简单的是：一个库，等于一个文件，等于一个模块，等于一个类，等于一个（单例）对象。<br />
+4.所以js的依赖只有一种。<br />
+5.requireJS就是干这个用的，它是js中的Spring，也是js中的Maven。<br />
+6.seaJs与requireJS作用相同，互为替代品，分别实现CMD规范和AMD规范。<br />
+7.不使用requireJS/seaJS的问题一：web中载入js有个顺序问题，必须把顺序写对，当多了很难写对。<br />
+8.问题二：当多了，大量script标签会引起阻塞。<br />
+9.&there4;requireJS解决7和8这两个问题，对7的解决是：在各个模块中写当前模块的依赖，使整体的依赖是个树的关系，而不是从上写到下的顺序关系。<br />
+10.对8的解决是：异步载入，解决了阻塞的问题。<br />
+<br />
+个人要注意的问题：<br />
+1.不要再写全局变量和全局方法了，虽然早就知道不该这样，但还在做。<br />
+2.对页面和js的使用要更专业，即采用requireJS这种库来管理。<br />
+3.但如果做得不是web app，而是网站，即整个站中有location的跳转而不是纯局部刷新，则每个jsp要有其自己的js入口文件。<br />
+4.所以require.config所在的通用配置要抽成单独的js，单独引入，写在页入口文件的上方，这是合理的权衡。<br />
+<br />
+最后，阮一峰的网络日志，很好，要常看：<br />
+http://www.ruanyifeng.com/blog/</p>
+</div>
+</div>
+</body>
+</html>

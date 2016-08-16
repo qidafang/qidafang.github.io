@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>java使用ffmpeg和mencoder做视频格式转换</h1>
+<div><p>主要使用技术：<br />
+1)FFmpeg，用于主流格式之间的转换，例如AVI，MP4，FLV等。<br />
+2)MEncoder，用于奇葩格式转主流格式，例如RMVB转AVI。这样我们可以把奇葩格式先转AVI，再由FFmpeg把AVI转成想要的格式。<br />
+3)java的执行命令行操作的技术，这样安装在服务器上的&uarr;这两个转换器就可以被java调用了。<br />
+包括ProcessBuilder和Runtime这两种调法。<br />
+可以参考<a href="http://blog.sina.com.cn/s/blog_9d38f2eb01014ocl.html">这篇</a>。</p>
+
+<p><br />
+FFmpeg的官网在<a href="http://ffmpeg.org/">这里</a>，其文档在<a href="http://ffmpeg.org/documentation.html">这里</a>。<br />
+MEncoder的官网在<a href="http://www.mplayerhq.hu/design7/news.html">这里</a>，其中文文档在<a href="http://www.mplayerhq.hu/DOCS/HTML/zh_CN/mencoder.html">这里</a>。</p>
+
+<p>主要参考：<a href="http://blog.csdn.net/jimzhai/article/details/7853005">这篇文章</a>，使用的FFmpeg和MEncoder也直接用的这篇文章后面提供的压缩包。<br />
+但正如有的网友指出的，这篇文章中代码的硬伤在于，当rmvb-&gt;avi-&gt;flv这样两步转换的时候，需要等待前一步完成，再进行后一步。<br />
+所以改了改代码，如下：</p>
+
+<blockquote>
+<p>package test;</p>
+
+<p>import java.io.BufferedReader;<br />
+import java.io.File;<br />
+import java.io.InputStreamReader;<br />
+import java.util.ArrayList;<br />
+import java.util.Calendar;<br />
+import java.util.List;<br />
+import java.util.UUID;</p>
+
+<p>public class Test {<br />
+&nbsp;&nbsp; &nbsp;<br />
+&nbsp;&nbsp; &nbsp;public static final String BASEPATH = &quot;d:\\ftest\\&quot;;</p>
+
+<p>&nbsp;&nbsp; &nbsp;public static void main(String[] args) {<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;String fromFilePath1 = BASEPATH + &quot;from\\test.mp4&quot;;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;doConvert(fromFilePath1, &quot;flv&quot;);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;String fromFilePath2 = BASEPATH + &quot;from\\test.rmvb&quot;;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;doConvert(fromFilePath2, &quot;flv&quot;);<br />
+&nbsp;&nbsp; &nbsp;}</p>
+
+<p>&nbsp;&nbsp; &nbsp;/**<br />
+&nbsp;&nbsp; &nbsp; * 尝试进行转换<br />
+&nbsp;&nbsp; &nbsp; */<br />
+&nbsp;&nbsp; &nbsp;public static void doConvert(String fromFilePath, String goalType){<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;if (!checkInput(fromFilePath)) {<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;System.out.println(&quot;文件&quot; + fromFilePath + &quot;不存在&quot;);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;}else{<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;if (process(fromFilePath, goalType)) {<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;System.out.println(&quot;转换成功&quot;);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;}else{<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;System.out.println(&quot;转换失败&quot;);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;}<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;}<br />
+&nbsp;&nbsp; &nbsp;}</p>
+
+<p>&nbsp;&nbsp; &nbsp;/**<br />
+&nbsp;&nbsp; &nbsp; * 进行转换<br />
+&nbsp;&nbsp; &nbsp; * @return<br />
+&nbsp;&nbsp; &nbsp; */<br />
+&nbsp;&nbsp; &nbsp;private static boolean process(String fromFilePath, String goalType) {<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;int type = checkContentType(fromFilePath);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;boolean status = false;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;if (type == 0) {<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;status = getResult(fromFilePath, goalType);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;} else if (type == 1) {<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;String avifilepath = getPreResult(type, fromFilePath);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;if (avifilepath == null){<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;return false;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;}<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;status = getResult(avifilepath, goalType);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;}<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;return status;<br />
+&nbsp;&nbsp; &nbsp;}</p>
+
+<p>&nbsp;&nbsp; &nbsp;/**<br />
+&nbsp;&nbsp; &nbsp; * 判断源视频的种类（主流格式 or 奇葩格式）<br />
+&nbsp;&nbsp; &nbsp; */<br />
+&nbsp;&nbsp; &nbsp;private static int checkContentType(String fromFilePath) {<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;String type = fromFilePath.substring(fromFilePath.lastIndexOf(&quot;.&quot;) + 1, fromFilePath.length())<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;.toLowerCase();<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;// ffmpeg能解析的格式：（asx，asf，mpg，wmv，3gp，mp4，mov，avi，flv等）<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;if (type.equals(&quot;avi&quot;)) {<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;return 0;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;} else if (type.equals(&quot;mpg&quot;)) {<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;return 0;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;} else if (type.equals(&quot;wmv&quot;)) {<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;return 0;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;} else if (type.equals(&quot;3gp&quot;)) {<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;return 0;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;} else if (type.equals(&quot;mov&quot;)) {<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;return 0;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;} else if (type.equals(&quot;mp4&quot;)) {<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;return 0;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;} else if (type.equals(&quot;asf&quot;)) {<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;return 0;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;} else if (type.equals(&quot;asx&quot;)) {<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;return 0;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;} else if (type.equals(&quot;flv&quot;)) {<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;return 0;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;}<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;// 对ffmpeg无法解析的文件格式(wmv9，rm，rmvb等),<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;// 可以先用别的工具（mencoder）转换为avi(ffmpeg能解析的)格式.<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;else if (type.equals(&quot;wmv9&quot;)) {<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;return 1;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;} else if (type.equals(&quot;rm&quot;)) {<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;return 1;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;} else if (type.equals(&quot;rmvb&quot;)) {<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;return 1;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;}<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;return 9;<br />
+&nbsp;&nbsp; &nbsp;}</p>
+
+<p>&nbsp;&nbsp; &nbsp;/**<br />
+&nbsp;&nbsp; &nbsp; * 检查指定的输入文件是否存在<br />
+&nbsp;&nbsp; &nbsp; */<br />
+&nbsp;&nbsp; &nbsp;private static boolean checkInput(String path) {<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;File file = new File(path);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;if (!file.isFile()) {<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;return false;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;}<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;return true;<br />
+&nbsp;&nbsp; &nbsp;}</p>
+
+<p>&nbsp;&nbsp; &nbsp;/**<br />
+&nbsp;&nbsp; &nbsp; * 对ffmpeg无法解析的文件格式(wmv9，rm，rmvb等), 可以先用别的工具（mencoder）转换为avi(ffmpeg能解析的)格式.<br />
+&nbsp;&nbsp; &nbsp; */<br />
+&nbsp;&nbsp; &nbsp;private static String getPreResult(int type, String fromFilePath) {<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;String fileName = UUID.randomUUID().toString() + &quot;.avi&quot;;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;//预处理指令<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;List&lt;String&gt; commend = new ArrayList&lt;String&gt;();<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;commend.add(BASEPATH + &quot;util\\mencoder&quot;);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;commend.add(fromFilePath);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;//commend.add(&quot;-oac lavc&quot;);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;commend.add(&quot;-oac&quot;);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;commend.add(&quot;mp3lame&quot;);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;commend.add(&quot;-lameopts&quot;);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;commend.add(&quot;preset=64&quot;);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;commend.add(&quot;-lavcopts&quot;);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;commend.add(&quot;acodec=mp3:abitrate=64&quot;);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;commend.add(&quot;-ovc&quot;);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;commend.add(&quot;xvid&quot;);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;commend.add(&quot;-xvidencopts&quot;);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;commend.add(&quot;bitrate=600&quot;);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;commend.add(&quot;-of&quot;);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;commend.add(&quot;avi&quot;);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;commend.add(&quot;-o&quot;);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;commend.add(BASEPATH + &quot;pre\\&quot; + fileName);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;try {<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;//预处理进程<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;ProcessBuilder builder = new ProcessBuilder();<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;builder.command(commend);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;builder.redirectErrorStream(true);</p>
+
+<p>&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;//进程信息输出到控制台<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;Process p = builder.start();<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;String line = null;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;while((line = br.readLine()) != null){<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;System.out.println(line);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;}<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;p.waitFor();//直到上面的命令执行完，才向下执行<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;return BASEPATH + &quot;pre\\&quot; + fileName;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;} catch (Exception e) {<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;e.printStackTrace();<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;return null;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;}<br />
+&nbsp;&nbsp; &nbsp;}</p>
+
+<p>&nbsp;&nbsp; &nbsp;/**<br />
+&nbsp;&nbsp; &nbsp; * ffmpeg能解析的格式：（asx，asf，mpg，wmv，3gp，mp4，mov，avi，flv等）<br />
+&nbsp;&nbsp; &nbsp; * @param oldfilepath<br />
+&nbsp;&nbsp; &nbsp; * @param goalType<br />
+&nbsp;&nbsp; &nbsp; * @return<br />
+&nbsp;&nbsp; &nbsp; */<br />
+&nbsp;&nbsp; &nbsp;private static boolean getResult(String oldfilepath, String goalType) {<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;String fileName = UUID.randomUUID() + &quot;.&quot; + goalType;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;if (!checkInput(oldfilepath)) {<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;System.out.println(oldfilepath + &quot;不存在&quot;);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;return false;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;}<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;// 文件命名<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;Calendar c = Calendar.getInstance();<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;//转换格式命令<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;List&lt;String&gt; commend = new ArrayList&lt;String&gt;();<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;commend.add(BASEPATH + &quot;util\\ffmpeg&quot;);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;commend.add(&quot;-i&quot;);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;commend.add(oldfilepath);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;commend.add(&quot;-ab&quot;);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;commend.add(&quot;56&quot;);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;commend.add(&quot;-ar&quot;);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;commend.add(&quot;22050&quot;);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;commend.add(&quot;-qscale&quot;);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;commend.add(&quot;8&quot;);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;commend.add(&quot;-r&quot;);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;commend.add(&quot;15&quot;);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;commend.add(&quot;-y&quot;);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;commend.add(&quot;-s&quot;);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;commend.add(&quot;600x500&quot;);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;commend.add(BASEPATH + &quot;to\\&quot; + fileName);</p>
+
+<p>&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;try {<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;Runtime runtime = Runtime.getRuntime();<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;//截图命令<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;String cut = BASEPATH + &quot;util\\ffmpeg.exe &nbsp; -i &nbsp; &quot;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;+ oldfilepath<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;+ &quot; &nbsp; -y &nbsp; -f &nbsp; image2 &nbsp; -ss &nbsp; 8 &nbsp; -t &nbsp; 0.001 &nbsp; -s &nbsp; 600x500 &nbsp; &quot; + BASEPATH + &quot;\\to\\&quot; + fileName + &quot;.jpg&quot;;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;//截图进程<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;Process proce = runtime.exec(cut);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;proce.waitFor();//直到上面的命令执行完，才向下执行<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;//转换格式进程<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;ProcessBuilder builder = new ProcessBuilder(commend);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;builder.command(commend);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;builder.redirectErrorStream(true);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;//进程信息输出到控制台<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;Process p = builder.start();<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;String line = null;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;while((line = br.readLine()) != null){<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;System.out.println(line);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;}<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;p.waitFor();//直到上面的命令执行完，才向下执行<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;return true;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;} catch (Exception e) {<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;e.printStackTrace();<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;return false;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;}<br />
+&nbsp;&nbsp; &nbsp;}<br />
+}</p>
+</blockquote>
+</div>
+</div>
+</body>
+</html>

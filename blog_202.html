@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>用htmlunit和jsoup做爬虫</h1>
+<div><p><a href="http://htmlunit.sourceforge.net/">htmlunit</a>和<a href="http://www.open-open.com/jsoup/">jsoup</a>都有获得远程网页并解析成dom的能力，但两者各有擅场：<br />
+1.htmlunit获得到的网页中的javascript会被执行，而jsoup不能。<br />
+2.jsoup能用jquery的语法方便地处理dom，htmlunit的getElementById显得笨拙。</p>
+
+<p>所以二者结合使用。<br />
+当然，拿到html后具体怎么处理，需要观察网页规则，这个工作是免不了的。</p>
+
+<p>示例项目<a href="https://github.com/qidafang/Demos/blob/master/demos/src/test/java/net/_427studio/demo/htmlunit/HtmlunitTest.java">在这里</a>。</p>
+
+<p>引入依赖：</p>
+
+<blockquote>
+<p>&lt;!-- jsoup --&gt;<br />
+&lt;dependency&gt;<br />
+&nbsp;&nbsp; &nbsp;&lt;groupId&gt;org.jsoup&lt;/groupId&gt;<br />
+&nbsp;&nbsp; &nbsp;&lt;artifactId&gt;jsoup&lt;/artifactId&gt;<br />
+&nbsp;&nbsp; &nbsp;&lt;version&gt;1.6.3&lt;/version&gt;<br />
+&lt;/dependency&gt;</p>
+
+<p>&lt;!-- htmlunit --&gt;<br />
+&lt;dependency&gt;<br />
+&nbsp; &nbsp; &lt;groupId&gt;net.sourceforge.htmlunit&lt;/groupId&gt;<br />
+&nbsp; &nbsp; &lt;artifactId&gt;htmlunit&lt;/artifactId&gt;<br />
+&nbsp; &nbsp; &lt;version&gt;2.16&lt;/version&gt;<br />
+&lt;/dependency&gt;</p>
+</blockquote>
+
+<p>爬虫代码：</p>
+
+<blockquote>
+<p>package net._427studio.demo.htmlunit;</p>
+
+<p>import org.jsoup.Jsoup;<br />
+import org.jsoup.nodes.Document;<br />
+import org.jsoup.nodes.Element;<br />
+import org.jsoup.select.Elements;<br />
+import org.junit.Test;</p>
+
+<p>import com.gargoylesoftware.htmlunit.BrowserVersion;<br />
+import com.gargoylesoftware.htmlunit.WebClient;<br />
+import com.gargoylesoftware.htmlunit.html.HtmlPage;</p>
+
+<p>//htmlunit官网：http://htmlunit.sourceforge.net/<br />
+//jsoup的中文文档：http://www.open-open.com/jsoup/<br />
+public class HtmlunitTest {</p>
+
+<p>&nbsp;&nbsp; &nbsp;<br />
+&nbsp;&nbsp; &nbsp;@Test<br />
+&nbsp;&nbsp; &nbsp;public void homePage() throws Exception {<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;String pageContent;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;//step 1 : 使用htmlunit，获取指定网址的网页的内容，该网页中的脚本已被执行<br />
+&nbsp;&nbsp; &nbsp; &nbsp; &nbsp;final WebClient webClient = new WebClient(BrowserVersion.FIREFOX_31);<br />
+&nbsp;&nbsp; &nbsp; &nbsp; &nbsp;<br />
+&nbsp; &nbsp; &nbsp; &nbsp; final HtmlPage page = webClient.getPage(&quot;http://op.win007.com/oddslist/1098756.htm&quot;);</p>
+
+<p>&nbsp; &nbsp; &nbsp; &nbsp; pageContent = page.asXml();</p>
+
+<p>&nbsp; &nbsp; &nbsp; &nbsp; webClient.close();<br />
+&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;<br />
+&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;<br />
+&nbsp; &nbsp; &nbsp; &nbsp; //step 2 : 使用jsoup，解析网页内容，使用jquery语法方便地进行dom操作<br />
+&nbsp; &nbsp; &nbsp; &nbsp; Document doc = Jsoup.parse(pageContent);<br />
+&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;<br />
+&nbsp; &nbsp; &nbsp; &nbsp; Elements trs = doc.select(&quot;#oddsList_tab tr&quot;);<br />
+&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;<br />
+&nbsp; &nbsp; &nbsp; &nbsp; for(Element tr : trs){<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;Elements tds = tr.select(&quot;td&quot;);<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;String company = tds.get(1).select(&quot;a&quot;).text();<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;String homeWin = tds.get(2).html();<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;String draw = tds.get(3).html();<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;String guestWin = tds.get(4).html();<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;System.out.println(&quot;博彩公司：&quot; + company);<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;System.out.println(&quot;主队胜：&quot; + homeWin);<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;System.out.println(&quot;平局：&quot; + draw);<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;System.out.println(&quot;客队胜：&quot; + guestWin);<br />
+&nbsp; &nbsp; &nbsp; &nbsp; }<br />
+&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;<br />
+&nbsp;&nbsp; &nbsp;}<br />
+&nbsp;&nbsp; &nbsp;<br />
+&nbsp;&nbsp; &nbsp;<br />
+}</p>
+</blockquote>
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>操作系统，windows编程，网络，socket</h1>
+<div><p>先有操作系统，然后有windows操作系统，然后有windows编程，然后有c#，然后有wpf，为了搞懂来龙去脉，把这一条线上的知识都摸了一遍。再加上网络。最后做了个最小的C/S程序。底层学习最大好处是，对本质更清晰了，不再迷惑。</p>
+
+<p>之前关于c/s的<a href="http://427studio.net/blog/1/177">一篇博文</a>只记了思路没记代码，而且表达不清晰，事后看不知所云，这个习惯要改。</p>
+
+<p>这十几天学了点关于操作系统、windows编程和网络，主要看的书有以下几本，都没看完或者只看了一点，记下书名先：<br />
+《现代操作系统》<br />
+《深入解析windows操作系统》<br />
+《windows程序设计》<br />
+《c#入门经典》<br />
+《wpf编程宝典》<br />
+《图解tcp/ip》<br />
+另外《tcp/ip详解》《java网络编程》《netty权威指南》是准备接下来看的。</p>
+
+<p><strong>1.操作系统</strong><br />
+<span style="color:#FF0000">应用程序</span>和<span style="color:#FF0000">硬件</span>之间的夹层，向上暴露方便编程的接口，向下管理硬件。<br />
+核心的核心：<span style="color:#FF0000">进程</span>，<span style="color:#FF0000">地址空间</span>和<span style="color:#FF0000">文件</span>，这三者分别是<span style="color:#FF0000">CPU</span>、<span style="color:#FF0000">内存</span>、<span style="color:#FF0000">硬盘</span>的抽象。<br />
+<span style="color:#FF0000">进程</span>和<span style="color:#FF0000">线程</span>都是<span style="color:#FF0000">容器</span>，CPU在多个容器间往来穿梭，就像有多个CPU似的。</p>
+
+<p><img alt="" src="http://img.zidafone.com/427studio/cdc55b14-bf82-4919-b6dc-d19539605e2e.png" style="height:301px; width:464px" /></p>
+
+<p><strong>2.windows</strong><br />
+分为<span style="color:#FF0000">用户态</span>和<span style="color:#FF0000">内核态</span>，重要代码运行在内核态，应用程序运行在用户态，应用程序通过调用api进行编程。具体见《深入解析windows操作系统》。<br />
+windows api编程，mfc编程，form编程，wpf编程。界面编程技术越来越多了，但学api编程还是有用，会理解底层原理。读《windows程序设计》吧。<br />
+c#跟java很像，但强大很多，像是java+语法糖一样，《c#入门经典》是入门书。<br />
+现在好像推荐wpf编程而不是使用form了，《wpf编程宝典》是为了凑单买的，好厚一本，躺着没法读。</p>
+
+<p><img alt="" src="http://img.zidafone.com/427studio/0e58c912-03c5-46ce-89a0-9acc28d1a3e7.png" style="height:277px; width:543px" /></p>
+
+<p><strong>3.网络</strong><br />
+传输层的tcp协议和网络层的ip协议是最关键的，不过《图解tcp/ip》不像《图解http》那样简单可爱，可能是因为本来就更复杂的缘故。<br />
+还要再读读，还有最有名的《tcp/ip详解》。<br />
+虽然我java用了很久，但除了web之外的网络编程其实不多，《java网络编程》和《netty权威指南》应该读读。nio这块的课也该补一下。</p>
+
+<p><img alt="" src="http://img.zidafone.com/427studio/344995a7-174d-4e57-ac5c-c59d716cfd04.png" style="height:461px; width:636px" /></p>
+
+<p><strong>4.一个demo</strong><br />
+socket编程其实足以用来开发各种c/s程序，上次博文代码找不到了，这次重新写，刚好还学了点儿windows编程，就用wpf做个exe程序的客户端，这回真像c/s程序了。<br />
+socket处于应用层和传输层之间，提供使用tcp协议的可能性，由应用层的程序代码调用。<br />
+双向传输中的&ldquo;读&rdquo;这块，由于while(xx.readLine)是阻塞的，所以客户端和服务端都需要使用一个专门线程用于等待响应。<br />
+线程就像是人，传统单线程程序好比只有一个人的公司，每多一个线程就好比多一个员工，这样同一个时间可以真正同时做多件事了，尤其是阻塞这种&ldquo;需要有个人傻等&rdquo;的情况。CPU是大脑，而进程、线程是对CPU的抽象，多进程/线程就像多大脑，能齐头并进地处理事情，当你发现你的程序需要多个大脑，就采用多线程吧。<br />
+代码<a href="https://github.com/qidafang/page/tree/master/socket" target="_blank">在这里</a>，包括了java和c#的客户端，以及用java写的服务器。</p>
+
+<p>java写的服务器打成可执行jar包，然后写个bat脚本，内容如下：</p>
+
+<blockquote>
+<p>call java -jar myServer.jar</p>
+</blockquote>
+
+<p>就能方便地启动了。</p>
+
+<p>&nbsp;</p>
+
+<p>c#的程序最让我惊艳的是函数是一等对象了：<br />
+这行（doClose是个函数）</p>
+
+<blockquote>
+<p>this.Closing += doClose;</p>
+</blockquote>
+
+<p>和这行（doReceive是个函数）</p>
+
+<blockquote>
+<p>receiveThread = new Thread(doReceive);</p>
+</blockquote>
+
+<p>的写法都让人感到好舒服。<br />
+然后下面是类似android的代码，新线程想改变控件内容不能直接改，因为控件属于主线程。</p>
+
+<blockquote>
+<p>this.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal,<span style="color:#FF0000"> (ThreadStart)delegate ()<br />
+{<br />
+&nbsp; &nbsp; theLabel.Content = msg;<br />
+}</span>);</p>
+</blockquote>
+
+<p>&ldquo;委托&rdquo;这东西我感觉就像javascript里所谓的函数字面量，或者java中的匿名内部类（用来提供方法体的）。</p>
+</div>
+</div>
+</body>
+</html>

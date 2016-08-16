@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>微信公众平台开发中</h1>
+<div><p>使用的jfinal_weixin做基础框架，确实极大减少了麻烦。</p>
+
+<p>把微信公众平台放到单独的服务器了（1218阿里云搞活动买的），和书桌这边的逻辑通过webservice交互。</p>
+
+<p>所谓webservice说来也简单，就是书桌暴露http接口，微信平台这边发http请求，请求里该带参数就带上，书桌返回json之后，微信平台解析json然后做相应处理。</p>
+
+<p>一不小心就把SOA的思想用上了，笑。</p>
+
+<p>现在功能是给微信公众平台回复消息，即使用关键字查询，返回书籍列表，最符合查询条件的放最上面，模糊查到的放下面，最多返回10个结果。</p>
+
+<p>把古籍的目录和阅读都加上bootstrap的响应式html头了，手机看着效果还不赖，正在请小伙伴们内测中。</p>
+
+<p>图：</p>
+
+<p><img alt="e112f82b-0a6a-4441-89bd-e932b855de89.png" src="/imageupload/view?fileName=e112f82b-0a6a-4441-89bd-e932b855de89.png" title="e112f82b-0a6a-4441-89bd-e932b855de89.png" /></p>
+
+<p><img alt="98bc9afa-f864-4a9d-986d-4d4700aaaba4.png" src="/imageupload/view?fileName=98bc9afa-f864-4a9d-986d-4d4700aaaba4.png" title="98bc9afa-f864-4a9d-986d-4d4700aaaba4.png" /></p>
+</div>
+</div>
+</body>
+</html>

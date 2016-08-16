@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>java I/O的一些事儿</h1>
+<div><p>1.<br />
+I/O的本质，是字节们位置的转变。<br />
+2.<br />
+从外部到jvm的，叫做输入。<br />
+从jvm到外部的，叫做输出。<br />
+3.<br />
+理论上，用最基本的流，一个字节一个字节处理，任何问题都能解决。<br />
+I/O复杂来源于大家不甘心这么刀耕火种地来做。<br />
+4.<br />
+装饰器模式的核心在于，拆解成一外一内两部分。<br />
+内层根据传输目标类型来定，是文件呢，还是网络呢，啥的&hellip;&hellip;<br />
+外层根据传输物品类型来定，是文本呢，还是对象呢，啥的&hellip;&hellip;<br />
+5.<br />
+由于&ldquo;文本&rdquo;这个&ldquo;传输物品类型&rdquo;过于重要，干脆直接定义一个独特的外层。<br />
+于是Reader/Writer粉墨登场。<br />
+6.<br />
+输入遇到的问题：<br />
+1)怎样获得字节们<br />
+2)怎样把这些字节弄成有用的数据格式<br />
+7.<br />
+输出遇到的问题：<br />
+1)怎样把有用的数据格式弄成字节们<br />
+2)把这些字节们放哪里去<br />
+8.<br />
+数据格式和字节们的互转换，可以称为序列化/反序列化。<br />
+这俩动作肯定是各个数据格式都不同的。<br />
+9.<br />
+获得字节或者保存字节，则是通用的，比如从磁盘中取啊，存向网络啊&hellip;&hellip;<br />
+10.<br />
+所以定义数据格式的时候，往往捎带手地定义个方法，可以接受任何输出流，输出出去：<br />
+public void out(OutputStream os){<br />
+&nbsp;&nbsp; &nbsp;os.write(...);<br />
+}<br />
+从输入流读当然也是了：<br />
+public static SomeObject in(InputStream is){<br />
+&nbsp;&nbsp; &nbsp;byte[] bs = is.read(..);<br />
+&nbsp;&nbsp; &nbsp;return new SomeObject(bs);<br />
+}<br />
+这就达到了序列化/反序列化与具体输入/输出目标的解耦。<br />
+11.<br />
+当然你也可以定义一个SomeObjectOutputStream/SomeObjectInputStream的装饰类，把目标流包在里面，在装饰类的方法里进行序列化反序列化。<br />
+12.<br />
+目标类型中最常见的是文件，物品类型中最常见的是文本。<br />
+所以为了简化关于它们的操作，I/O类又变得复杂了点儿&hellip;&hellip;<br />
+13.<br />
+来的，从字节数组来；<br />
+去的，从字节数组走。<br />
+任何问题，都可以深入到字节数组这个层面来解决。<br />
+ByteArrayInputStream和ByteArrayOutputStream是最终的武器。<br />
+14.<br />
+复杂的对象，可以通过Object输入输出流操作。<br />
+但还是序列化成json甚至xml这种字符串比较好，比字节串好。<br />
+15.<br />
+关于字节串和字符串的互转，BASE64或HEX都行。<br />
+这实际意味着，任何数据都可以通过先转字节串再转字符串，以字符串的内容落实在某容器里。<br />
+16.<br />
+参考：<br />
+1)《Thinking in Java》和《Core Java》有关I/O的章节。<br />
+2)<a href="http://commons.apache.org/proper/commons-io/description.html">commons io库</a>，其中强大的<a href="http://commons.apache.org/proper/commons-io/javadocs/api-release/index.html?org/apache/commons/io/IOUtils.html">IOUtils</a>和<a href="http://commons.apache.org/proper/commons-io/javadocs/api-release/org/apache/commons/io/FileUtils.html">FileUtils</a>。<br />
+3)<a href="http://mirrors.cnnic.cn/apache//commons/io/source/commons-io-2.4-src.zip">commons io库的源码</a>。</p>
+
+<p>当某技术的庞大让人摸不着头脑时，从《T》理解思想，从《C》熟悉类库，从成熟的开源项目学习最佳实践，是个人的一点心得。</p>
+</div>
+</div>
+</body>
+</html>

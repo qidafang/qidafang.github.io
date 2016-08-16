@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>oracle，好久不见</h1>
+<div><p>久违的数据库，久违的业务场景，久违的人。<br />
+好像回到了多年前的北三环。<br />
+夜深忽梦少年事，梦啼妆泪红阑干。</p>
+
+<p>1.<br />
+从<a href="http://www.oracle.com/technetwork/database/enterprise-edition/downloads/index.html">oracle官网</a>上下载两个巨大无比的安装包，分别解压后放到一起，安装。<br />
+2.<br />
+安装PL/SQL，如果装oracle的机器是64位的，还要按<a href="http://dehuang420-sina-com.iteye.com/blog/1566054">这个教程</a>来解决问题。<br />
+3.<br />
+如果单纯想测试oracle服务是否好用，写个单元测试尝试jdbc连就行了。</p>
+
+<blockquote>
+<p>&nbsp;&nbsp; &nbsp;@Test<br />
+&nbsp;&nbsp; &nbsp;public void testOracle() throws Exception {<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;Class.forName(&quot;oracle.jdbc.driver.OracleDriver&quot;);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;Connection c = DriverManager.getConnection(&quot;jdbc:oracle:thin:@localhost:1521:orcl&quot;, &quot;test&quot;, &quot;test&quot;);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;c.close();<br />
+&nbsp;&nbsp; &nbsp;}</p>
+</blockquote>
+
+<p>4.<br />
+在这之前当然需要把oracle驱动添加到maven引用。<br />
+但oracle驱动maven中央库没有，需要手动添加到本地库：<br />
+在<a href="http://www.oracle.com/index.html">oracle首页</a>点downloads，页面中的drivers栏里有jdbc驱动链接，点进去下载。<br />
+然后mvn install:install-file -Dfile=ojdbc6.jar -DgroupId=com.oracle -DartifactId=ojdbc6 -Dversion=11.2.0.1.0 -Dpackaging=jar<br />
+然后再在项目中引入</p>
+
+<blockquote>
+<p>&lt;dependencies&gt;<br />
+&nbsp;&nbsp; &nbsp;&lt;dependency&gt;<br />
+&nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&lt;groupId&gt;com.oracle&lt;/groupId&gt;<br />
+&nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&lt;artifactId&gt;ojdbc14&lt;/artifactId&gt;<br />
+&nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&lt;version&gt;11.2.0.1.0&lt;/version&gt;<br />
+&nbsp;&nbsp; &nbsp;&lt;/dependency&gt;<br />
+&lt;/dependencies&gt;</p>
+</blockquote>
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>java的C/S程序初体验</h1>
+<div><p><strong>目的：</strong>锻炼每本基础教材都讲，但java web程序员不常用的基础知识&mdash;&mdash;图形界面技术，多线程技术，socket编程技术。</p>
+
+<p><strong>思路：</strong></p>
+
+<p>Client端：与网页开发思路一致，model和view分离，view上加监听函数，服务器的响应先到model，再将model渲染到view</p>
+
+<p>Server端：与tomcat思路一致，监听某端口，请求到来后立刻甩给一个新建的线程</p>
+
+<p><strong>整体结构，一图流：</strong></p>
+
+<p><img alt="" src="http://img.zidafone.com/427studio/4b207764-b3d0-485c-aafc-6c63613d553e.png" style="height:593px; width:778px" /></p>
+
+<p><strong>线程们：</strong></p>
+
+<p>客户端俩线程，一个负责监听服务器的命令，一个负责监控model状态，时时更新到界面上。</p>
+
+<p>服务端一加N个线程，一个负责将model状态发布给客户机，N个每个负责和一个客户机的连接，监听客户机的命令。</p>
+
+<p>这些线程都以无限循环、监听某个对象的状态的方式工作。</p>
+
+<p><strong>参考书籍：</strong></p>
+
+<p>《Core Java》，比想象中的好看</p>
+
+<p>《现代操作系统》，笔记<a href="http://zidafone.com/share/note/151">在这里</a></p>
+</div>
+</div>
+</body>
+</html>

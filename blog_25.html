@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>2014.11.21晨，nagios汉化</h1>
+<div><p>昨天跟彪哥和龙神学linux下vim操作，他们很热心地教我，然后我今天改配置文件还是ftp传过来，改完再传回去，虽然麻烦，但是习惯。 彪哥的《高性能Linux服务器构建实战》第九章基本就是昨天看的那个博文的内容（见前一篇博客），但提到一个博文没提到的就是安nagios的汉化插件，该插件sourceforge上只有rpm包，不会安，到csdn上花两分下了个压缩包汉化成功，但汉化后出现乱码的情况，在网上查资料解决。 http://www.examw.com/os/linux/180432/ http://gaodedashu.blog.163.com/blog/static/386081022014121115026665/ 分别是解决服务页面乱码和拓扑图乱码的，后者还需要手动拷一个中文字体文件过去http://www.cnblogs.com/qi09/archive/2010/09/07/1820939.html 原来昨天发现的服务器占用内存太多的原因是tomcat的catalina.bat中设置的jvm启动参数的问题，如果写700M，则就算没用完也会都占着，但任务管理器只显示实际占用的内存。用jdk自带的jvisualvm远程连接发现的问题，将700M改为400M，释放出300M内存，再在nagios下查看就发现红色的紧急变黄色的告警了。现在的启动参数如下： set CATALINA_OPTS=-server -Xmx400M -Xms400M -XX:NewRatio=2 -Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8000 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.port=3099 好像这样任何一台电脑都能jmx远程查看状态，不太安全。 git@osc还是没恢复完，实在不想再敲一遍博客的代码了，等好了把记录古籍阅读次数的功能加上，好像现在访问量大点了。</p>
+</div>
+</div>
+</body>
+</html>

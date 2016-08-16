@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>express4的nodejs项目</h1>
+<div><p>现在nodeclipse生成express项目是3.x的版本。<br />
+我试了改配置来改成生成4.0版本，都失败了。</p>
+
+<p>还是用基本的方法吧：<br />
+1.先在nodeclipse建个node空项目如test4<br />
+2.到该项目上级目录express执行express test4<br />
+3.进入test4执行npm install<br />
+4.刷新项目<br />
+5.在项目目录npm start或者进入bin目录node www，但这样有点麻烦而且不能用supervisor调试，所以在app.js的最下面改回原来的写法：<br />
+app.listen(3000, function() {<br />
+&nbsp; &nbsp; console.log(&quot;...started...&quot;);<br />
+});<br />
+这样直接右键app启动就行了。当然在这之前要在window-preferences-nodeclipse中把node.js path设为例如C:\Users\Administrator\AppData\Roaming\npm\supervisor.cmd，并把复选框find node on path取消勾选。这样当代码发生改变后它会自动重启服务器。</p>
+</div>
+</div>
+</body>
+</html>

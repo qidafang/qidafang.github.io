@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>html5游戏引擎phaser官方示例学习</h1>
+<div><p>phaser官方示例学习进行中，把官方示例调整为简明的目录结构，学习过程中加了点中文注释，代码在<a href="https://github.com/qidafang/phaser_demo_study" target="_blank">这里</a>。</p>
+
+<p>目前把官方的完整游戏示例看了一大半，</p>
+
+<p><a href="https://github.com/qidafang/phaser_demo_study/tree/master/games/breakout" target="_blank">breakout</a>是敲砖块，<a href="https://github.com/qidafang/phaser_demo_study/tree/master/games/gemmatch" target="_blank">gemmatch</a>是钻石消除，<a href="https://github.com/qidafang/phaser_demo_study/tree/master/games/invaders" target="_blank">invaders</a>是小蜜蜂，<a href="https://github.com/qidafang/phaser_demo_study/tree/master/games/matching" target="_blank">matching</a>是配对，<a href="https://github.com/qidafang/phaser_demo_study/tree/master/games/simon">simon</a>是记忆游戏，<a href="https://github.com/qidafang/phaser_demo_study/tree/master/games/sliding" target="_blank">sliding</a>是拼图，<a href="https://github.com/qidafang/phaser_demo_study/tree/master/games/starstruck">starstruck</a>类似超级马里奥，<a href="https://github.com/qidafang/phaser_demo_study/tree/master/games/tanks">tanks</a>是坦克游戏。</p>
+
+<p>游戏场面上看，敲砖块、小蜜蜂是竖版，超级马里奥是横版，坦克游戏是俯瞰，钻石、配对、记忆、拼图这四个都是棋盘。</p>
+
+<p>界面构成上看，棋盘类游戏基本都用到了瓦块图，砖块蜜蜂和坦克是基本精灵，马里奥是瓦块和精灵组合。</p>
+
+<p>瓦块图的绘制使用<a href="http://www.mapeditor.org/" target="_blank">Tiled</a>进行可视化绘制，绘制完生成json文件，该文件即保存了世界的结构，这个还在摸索。瓦块图的素材网上有很多，其实RPGMaker各个版本自带的素材就不错，它们自带的效果素材如爆炸什么的也可以在phaser中使用，行走图也能用。</p>
+
+<p>因为phaser自身支持动画，定义精灵的时候除了可以指定一张简单图片，还可以指定一张包含了许多帧的大图片（其实只使用其中的一帧如砖块钻石，或者将其中的许多帧一起作为动画使用如小蜜蜂的敌机），甚至可以指定多张图片来形成动画（坦克例子有所演示），除此之外也可以将多个精灵组成一个逻辑精灵（也是坦克例子演示的，车身、炮塔、阴影分别是不同的精灵）。</p>
+
+<p>敌人精灵的行为，简单的就在主循环update方法里为之写逻辑，例如小蜜蜂的敌机，复杂点的可以把敌人定义个类，用prototype的方式编写实例方法，在update方法中遍历之调用某方法，甚至你可能将多个不同类的敌人放到同一个数组里，调用它们的同名方法即可，这有点像java的多态特性，但javascript是弱类型的。</p>
+
+<p>玩家的行为，分为鼠标操作和键盘操作，键盘操作在主循环update里判断是否按下，如果不想太频繁地响应用户操作，可以用个变量保存上次操作时间，再有操作看看其间是否已隔了足够多的毫秒数，否则就不处理，这种&ldquo;临界值&rdquo;的使用各个例子中很常见。</p>
+
+<p>鼠标操作可以在主循环判断鼠标键是否按下，更直观的是为精灵添加按下/释放/移动..等响应函数，当鼠标在精灵上做了操作直接调用函数，钻石游戏是很好的演示。至于鼠标的位置，棋类游戏可以把其先转化为在棋盘中的哪一格，得到行数列数再处理，而坦克游戏则直接使用指针的位置来作为目标旋转炮塔和发炮。</p>
+
+<p>游戏中可以用重复而自连接的小图片作为背景，类似现实中地砖或床单上的图案，其实是一个精灵，锁定在屏幕上，你自己来写代码让它卷动，例如小蜜蜂自动将星空向下滚类似飞机在向上飞，而坦克游戏则是向坦克的移动方向反方向卷，看着效果就是坦克和地面的相对位置变化与现实中一致，至于超级马里奥游戏，干脆不卷了，这是因为画面上的地图元件已经足够呈现移动的效果。</p>
+
+<p>配对、记忆、拼图都有&ldquo;电脑知道而玩家不一定记得&rdquo;的信息，例如配对游戏中每个格子背后的画是什么，记忆游戏到底出的题目的数字序列是什么，拼图游戏成功时每个碎片应该在什么位置，这些信息当然存在游戏的全局变量里，另外例如坦克游戏里敌人坦克的血量，则由敌人坦克类的一个属性保存。游戏状态的保存使用什么编程元素都可以，可以想到的还有html5的本地存储甚至数据库，甚至是用ajax或者websocket存到服务器上。</p>
+
+<p>记忆游戏有&ldquo;关卡&rdquo;的概念，而小蜜蜂游戏当三条命死绝之后有点击重新开始游戏的功能，这些进入新关卡或者重新开始游戏，当然不要location.reload，也不要重新初始化dom之类这样大张旗鼓的事，其实重新开始游戏只是逻辑上的重新开始，将全局变量重设为初始状态（过关则是关卡数加一其他数据清零），并重新显示适当的交互信息即可，例如播放动画、提示用户点击开始什么的。</p>
+
+<p>棋盘类游戏中的精灵，既有坐标，也有身处第几行、第几列的概念，游戏逻辑中当然是用行数列数写逻辑最合理，当要移动棋子时，则使用坐标编写动画语句优美地滑过去，而行数列数则直接指定，代表&ldquo;该在哪儿&rdquo;。</p>
+
+<p>小蜜蜂和坦克有炮弹和爆炸的临时精灵，用&ldquo;池&rdquo;来预先初始化一批这样的精灵，用到就取出，用完再归还，与数据库的连接&ldquo;池&rdquo;、服务器的线程&ldquo;池&rdquo;是相同的思想，避免对象过多。炮弹打到敌人坦克/飞机上时的事件，则是主循环中检测接触，如果接触则做点什么，比如销毁炮弹、播放动画效果、敌人血量减少甚至死亡。</p>
+
+<p>目前的体会就这些，总结核心的关键点是主循环、精灵、全局状态、玩家行为、精灵策略，当然还有tile地图。</p>
+</div>
+</div>
+</body>
+</html>

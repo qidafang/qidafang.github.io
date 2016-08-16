@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>特洛伊城公主——Cassandra初识</h1>
+<div><p>我不敢看这个眼神</p>
+
+<p><img alt="" src="http://img.zidafone.com/427studio/19354a25-3c61-48aa-a85f-9e066fe4e36e.png" style="height:100px; width:500px" /></p>
+
+<p>那么尖锐又那么凄厉。</p>
+
+<p>卡珊德拉，特洛伊城的公主，赫克托耳的妹妹，古希腊神话里最强悍的预言家之一，预言百发百中，无一落空。<br />
+却不被任何一个人相信。<br />
+最终，特洛伊城破，卡珊德拉在雅典娜神庙被小埃阿斯侮辱，后者因此在归途中殒命，卡珊德拉随阿伽门农返乡，与阿伽门农一同被其妻子杀害。</p>
+
+<blockquote>
+<p>&ldquo;她和古希伯来的众先知一样直视事理的真相，但是她的明晰无误的眼力，和她心中负荷的宇宙事理的可怖奥秘，却使她隔绝于正常的人生，使她在世人眼中成了个疯子。这便是古来先知们一再遭遇的命运。&rdquo;&mdash;&mdash;Bernard M.W.Knox</p>
+</blockquote>
+
+<p><strong>图：小埃阿斯和卡珊德拉</strong></p>
+
+<p><img alt="" src="http://img.zidafone.com/427studio/9bb2c5cb-0269-4ce1-9872-9c16ba23cb6f.jpg" style="height:598px; width:293px" /></p>
+
+<p>我本来以为会很鄙视这个男人，却发现怎么也鄙视不起来。<br />
+阿开亚人的英雄，忒拉蒙儿子的战友，在十年的浴血拼杀中始终奋战在第一线，又活到了战争胜利那天的铁血战士。&mdash;&mdash;如斯坚强<br />
+在战船边、沙场上浴血奋战，在神庙里、恐怖的大神雅典娜眼皮底下无法无天的，豪勇男儿。&mdash;&mdash;如斯骄傲</p>
+
+<p>一个传达神的意志却不被世人理解的女子，一个无视神的意志哪怕粉身碎骨的勇士。<br />
+自古美人如名将，不使人间见白头。</p>
+
+<p><br />
+============</p>
+
+<p><br />
+那么学习开始：</p>
+
+<p><strong>一、初识公主面</strong><br />
+1.从<a href="http://cassandra.apache.org/">官网</a>上下载安装包<br />
+2.解压，运行bin目录下的cassandra.bat启动服务器<br />
+3.运行cqlsh.bat启动客户端<br />
+1)建立keyspace（可以理解为建立数据库）:<br />
+CREATE KEYSPACE troy WITH REPLICATION={&#39;class&#39;:&#39;SimpleStrategy&#39;,&#39;replication_factor&#39;:1};<br />
+2)使用keyspace:<br />
+USE troy;<br />
+3)建立columnfamily（可以理解为建立表）:<br />
+create columnfamily hero(<br />
+&nbsp;&nbsp; &nbsp;id varchar primary key,<br />
+&nbsp;&nbsp; &nbsp;name varchar<br />
+);<br />
+4)插入记录：<br />
+insert into hero(id,name) values(&#39;1&#39;,&#39;ajax&#39;);<br />
+5)查询记录：<br />
+select id,name from hero;<br />
+6)更新记录：<br />
+update hero set name = &#39;small ajax&#39; where id = &#39;1&#39;;<br />
+7)删除记录：<br />
+delete from hero where id = &#39;1&#39;;<br />
+&nbsp;</p>
+
+<p><strong>二、使用<a href="http://docs.datastax.com/en/developer/java-driver/2.1/common/drivers/introduction/introArchOverview_c.html">java客户端</a></strong><br />
+cassandra的查询语句CQL<a href="http://docs.datastax.com/en/cql/3.1/cql/cql_intro_c.html">参考这里</a><br />
+1)引入库：</p>
+
+<blockquote>
+<p>&nbsp;&nbsp; &nbsp;&lt;dependency&gt;<br />
+&nbsp;&nbsp; &nbsp; &nbsp;&lt;groupId&gt;com.datastax.cassandra&lt;/groupId&gt;<br />
+&nbsp;&nbsp; &nbsp; &nbsp;&lt;artifactId&gt;cassandra-driver-core&lt;/artifactId&gt;<br />
+&nbsp;&nbsp; &nbsp; &nbsp;&lt;version&gt;2.1.4&lt;/version&gt;<br />
+&nbsp;&nbsp; &nbsp;&lt;/dependency&gt;</p>
+</blockquote>
+
+<p>2)单元测试代码：</p>
+
+<blockquote>
+<p>package test;</p>
+
+<p>import org.junit.After;<br />
+import org.junit.Before;<br />
+import org.junit.Test;</p>
+
+<p>import com.datastax.driver.core.Cluster;<br />
+import com.datastax.driver.core.ResultSet;<br />
+import com.datastax.driver.core.Row;<br />
+import com.datastax.driver.core.Session;</p>
+
+<p>public class CassandraTest {</p>
+
+<p>&nbsp;&nbsp; &nbsp;private Cluster cluster;<br />
+&nbsp;&nbsp; &nbsp;<br />
+&nbsp;&nbsp; &nbsp;@Before<br />
+&nbsp;&nbsp; &nbsp;public void before(){<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;cluster = Cluster.builder().addContactPoint(&quot;127.0.0.1&quot;).build();<br />
+&nbsp;&nbsp; &nbsp;}<br />
+&nbsp;&nbsp; &nbsp;<br />
+&nbsp;&nbsp; &nbsp;@After<br />
+&nbsp;&nbsp; &nbsp;public void after(){<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;cluster.close();<br />
+&nbsp;&nbsp; &nbsp;}</p>
+
+<p>&nbsp;&nbsp; &nbsp;@Test<br />
+&nbsp;&nbsp; &nbsp;public void cql(){<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;Session session = cluster.connect();<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;session.execute(&quot;drop table if exists troy.hero;&quot;);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;session.execute(&quot;create table troy.hero(id varchar primary key,name varchar);&quot;);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;session.execute(&quot;insert into troy.hero(id,name) values(&#39;0&#39;,&#39;Hector&#39;);&quot;);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;session.execute(&quot;insert into troy.hero(id,name) values(&#39;1&#39;,&#39;Ajax&#39;);&quot;);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;ResultSet rs = session.execute(&quot;select * from troy.hero;&quot;);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;for(Row row : rs){<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;System.out.println(row.getString(&quot;name&quot;));<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;}<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;session.close();<br />
+&nbsp;&nbsp; &nbsp;}<br />
+}</p>
+</blockquote>
+
+<p>3)引入面向对象库</p>
+
+<blockquote>
+<p>&nbsp;&nbsp; &nbsp;&lt;dependency&gt;<br />
+&nbsp;&nbsp; &nbsp; &nbsp;&lt;groupId&gt;com.datastax.cassandra&lt;/groupId&gt;<br />
+&nbsp;&nbsp; &nbsp; &nbsp;&lt;artifactId&gt;cassandra-driver-mapping&lt;/artifactId&gt;<br />
+&nbsp;&nbsp; &nbsp; &nbsp;&lt;version&gt;2.1.5&lt;/version&gt;<br />
+&nbsp;&nbsp; &nbsp;&lt;/dependency&gt;</p>
+</blockquote>
+
+<p>4）在实体上添加注解</p>
+
+<blockquote>
+<p>@Table(keyspace = &quot;troy&quot;, name = &quot;hero&quot;)<br />
+public class Hero {</p>
+
+<p>&nbsp;&nbsp; &nbsp;@PartitionKey<br />
+&nbsp;&nbsp; &nbsp;private String id;<br />
+&nbsp;&nbsp; &nbsp;private String name;</p>
+</blockquote>
+
+<p>5)测试实体API的单元测试</p>
+
+<blockquote>
+<p>&nbsp;&nbsp; &nbsp;@Test<br />
+&nbsp;&nbsp; &nbsp;public void entity(){<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;Session session = cluster.connect();<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;Mapper&lt;Hero&gt; heroMapper = new MappingManager(session).mapper(Hero.class);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;Hero odysseus = new Hero();<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;odysseus.setId(&quot;250&quot;);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;odysseus.setName(&quot;odysseus&quot;);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;heroMapper.save(odysseus);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;Hero the250 = heroMapper.get(&quot;250&quot;);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;Assert.assertEquals(&quot;二百五的名字不对&quot;, &quot;odysseus&quot;, the250.getName());<br />
+&nbsp;&nbsp; &nbsp;}</p>
+</blockquote>
+
+<p><strong>三、与关系型数据库的概念对应</strong></p>
+
+<blockquote>
+<p>keyspace -&gt; database</p>
+
+<p>columnfamily -&gt; table</p>
+
+<p>row -&gt; row</p>
+
+<p>column -&gt; column</p>
+</blockquote>
+
+<p>唯一的区别在卡珊德拉的<strong>同一个表中不同行中拥有的列数是可以不同的</strong>，不像关系型数据库一个表中所有行的列数都一致。</p>
+
+<p>用集合的角度理解卡珊德拉的概念：</p>
+
+<p>本质是一个超级容器</p>
+
+<blockquote>
+<p>map&lt;k0,map&lt;k1,map&lt;k2,map&lt;k3,v&gt;&gt;&gt;&gt;</p>
+
+<p>k0：数据库名</p>
+
+<p>k1：表名</p>
+
+<p>k2：行名</p>
+
+<p>k3：列名</p>
+</blockquote>
+
+<p><strong>&nbsp;四、参考书籍：</strong></p>
+
+<p>《NOSQL精粹》</p>
+
+<p>《Cassandra权威指南》</p>
+
+<p><strong>五、TODO：</strong></p>
+
+<p><a href="https://github.com/hector-client/hector/wiki/Getting-started-%285-minutes%29">Hector</a>客户端，赫克托耳是卡珊德拉的好哥哥。</p>
+</div>
+</div>
+</body>
+</html>

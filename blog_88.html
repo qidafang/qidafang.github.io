@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>Activiti工作流再一次初学</h1>
+<div><p>又是再次初学，学习不归档等于浪费生命。</p>
+
+<p>参考资料：电子文档《Activiti5.4用户指南（中文）》，开源项目kft_activiti_demo（推荐）</p>
+
+<p>&nbsp;</p>
+
+<p>1.性质：一些表，一些操作这些表的持久层、业务层对象，引入到你的项目里，供你爱怎么调用怎么调用</p>
+
+<p>please call me, i wont call you的低调，让人愉快、欣喜。</p>
+
+<p>这是把自己定位成类库了，虽然有数据库表。为什么说是类库？因为没有&ldquo;控制反转&rdquo;抢夺程序流程的控制权。</p>
+
+<p>&nbsp;</p>
+
+<p>2.最基本的用法，如下图</p>
+
+<p><img alt="http://img.zidafone.com/site/e43a0814-16b5-4490-8e38-6971b1c7b959.png" src="http://img.zidafone.com/site/e43a0814-16b5-4490-8e38-6971b1c7b959.png" title="http://img.zidafone.com/site/e43a0814-16b5-4490-8e38-6971b1c7b959.png" /></p>
+
+<p>解释：由于其低调老实的特点，你写业务代码的时候尽管无视它，然后在其该切入的点上，调用一下它的方法，就OK了。</p>
+
+<p>名词class：</p>
+
+<p>核心的两个概念，一是流实体，二是流任务。业务中出现了&ldquo;创造一个工作流&rdquo;的含义时，就是一个流实体该出现的时候，流实体每前进一步，就出现一个新的流任务，等人来完成。</p>
+
+<p>动词class：</p>
+
+<p>各个service你尽管把它们看成用于单表查询的数据访问对象，还是类似hibernate的基于原型查询的方式，用起来非常简单。</p>
+
+<p>&nbsp;</p>
+
+<p>3.定义工作流</p>
+
+<p>本质就是写xml，由于安eclipse插件失败，干脆手写了。但如果给客户用肯定还是得有设计工具。</p>
+
+<p>做个页面用于上传写好的xml，标准代码，不赘。</p>
+
+<p>&nbsp;</p>
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>在github上写博客</h1>
+<div><p>拿了本上周买的github书籍去沙发上躺着看，突然想研究在github上建博客了。</p>
+
+<h1>1.在github上建博客</h1>
+
+<p>其实很简单，建个库，库的名字叫username.github.io，其中github和你的用户名一样就可以。</p>
+
+<p>然后上传一个index.html，访问username.github.io应该就可以看得到了。</p>
+
+<p>如果看不到，看看是不是没进行邮箱校验。</p>
+
+<p>具体参考<a href="https://pages.github.com/" style="box-sizing: border-box; color: rgb(38, 139, 210); text-decoration: none;">官网的教程</a>，非常简单。</p>
+
+<h1>2.使用jekyll</h1>
+
+<p>因为只能上传html的静态文件，而我们希望写一篇博客只需要写内容，这就需要模板渲染。github支持jekyll。</p>
+
+<p>如果写博文时想要在本地看效果，就要安jekyll，具体参考<a href="https://help.github.com/articles/using-jekyll-with-pages/" style="box-sizing: border-box; color: rgb(38, 139, 210); text-decoration: none;">官网教程</a>。</p>
+
+<p>不算难，但有两点&mdash;&mdash;</p>
+
+<h2>1)在使用gem之前要为gem换源，因为官方源被墙：</h2>
+
+<blockquote>
+<p>gem sources -l gem sources &ndash;remove https://rubygems.org/ gem sources -a http://ruby.taobao.org/</p>
+</blockquote>
+
+<h2>2)在安装jekyll之前需要先安装devkits</h2>
+
+<blockquote>
+<p>在<a href="http://rubyinstaller.org/downloads" style="box-sizing: border-box; color: rgb(38, 139, 210); text-decoration: none;">官网</a>下载devkits 解压 执行ruby dk.rb init及ruby dk.rb install，在install之前可能需要改下config.yml，配置ruby安装地址。</p>
+</blockquote>
+
+<p>之后可以找找jekyll模板，因为全手动来累死人，模板解压到username.github.io这个库的文件夹下，jekyll serve，如果可以在localhost:4000上看到页面，就成功了。</p>
+
+<p>然后就折腾_posts文件夹里的文件，每个文件就是一篇博文，随时写随时在浏览器看效果，ok之后提交到github，即可在username.github.io中看到了。</p>
+
+<h1>3.markdown</h1>
+
+<p>markdown语法说明可以看<a href="http://wowubuntu.com/markdown/" style="box-sizing: border-box; color: rgb(38, 139, 210); text-decoration: none;">这里</a>，本质是用一些简洁的标记，生成html的标签，但不影响html标签的样式。</p>
+
+<p>所以我们写博客的时候实际是内容和结构一起写的。</p>
+
+<p>比如<a href="http://qidafang.github.io/2015/08/18/first-page/" style="box-sizing: border-box; color: rgb(38, 139, 210); text-decoration: none;">我的第一篇博客</a>，源码在<a href="https://github.com/qidafang/qidafang.github.io/blob/master/_posts/2015-08-18-first-page.md" style="box-sizing: border-box; color: rgb(38, 139, 210); text-decoration: none;">这里</a>。</p>
+
+<p>因为github能识别markdown语法，所以直接显示了内容。</p>
+</div>
+</div>
+</body>
+</html>

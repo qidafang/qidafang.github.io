@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>使用Node.js的socket.io模块开发实时web程序</h1>
+<div><p>今天的思维漫游如下：从.net的windows程序开发，摸到nodejs的桌面程序开发，又熟悉了一下nodejs，对&ldquo;异步&rdquo;的理解有了上上周对操作系统的学习而更能理解。<br />
+然后发现了Node.js中的socket.io这个模块，又觉得跟前几天用.net做客户端的socket游戏了。<br />
+<span style="color:#008000">技术世界，兜兜转转，相逢一笑，疑是故人。</span></p>
+
+<p>socket.io用来做实时web程序，解决之前的B/S程序只有无状态连接，特定需求还需要用长连接这种&ldquo;奇技淫巧&rdquo;的问题。<br />
+当然，这是html5中websocket技术的任务，而socket.io正是封装了它。<br />
+socket.io的文档在<a href="http://socket.io/docs/">这里</a>，先写个demo，明天想个好玩的点子玩玩看。<br />
+真的好短好舒服，比java的socket编程美观，比java的websocket服务端编程美观到不知哪里去了。</p>
+
+<p><strong>服务器代码：</strong></p>
+
+<blockquote>
+<p>var app = require(&quot;http&quot;).createServer(handler);<br />
+var io = require(&quot;socket.io&quot;).listen(app);<br />
+var fs = require(&quot;fs&quot;);<br />
+var html = fs.readFileSync(&quot;index.html&quot;, &quot;utf8&quot;);</p>
+
+<p>function handler(req, res){<br />
+&nbsp; &nbsp; res.setHeader(&quot;Content-Type&quot;, &quot;text/html&quot;);<br />
+&nbsp; &nbsp; res.setHeader(&quot;Content-Length&quot;, Buffer.byteLength(html, &quot;utf8&quot;));<br />
+&nbsp; &nbsp; res.end(html);<br />
+}</p>
+
+<p>app.listen(8080);</p>
+
+<p>io.sockets.on(&quot;connection&quot;, function(socket){<br />
+&nbsp; &nbsp;<span style="color:#FF0000"> //从客户端获得命令</span><br />
+&nbsp; &nbsp; <span style="color:#FF0000">socket.on</span>(&quot;say&quot;, function(data){<br />
+&nbsp; &nbsp; &nbsp; &nbsp;<span style="color:#FF0000"> //向客户端发命令</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; <span style="color:#FF0000">io.sockets.send</span>(data.content);<br />
+&nbsp; &nbsp; });<br />
+});</p>
+</blockquote>
+
+<p>网页代码：</p>
+
+<blockquote>
+<p>&lt;!DOCTYPE html&gt;<br />
+&lt;html&gt;<br />
+&lt;head&gt;<br />
+&nbsp; &nbsp; &lt;meta charset=&quot;utf8&quot;&gt;<br />
+&lt;/head&gt;<br />
+&lt;body&gt;<br />
+&nbsp; &nbsp; &lt;div id=&quot;msg&quot;&gt;&lt;/div&gt;<br />
+&nbsp; &nbsp; &lt;input type=&quot;text&quot; id=&quot;t&quot;/&gt;<br />
+&nbsp; &nbsp; &lt;input type=&quot;button&quot; id=&quot;b&quot; value=&quot;发送&quot;/&gt;</p>
+
+<p>&nbsp; &nbsp; &lt;script type=&quot;text/javascript&quot; src=&quot;/socket.io/socket.io.js&quot;&gt;&lt;/script&gt;<br />
+&nbsp; &nbsp; &lt;script type=&quot;text/javascript&quot;&gt;<br />
+&nbsp; &nbsp; &nbsp; &nbsp; var socket = io.connect();<br />
+&nbsp; &nbsp; &nbsp; &nbsp; <span style="color:#FF0000">//从服务器获得消息</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; <span style="color:#FF0000">socket.on</span>(&quot;message&quot;, function(msg){<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; var newMsg = document.createElement(&quot;div&quot;);<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; newMsg.innerHTML = msg;<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; document.getElementById(&quot;msg&quot;).appendChild(newMsg);<br />
+&nbsp; &nbsp; &nbsp; &nbsp; });<br />
+&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;<br />
+&nbsp; &nbsp; &nbsp; &nbsp; document.getElementById(&quot;b&quot;).onclick = function(){<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; var txt = document.getElementById(&quot;t&quot;).value;<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <span style="color:#FF0000">//向服务器发消息</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <span style="color:#FF0000">socket.emit</span>(&quot;say&quot;, {<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &quot;content&quot; : txt<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; });<br />
+&nbsp; &nbsp; &nbsp; &nbsp; }<br />
+&nbsp; &nbsp; &lt;/script&gt;<br />
+&lt;/body&gt;<br />
+&lt;/html&gt;</p>
+</blockquote>
+
+<p>用法：在已安装nodejs的前提下，在某个文件夹执行</p>
+
+<blockquote>
+<p>npm install socket.io</p>
+</blockquote>
+
+<p>再新建main.js和index.html俩文件，代码分别如上，然后启动服务器</p>
+
+<blockquote>
+<p>node main.js&nbsp;</p>
+</blockquote>
+
+<p>在浏览器http://localhost:8080/就可以使用了，开多个浏览器看效果。</p>
+
+<p><strong>小贴士：</strong><br />
+按shift在文件夹里右键单击，会弹出&ldquo;在此处打开命令行窗口&rdquo;的菜单项，比windows+r，再cmd，再复制文件夹路径，再cd过去方便多了。</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p><strong><span style="color:#FF0000">附：</span></strong>真正的socket（而不是websocket）的写法，来自《Node.js实战》第13章的代码。<br />
+忍不住要记一下，实在是爱不释手&mdash;&mdash;</p>
+
+<p><strong>服务器（socket_server.js)：</strong></p>
+
+<blockquote>
+<p>var net = require(&quot;net&quot;);<br />
+net.createServer(function(socket){<br />
+&nbsp; &nbsp; <span style="color:#FF0000">socket.on</span>(&quot;data&quot;, function(data){<br />
+&nbsp; &nbsp; &nbsp; &nbsp; <span style="color:#FF0000">socket.write</span>(&quot;em..&quot;);<br />
+&nbsp; &nbsp; })<br />
+}).listen(3000);</p>
+</blockquote>
+
+<p><strong>客户端（socket_client.js）：</strong></p>
+
+<blockquote>
+<p>var net = require(&quot;net&quot;);<br />
+var socket = net.connect({<br />
+&nbsp; &nbsp; host: &quot;127.0.0.1&quot;,<br />
+&nbsp; &nbsp; port: 3000<br />
+});<br />
+socket.on(&quot;connect&quot;, function(){<br />
+<span style="color:#FF0000">&nbsp; &nbsp; process.stdin.pipe(socket);//绑定标准输入<br />
+&nbsp; &nbsp; socket.pipe(process.stdout);//绑定标准输出<br />
+&nbsp; &nbsp; process.stdin.resume();</span><br />
+});</p>
+</blockquote>
+
+<p>那么dota B/P练习小工具服务器的测试工作，只需要把ip和端口改成182.92.10.238和42769就OK了。</p>
+</div>
+</div>
+</body>
+</html>

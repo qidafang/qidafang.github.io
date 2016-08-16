@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>博客改为生成静态页</h1>
+<div><p>之前网站明明只有博客在跑，却占着两个G的内存，实在太浪费，为节约资源，改为生成静态html后上传。总体思路如下：</p>
+
+<ol>
+<li>在本地用markdown语法写博客</li>
+<li>使用markdownj将markdown转为html</li>
+<li>使用freemarker将上一步转好的博文内容渲染为整个博客网页</li>
+<li>使用apache-commons-net库的ftp传输功能，拿到老版目录页，用jsoup解析，加入新博文的目录项，再重生成目录页html</li>
+<li>将34步生成的两个网页上传到虚拟主机上</li>
+</ol>
+
+<p>当然，2-5步全由程序完成。</p>
+
+<p>嗯，简说就是github博客的山寨版。</p>
+
+<p>代码如下：</p>
+
+<pre><code>@Test
+public void upload() throws Exception{
+
+  MarkdownProcessor processor = new MarkdownProcessor();
+
+  File folder = new File("e:/markdown");
+  File[] markdowns = folder.listFiles();
+
+  for(File f : markdowns){
+
+    if(f.getName().endsWith(".md")){
+      //markdown转html
+      String title = f.getName().substring(0, f.getName().length() - 3);
+      String md = FileUtils.readFileToString(f);
+      String content = processor.markdown(md);
+
+      Blog b = new Blog();
+      b.setId(new Date().getTime());
+      b.setTitle(title);
+      b.setContent(content);
+
+      Map&lt;String, Object&gt; context = Maps.newHashMap();
+      context.put("blog", b);
+
+      //生成博客html
+      String blogHtml = FreeMarkerTemplateUtils.processTemplateIntoString(blogTemplate, context);
+      String fileName = "blog_" + b.getId() + ".html";
+      File tempBlog = new File("e:/markdown/" + fileName);
+      FileUtils.writeStringToFile(tempBlog, blogHtml);
+
+      //连接ftp
+      FTPClient ftp = new FTPClient();    
+      ftp.connect("...", 21);    
+      ftp.login("...", "...");    
+      ftp.setFileType(FTPClient.BINARY_FILE_TYPE);    
+      ftp.changeWorkingDirectory("htdocs/blog");  
+      ftp.enterLocalPassiveMode();
+
+      //获得老目录html，添加入新项，生成新目录html
+      File tempIndex = new File("e:/markdown/index.html");
+      OutputStream indexOS = new FileOutputStream(tempIndex);
+      ftp.retrieveFile("index.html", indexOS);
+      indexOS.close();
+      String oldIndex = FileUtils.readFileToString(tempIndex, "utf-8");
+      Document doc = Jsoup.parse(oldIndex);
+      Element ul = doc.select("ul").get(0);
+      ul.html("&lt;li&gt;&lt;a href=\"" + fileName + "\"&gt;" + title + "&lt;/a&gt;&lt;/li&gt;" + ul.html());
+      String newIndexHtml = doc.toString();
+      FileUtils.writeStringToFile(tempIndex, newIndexHtml);
+
+      //上传博客html和新目录html
+      InputStream blogIS = new FileInputStream(tempBlog);
+      ftp.storeFile(fileName, blogIS);
+      blogIS.close();
+      InputStream indexIS = new FileInputStream(tempIndex);
+      ftp.storeFile("index.html", indexIS);
+      indexIS.close();
+
+      //清理现场
+      tempBlog.delete();
+      tempIndex.delete();
+      f.renameTo(new File("e:/markdown/" + f.getName() + "x"));//mdx表示已上传过的md博客
+    }
+
+  }//end of for
+
+}//end of upload()
+</code></pre>
+</div>
+</div>
+</body>
+</html>

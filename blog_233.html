@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>java web程序员开学android</h1>
+<div><p>对一个宏大的世界的认识，首先要提纲挈领通览，化繁为简，先大刀阔斧，后娓娓看来。<br />
+一个安卓APP=若干个Activity+若干个Service+若干个ContentProvider+若干个BroadcastReceiver。</p>
+
+<p>这四种核心组件都可以被其他程序调用，调用方式分别是：<br />
+Activity:暂时略。<br />
+Service:类似rmi远程调用那样。系统提供了一些service可调。<br />
+ContentProvider:类似webservice那样，系统提供了一些contentProvider可调。<br />
+BroadcastReceiver:监听广播频道，当指定频道有广播则响应之。系统提供了一些广播频道可监听。</p>
+
+<p><strong>1)界面（前端关键点）</strong><br />
+APP当然有界面，有界面就要有交互。<br />
+界面是xml定义。<br />
+交互是回调函数。<br />
+用网页前端类比，界面的xml大概相当于html+css，即有结构的意义，又有样式的意义。<br />
+回调函数对应的就是javascript的方法，用户有操作则调用方法。<br />
+整个界面的Activity对应的就是一个ONE PAGE ONE APPLICATION的网页，Activity可以有承担状态的属性，正如网页中常用全局变量承担状态。<br />
+而Activity对控件对象的持有，在网页上的话就是声明一个全局变量var theContent = document.getELementById(&quot;theContentId&quot;);</p>
+
+<p><strong>2)读写（后端关键点）</strong><br />
+在数据源层，有以下几个地方可以做数据源：<br />
+本地的可读写的配置文件；<br />
+本地的数据库；<br />
+通过api通信的远程站点的http接口；<br />
+关于这几个数据源android都提供了与之交互的类库，不赘。<br />
+仔细想想android的技术点跟html5的单页面app非常像。<br />
+android的本地的可读写的配置文件，html5对应的就是键值对的存储。<br />
+本地数据库，html5也有。<br />
+rest api通信能力就不用说了。<br />
+所以啊！同一个服务端提供手机和OPOA网页的接口才是可能的。</p>
+
+<p><strong>3)小小总结一下</strong><br />
+今天把主要的打通经络的技术通览了一遍，具体的技术细节待续。<br />
+总结一下，关键的概念还是无非分为两组，一是前端，二是后端。<br />
+前端无论用不用mvc，界面、界面状态、响应交互的函数都是当然要有的。<br />
+后端无论用不用orm，数据源、读写能力也是当然要有的。<br />
+做出来的是c/s程序，既能与本地系统打交道，也能与远程服务器打交道。<br />
+而OPOA的html5页面，也是c/s程序了，想和本地系统打交道，像android一样也要先申请用户同意&mdash;&mdash;不无脑允许，也不无脑禁止。</p>
+
+<p><strong>参考：</strong>李刚《疯狂android讲义》，真是厚，昨天还非常讨厌，今天开始喜欢上了。<br />
+阅读方法是<strong>先无视细节类库之类末节东西，先看核心概念的结构，把前端后端概念都写demo摸一遍，这棵树的树根树干主要枝干的关键点就有了。</strong><br />
+至于细枝末节和一片片叶子，是明天开始的任务。</p>
+</div>
+</div>
+</body>
+</html>

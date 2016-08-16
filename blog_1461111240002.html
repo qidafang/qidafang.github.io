@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>使用jsp作为模板引擎，在程序中获得渲染结果</h1>
+<div><p>java渲染用惯了freemarker，其实jsp本身就是model转view的神器，标签库什么的又熟悉，web环境又当然支持，不是比freemarker更舒服吗？</p>
+
+<p>尤其是当已有jsp页面的时候，突然需要在程序中获得渲染后的文本，用于ajax异步返回，或者写到磁盘文本文件里什么的。再用freemarker写一套同样的模板就头大了。</p>
+
+<p>而且两套模板保持同步也是个问题。</p>
+
+<p>于是研究了一下使用jsp来渲染，java没有傻瓜式的办法，只好用RequestDispatcher渲染，在自定义的HttpServletResponse实现里获取渲染结果。</p>
+
+<h2>自定义的HttpServletResponse：</h2>
+
+<pre><code>public class MyResponseWrapper extends HttpServletResponseWrapper{
+
+    private PrintWriter writer;
+    private CharArrayWriter bufferedWriter;
+
+    public MyResponseWrapper(HttpServletResponse response) {
+        super(response);
+
+        bufferedWriter = new CharArrayWriter();
+        writer = new PrintWriter(bufferedWriter);
+    }
+
+    @Override
+    public PrintWriter getWriter() throws IOException {
+        return writer;
+    }
+
+    public String getResult(){
+        return bufferedWriter.toString();
+    }
+}
+</code></pre>
+
+<p>如上，继承HttpServletResponseWrapper类，构造方法传入一个已有response，重写getWriter方法后，渲染结果将写入我们自己的容器，最后可以以getResult的方式取得结果字符串。</p>
+
+<h1>渲染方式：</h1>
+
+<pre><code>request.setAttribute("xx", xx);
+MyResponseWrapper resp = new MyResponseWrapper(response);
+request.getRequestDispatcher("/WEB-INF/..../xx.jsp").include(request, resp);
+String content = resp.getResult();
+</code></pre>
+
+<p>如上，在web环境中，将现成的request作为model，将模板需要的参数用setAttribute的方法设入之，然后准备一个MyResponseWrapper作为“桶”，用于装渲染结果。</p>
+
+<p>调用getRequestDispatcher..include之后，“桶”里有了最终的结果，getResult取出即可。</p>
+
+<p>至此已经成功实现了用jsp作为页面模板，在程序中获得渲染结果的目的。</p>
+
+<p>因为request，response需要用到原生的对象，所以只能在web环境中使用，如果是用于响应用户请求的逻辑，用户请求时当然有request和response，不必多说。</p>
+
+<p>不是用于响应用户请求的逻辑，比如定时任务，则可以用httpClient构造一个请求触发之。</p>
+
+<p>如果需要传入动态参数，在用户请求or自己构造的请求传入http参数即可，程序代码里request.getParameter获得，逻辑处理后setAttribute之后再渲染，与经典的servlet-jsp程序方法一致。</p>
+</div>
+</div>
+</body>
+</html>

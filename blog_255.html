@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>从11对战平台获取玩家数据进行分析</h1>
+<div><p><strong>12月3日晚上更新：</strong>我的统计算法，页面<a href="http://page.zidafone.com/demos/dota-player/number.html" target="_blank">在这里</a>，代码<a href="https://github.com/qidafang/dota_player_hero_calculate/blob/master/page/number.html" target="_blank">在这里</a>。</p>
+
+<p>&nbsp;</p>
+
+<p>在11对战平台好友列表中右键可以查看他的战绩，该页面的地址实际是这样：</p>
+
+<p><a href="http://score.5211game.com/RecordCenter/?u=%E6%9C%88%E7%97%959873&amp;t=10001" target="_blank">http://score.5211game.com/RecordCenter/?u=%E6%9C%88%E7%97%959873&amp;t=10001</a></p>
+
+<p>用浏览器查看的话需要登录。在页面右侧的搜索框输入游戏ID，可以看他的战绩。</p>
+
+<p>打开chrome浏览器控制台，network选项卡，过滤异步请求消息，可以看到一个有用的数据：</p>
+
+<p><img alt="" src="http://img.zidafone.com/427studio/0e09d797-8a38-4b38-bb15-066a7529def1.png" style="height:326px; width:834px" /></p>
+
+<p>这个json文件拷贝到编辑器里，将json格式化（为啥不用爬虫？因为要登录。暂时懒得研究爬虫登录的办法）：</p>
+
+<p><img alt="" src="http://img.zidafone.com/427studio/c877c28e-b873-454b-9311-4bf3fde149a2.png" style="height:320px; width:306px" /></p>
+
+<p>如图，新建一个js文件，先输入var xx = ，再将复制的json粘贴，然后右键source-format，格式化json。</p>
+
+<p>观察，不难发现mjInfos是名将数据，ttInfos是天梯数据，mjheroInfos是名将英雄数据，最后这个数据信息量很丰富：</p>
+
+<p><img alt="" src="http://img.zidafone.com/427studio/f5b0af58-967f-466f-815e-dbdd0ac6520d.png" style="height:534px; width:329px" /></p>
+
+<p>利用这些信息和之前获得的英雄数据（可以参考<a href="http://427studio.net/blog/1/253" target="_blank">这篇博文</a>），就可以计算一些统计信息了。</p>
+
+<p>例如给你的小伙伴们各项指标评分，担心主观判断太重，好办，用数据来计算分数就可以了。</p>
+
+<p>我的代码<a href="https://github.com/qidafang/dota_player_hero_calculate/blob/master/page/test.html" target="_blank">在这里</a>，有兴趣自己看吧，我计算出的结果如下，小伙伴们反映还是比较中肯的（这个编辑器参考<a href="http://427studio.net/blog/1/254" target="_blank">这里</a>）：</p>
+
+<p><img alt="" src="http://img.zidafone.com/427studio/bd39fa4c-6b1e-43b5-9299-f27798e81540.png" style="height:240px; width:1165px" />对每个玩家的特点，用第一手数据进行分析，让他知道&ldquo;原来我的特点是这样&rdquo;，这件事真挺有趣的。</p>
+
+<p>看到数据之后震惊的时候也不少，有些数据表示我们通常认为谁的特点可能是错误的。</p>
+</div>
+</div>
+</body>
+</html>

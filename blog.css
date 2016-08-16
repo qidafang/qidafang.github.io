@@ -1,0 +1,25 @@
+﻿*{
+	font-family: 微软雅黑,宋体,Consolas,arial;
+	line-height: 1.7;
+}
+
+body{
+	background-color: #EEE;
+}
+
+
+#container{
+	width: 1200px;
+	margin: 0 auto;
+}
+
+blockquote, pre{
+	overflow: auto;
+	border: 1px solid black;
+	margin: 0;
+	padding: 16px;
+	font-size: 85%;
+	line-height: 1.4;
+	background-color: #BBB;
+	border-radius: 3px;
+}

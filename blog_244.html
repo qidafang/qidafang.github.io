@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>dota BP练习工具开发：一个C/S多用户程序</h1>
+<div><p>客户端采用C#开发，服务器使用java开发，通信方式为socket。</p>
+
+<p><img alt="" src="http://img.zidafone.com/427studio/9939440c-fb0d-4f98-b126-32871ca85662.png" style="height:350px; width:525px" /></p>
+
+<p><strong>1.首先决定交互协议</strong></p>
+
+<p>客户端指令协议：</p>
+
+<blockquote>
+<p><span style="color:#FF0000">getgames</span>：要求服务端发送games指令</p>
+
+<p><span style="color:#FF0000">creategame:name=xx</span>：新建一个游戏，并指定当前玩家名称，该名称也被用作游戏名称</p>
+
+<p><span style="color:#FF0000">joingame:game=xx,name=yy</span>：加入一个已有的游戏，指定游戏名称和当前玩家名称</p>
+
+<p><span style="color:#FF0000">bp:hero=vs</span>:进行BP，表示禁用英雄复仇之魂或选择英雄复仇之魂</p>
+</blockquote>
+
+<p>服务端指令协议：</p>
+
+<blockquote>
+<p><span style="color:#FF0000">games:games=xx|nn</span>：告之客户端&ldquo;在服务端有多少个可以加入的游戏&rdquo;，即已有人建主且房间未满的游戏</p>
+
+<p><span style="color:#FF0000">game:turn=1,p1=xx,p2=yy</span>：告之客户端&ldquo;你当前加入的游戏的信息&rdquo;，p1和p2分别是两个玩家的名称，turn是进行到bp的哪个阶段</p>
+
+<p><span style="color:#FF0000">bp:hero=vs</span>：告之客户端&ldquo;正在进行的游戏的新进度&rdquo;，如对方刚刚下了禁用了vs的命令</p>
+
+<p><span style="color:#FF0000">gameover:msg=对方退出游戏</span>：告之客户端&ldquo;当前游戏结束&rdquo;的信息，让客户端返回空闲状态</p>
+</blockquote>
+
+<p><strong>2.决定协议之后，根据协议完成服务端的实现&mdash;&mdash;</strong></p>
+
+<p>服务端模型：</p>
+
+<blockquote>
+<p><a href="https://github.com/qidafang/bp_server/blob/master/bpServer/src/testSocketServer/Server.java" target="_blank">server</a>与<a href="https://github.com/qidafang/bp_server/blob/master/bpServer/src/testSocketServer/component/Service.java" target="_blank">service</a>一对多，每个service是个线程，负责管理一个客户端连接的工作</p>
+
+<p><a href="https://github.com/qidafang/bp_server/blob/master/bpServer/src/testSocketServer/Server.java" target="_blank">server</a>与<a href="https://github.com/qidafang/bp_server/blob/master/bpServer/src/testSocketServer/model/Game.java" target="_blank">game</a>一对多，每个game表示一个游戏</p>
+
+<p><a href="https://github.com/qidafang/bp_server/blob/master/bpServer/src/testSocketServer/model/Game.java" target="_blank">game</a>与<a href="https://github.com/qidafang/bp_server/blob/master/bpServer/src/testSocketServer/model/Player.java" target="_blank">player</a>一对(1..2)，每个game有两个玩家，即现实中的两个BP手，也存在已新建游戏，并没人加入游戏的状态，这时只有一个玩家</p>
+
+<p><a href="https://github.com/qidafang/bp_server/blob/master/bpServer/src/testSocketServer/component/Service.java" target="_blank">service</a>与<a href="https://github.com/qidafang/bp_server/blob/master/bpServer/src/testSocketServer/model/Player.java" target="_blank">player</a>一对(0..1)，如果玩家未创建游戏，也未加入游戏，为1对0，如果在游戏中，为1对1</p>
+</blockquote>
+
+<p>当服务端接收到客户端命令，总体上进行两个动作，一是改变服务端状态，即修改以上模型的属性，二是（改变完状态之后）由服务端向客户端发送命令，分为<span style="color:#FF0000">响应/向当前游戏玩家广播/向所有玩家广播</span>三种发送方式（见<a href="https://github.com/qidafang/bp_server/blob/master/bpServer/src/testSocketServer/component/Service.java" target="_blank">Service类</a>中的response/game/all分支）。具体的响应命令的策略见<a href="https://github.com/qidafang/bp_server/blob/master/bpServer/src/testSocketServer/component/RequestDealer.java" target="_blank">RequestDealer类</a>。</p>
+
+<p>服务端的调试简单的写个java控制台客户端来交互，用<a href="https://github.com/qidafang/page/blob/master/socket/Client.java" target="_blank">之前的这个</a>就可以，确定服务端对命令处理的业务逻辑以及响应的命令正确。</p>
+
+<p><strong>3.服务端完成之后进行客户端的开发&mdash;&mdash;</strong></p>
+
+<p>客户端界面（xaml文件<a href="https://github.com/qidafang/bp_client/blob/master/bp_client/MainWindow.xaml">在这里</a>）：</p>
+
+<p><img alt="" src="http://img.zidafone.com/427studio/75421bb5-fc6f-4769-afa8-2351cac0e889.png" style="height:359px; width:537px" /></p>
+
+<p>客户端的工作包括：</p>
+
+<blockquote>
+<p>1)有服务端命令到来的时候，根据命令改变客户端状态，再根据客户端状态改变界面显示。</p>
+
+<p>2)玩家在界面上进行操作时，发送客户端命令到服务器。</p>
+</blockquote>
+
+<p>其中第一步的先改状态再改显示，就是典型的将命令改变到model，再将model渲染到view。</p>
+
+<p>第二步则仅仅做发送命令的操作，不做客户端状态的改变。只有服务器命令能让客户端的状态和显示变化，这样让职责更清晰。</p>
+
+<p>代码<a href="https://github.com/qidafang/bp_client/blob/master/bp_client/MainWindow.xaml.cs" target="_blank">在这里</a>，其中<span style="color:#FF0000">dealRequest</span>方法是完成上面1)的工作，方法体内调用<span style="color:#FF0000">setStateMsg</span>方法进行根据状态改变界面的工作；而<span style="color:#FF0000">createGame_Click等</span>响应按钮事件的方法完成上面2)的工作。</p>
+
+<p>&nbsp;</p>
+
+<p><strong>总结一下&mdash;&mdash;</strong></p>
+
+<p>1)研究问题领域，进行总体设计（在纸上进行的工作，包括服务器、客户端状态、客户端界面）</p>
+
+<p>2)决定交互协议，服务器、客户端的命令格式，<span style="color:#FF0000">本质为方法名、参数列表的定义</span>。</p>
+
+<p>3)服务端开发，使用模拟客户端进行测试和调试。</p>
+
+<p>4)客户端开发</p>
+
+<p>&nbsp;</p>
+
+<p>服务器在182.92.10.238服务器的42769接口，欢迎用socket连接实验，其源码在<a href="https://github.com/qidafang/bp_server" target="_blank">这里</a>。</p>
+
+<p>客户端在<a href="http://share.427studio.net/bp.exe" target="_blank">这里</a>，360会报木马，最好关闭360再下载。如果不放心可以自行使用<a href="https://github.com/qidafang/bp_client/tree/master/bp_client" target="_blank">源码</a>编译。</p>
+
+<p>&nbsp;</p>
+
+<p><strong>最后给自己记的：</strong></p>
+
+<p>1)跑jar包的方法：eclipse导出可执行jar，然后写个bat脚本，内容为<span style="color:#FF0000">call java -jar bpServer.jar</span>。</p>
+
+<p>2)本地项目上传github：先在github上建项目，然后本地新建个文件夹，然后git clone，然后将项目拷贝到出现的子文件夹里，cd进去，git add .，git -commit -m &quot;init&quot;，最后git push即可。我的脑子最不擅长记这种机械的东西了&hellip;&hellip;</p>
+</div>
+</div>
+</body>
+</html>

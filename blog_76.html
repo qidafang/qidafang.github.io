@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>服务器推框架cometd研究两天</h1>
+<div><p>做web的在线通讯、游戏之类的功能，需要浏览器/服务器保持连接的。</p>
+
+<p>特点是与经典的请求/响应模式不同，即服务器随时可以给浏览器响应。</p>
+
+<p>&nbsp;</p>
+
+<p>一种普遍的解决方案是服务器推模式，英文叫comet。</p>
+
+<p>搜comet框架能找到几种流行的解决方案，我主要研究的是cometd。</p>
+
+<p>&nbsp;</p>
+
+<p>优点在：基于maven，官方文档详细。</p>
+
+<p>缺点在：demo上手麻烦，文档略嫌啰嗦。</p>
+
+<p>&nbsp;</p>
+
+<p>目前有2和3两个版本，本来想用3，但只支持jetty9，而springside用的嵌入式jetty只出到7，所以不成，只能用2了。</p>
+
+<p>2的文档比起3来，没有一个单独的html，没法全局搜索例如tomcat这样的关键字，较烦。</p>
+
+<p>&nbsp;</p>
+
+<p>个人一点经验，只是经验，不是最佳实践：</p>
+
+<ol style="list-style-type:decimal">
+	<li>
+	<p>官方的demo很好，但是零散，java代码和js代码都在不同的project里，感觉有点过度解耦了，不喜欢。可以从官方给的maven骨架项目入手做自己的测试项目。参考官方demo的代码。</p>
+	</li>
+	<li>
+	<p>使用spring一定要将cometd的service的延迟初始化设为否，否则不起作用。</p>
+	</li>
+	<li>
+	<p>从骨架项目的包里找需要的js吧，在demo中找乱死了。</p>
+	</li>
+	<li>
+	<p>自己测试项目跑起来再看文档，更容易理解。</p>
+	</li>
+	<li>
+	<p>调试可以用springside的内嵌jetty，或mvn jetty:run调试，jetty7顺利运行。tomcat7和jetty9都能用，但websocket会被自动降级为ajax轮询，功能好歹是没受影响。</p>
+	</li>
+	<li>
+	<p>tomcat7按文档的说明改配置，所有浏览器运行失败，都被降级到ajax轮询，但单独部的websocket项目已能使用，不知道是哪里配的不对。</p>
+	</li>
+	<li>
+	<p>内嵌jetty调试时ie9不正常，tomcat7下ie9正常轮询，jetty7下ie11轮询，能轮询就是好事，我基本要放弃websocket了。</p>
+	</li>
+	<li>
+	<p>不喜欢依赖特定版本的特定服务器的解决方案，早晚会规范和一致的，现在下苦力研究长远看也无用，而且java程序员骨子里都有个write once, run anywhere的情结。标准的平台和解决方案才是我们喜欢的。ie的市场份额下降真是大好事。</p>
+	</li>
+	<li>
+	<p>关于websocket和servlet3.0，要进一步研究，这长远上是有用的。</p>
+	</li>
+</ol>
+
+<p>&nbsp;</p>
+
+<p><strong>cometd的核心：</strong>浏览器和服务器逻辑上通过一个&ldquo;频道&rdquo;的概念通信，浏览器可以做订阅频道、向频道推消息这两件事，服务器则做监听频道、向频道推消息这两件事。一方推的消息，订阅/监听了频道的另一方可以自然得到，交互格式是json/map，很自然。</p>
+
+<ol style="list-style-type:decimal">
+	<li>
+	<p>服务器除了可以向频道推消息即广播，还可以给特定的浏览器发消息。一个要点是服务器持有全局容器，记录了当前所有用户的某些信息，从而响应任何一个用户的线程都能访问到全部的资料。存static变量/数据库/nosql数据库/缓存当然都行，总之要有全局容器。</p>
+	</li>
+	<li>
+	<p>当然也可以让其他的java代码访问给浏览器推消息的对象，这样就可以做例如后台操作给用户发消息之类的功能了，服务器给用户发消息的动作不是只能在有消息过来时被触发，定时任务什么的当然都可以，很灵活。</p>
+	</li>
+	<li>
+	<p>根本的根本，还是&ldquo;服务器推&rdquo;这四个字，comet解决的就是这个需求，其他问题都是解决需求的过程中引入的问题，如果找不到合适的框架，别忘了可以自己写。</p>
+
+	<p>&nbsp;</p>
+	</li>
+</ol>
+
+<p><strong>自己写的基本思路：</strong>核心是服务器的一个方法，该方法在请求来的时候，检查某个全局容器的状态，决定是否继续等待，直到应该给浏览器消息了，给浏览器返回。</p>
+
+<ol style="list-style-type:decimal">
+	<li>
+	<p>浏览器接收到返回的消息就进行处理，并立刻再发一</p>
+	</li>
+</ol>
+</div>
+</div>
+</body>
+</html>

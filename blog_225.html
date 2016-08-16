@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>git的使用</h1>
+<div><p>使用git，目前本人所知的有三种方法：</p>
+
+<p><strong><span style="font-size:14px">1)github for windows</span></strong><br />
+可以在github官网上下载，图形化操作。<br />
+基本操作还是比较简单的。但<strong>不推荐</strong>，推荐用第2种。</p>
+
+<p><strong>2)git bash<span style="color:#FF0000">（推荐）</span></strong><br />
+使用命令操作，更简洁暴力，但需要学习一下。<br />
+首先在<a href="http://git-scm.com/download/">官网</a>下载安装。<br />
+常用命令：<br />
+从远程仓库上获得：git clone ...<br />
+查看状态：git status<br />
+查看区别：git diff<br />
+准备把修改commit到本地仓库：git add .<br />
+把修改commit到本地仓库：git commit -m &quot;这里写注释&quot;<br />
+把修改push到远程仓库：git push<br />
+从远程仓库获取变化：git pull</p>
+
+<p><strong>3)eclipse插件</strong><br />
+可以从github上import项目到本地，在eclipse中导入成项目，修改之后提交。<br />
+具体eclipse的team菜单中的命令，参考上面2)中使用git bash时的命令。</p>
+
+<p>另外，<a href="http://git.oschina.net/">git@osc</a>是中国版的github，好处在于<strong>私有库免费</strong>，公司用户想有私有库，又不想花钱的，可以考虑使用。</p>
+
+<p>建立新库的推荐操作：先在github网站上建立仓库，clone到本地文件夹，在该文件夹中初始化项目，再push上去。</p>
+
+<p>如果是已有的项目，则可以team-share project创建本地库（建议在父文件夹中建库，否则项目会被从workspace中挪走），之后commit，再push。</p>
+
+<p><strong>参考：</strong><br />
+书籍《github入门与实践》<br />
+<a href="http://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000">廖雪峰的git教程</a></p>
+</div>
+</div>
+</body>
+</html>

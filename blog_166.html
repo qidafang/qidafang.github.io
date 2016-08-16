@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>使用页面缓存和浏览器缓存</h1>
+<div><p><strong>核心思想：</strong>缩短请求-响应距离，尽量在离客户最近的地方返回。</p>
+
+<p>页面缓存：将常用页面缓存在服务器内存里，请求到达时通过过滤器判断，如果是已缓存的网页，直接从缓存中取内容。</p>
+
+<p>浏览器缓存：将静态资源(javascript,css,image..)缓存在浏览器缓存里，网页引用了以上资源时会优先从浏览器缓存中寻找，如果找到，则直接使用，不发请求。</p>
+
+<p><strong>一图流：</strong></p>
+
+<p><img alt="" src="http://img.zidafone.com/427studio/f61de626-fa42-4bd5-94cc-640e688246bb.png" style="height:418px; width:837px" /></p>
+
+<p><strong>实现技术：</strong></p>
+
+<p>页面缓存：<a href="http://ehcache.org/generated/2.10.0/html/ehc-all/#page/Ehcache_Documentation_Set%2Fto-title_web_cache_user_guide.html%23">ehcache页面缓存</a></p>
+
+<p>浏览器缓存：</p>
+
+<p>一个简单的过滤器，使用springside的添加缓存响应头方法，其实就俩语句：</p>
+
+<p>// Http 1.0 header, set a fix expires date.<br />
+response.setDateHeader(HttpHeaders.EXPIRES, System.currentTimeMillis() + (expiresSeconds * 1000));<br />
+// Http 1.1 header, set a time after now.<br />
+response.setHeader(HttpHeaders.CACHE_CONTROL, &quot;private, max-age=&quot; + expiresSeconds);</p>
+
+<p>&nbsp;</p>
+
+<p><strong>页面缓存效果：</strong></p>
+
+<p>20个并发线程，每个线程访问20次，</p>
+
+<p>使用页面缓存前：平均响应时间1955毫秒</p>
+
+<p>使用页面缓存后：平均响应时间78毫秒</p>
+
+<p>&nbsp;</p>
+
+<p><strong>浏览器缓存效果：</strong></p>
+
+<p>使用浏览器缓存前：打开页面467毫秒</p>
+
+<p>使用浏览器缓存后：打开页面使用125毫秒</p>
+</div>
+</div>
+</body>
+</html>

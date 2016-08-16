@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>mysql主从复制和读写分离</h1>
+<div><p>1.<br />
+<strong>在同一台电脑上安装两个mysql</strong></p>
+
+<p>（我准备用3427和3428俩端口，前者主人，后者奴隶），<br />
+搜索&ldquo;mysql-noinstall&rdquo;<a href="http://dl.mysql.cn/mysql5/5.1/mysql-noinstall-5.1.63-win32.zip">下载压缩包</a>（原地址貌似失效，用迅雷可以下），<br />
+参考的是<a href="http://down.chinaz.com/server/201111/1333_1.htm">这篇教程</a><br />
+1)分别解压到两个目录：d:/database_server/mysql_3427和d:/database_server/mysql_3428<br />
+2)把根目录的my_medium复制一个改名为my.ini<br />
+3)[mysqld]块下添加（以文件夹3427为例，3428同理）：<br />
+basedir = d:\database_server\mysql_3427<br />
+datadir = d:\database_server\mysql_3427\data<br />
+修改：<br />
+port = 3427<br />
+server_id = 3427<br />
+max_allowed_packet = 100M<br />
+4)改完保存之后，进入mysql的bin目录，执行：<br />
+mysqld --install mysql3427（给服务起个名，另一个叫mysql3428，当然也可以叫别的）<br />
+安装成功服务后<br />
+net start mysql3427<br />
+成功启动就对了<br />
+5)至此就成功在同一台windows电脑上安装了两个mysql</p>
+
+<p>&nbsp;</p>
+
+<p>2.<br />
+<strong>配置主从关系</strong><br />
+参考的是<a href="http://369369.blog.51cto.com/319630/790921/">这篇</a>（不建议点击），原文里笔误很多，还是看我的吧<br />
+1)把俩mysql服务停了，因为要修改配置：<br />
+[mysqld]下确定：<br />
+log-bin=mysql-bin（这个应该不用改）<br />
+server-id=3427（这个用改，另一个改为3428）<br />
+2)把俩服务启动<br />
+3)在master上添加奴隶账户，我把3427用作master，3428用作slave，所以奴隶账户密码都定为mysql_3428<br />
+grant replication slave on *.* to &#39;mysql_3428&#39;@&#39;%&#39; identified by &#39;mysql_3428&#39;;<br />
+4)在master上查询master状态：<br />
+show master status;<br />
+结果有一个File值(我的是mysql-bin-000005)一个Position值(我的是402)，记下来有用<br />
+5)在slave上配置主人信息<br />
+change master to master_host=&#39;localhost&#39;,master_port=3427,master_user=&#39;mysql_3428&#39;,master_password=&#39;mysql_3428&#39;,master_log_file=&#39;mysql-bin-000005&#39;,master_log_pos=402;<br />
+注意，主机和端口写master的，localhost和3427，用户和密码写master上的奴隶账户，mysql_3428，有点后悔给这个账户起这个名字了，叫the_slave好了，没有混淆的麻烦<br />
+master_log_file和master_log_pos就是第4)步里记下的那两个值<br />
+6)在slave上检查与主人联系上没有：<br />
+show slave status\G<br />
+SLAVE_IO和SLAVE_SQL都是YES就对了，否则查看LAST_IO_ERROR/LAST_SQL_ERROR这俩列看报错信息。<br />
+7)至此主从关系就配完了，其实干的就俩件事：主账户开个奴隶账号，奴隶用账号联系主人。<br />
+看看结果：在主库里新建个库/表，新插条记录，到从库里看看，同步没有？同步了就对了。</p>
+
+<p>&nbsp;</p>
+
+<p>3.</p>
+
+<p><strong>读写分离</strong></p>
+
+<p>主库从库配置完了，他俩和应用程序是什么关系呢？</p>
+
+<p>简单明了，一图流：</p>
+
+<p><img alt="" src="http://img.zidafone.com/427studio/c01e13be-5650-4bc2-beb2-32052f6e3421.png" style="height:315px; width:525px" /></p>
+
+<p>其中辅助项目用于对外暴露API，网站通过调用API完成写操作。</p>
+
+<p>当然了，把调API改成通过消息队列也是运用之妙存乎一心的事。</p>
+</div>
+</div>
+</body>
+</html>

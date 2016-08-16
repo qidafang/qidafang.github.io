@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>安装mysql的记录</h1>
+<div><p>安装mysql不是什么难事，但一直没记录方法，每次都现研究，有点浪费时间。<br />
+所以总结一下&mdash;&mdash;</p>
+
+<p>1)<br />
+进入mysql官网，一步步点入下载页面，其间需要oracle用户登录，选择标准版，64位系统，查询，查询结果中列出好多个文件，只下载服务器那个就行。<br />
+下载后是个zip文件，解压，进入bin目录运行mysqld，mysql即启动成功。</p>
+
+<p>2)<br />
+内存占用过大的解决：我的服务器内存为2G，tomcat占用几百兆之后，mysql还需要占用几百兆就不够用了。<br />
+参考<a href="http://blog.csdn.net/wulantian/article/details/41119755">这篇博文</a>的方法，调整my.ini的配置，大幅降低了mysql占用的内存，从几百兆变成了几十兆。<br />
+注意只有my.ini才会被读取，修改mydefault.ini没用。把default拷贝一个改为my.ini再改才行。</p>
+
+<p>3)<br />
+mysql启动之后默认密码为空，而且不允许远程访问。<br />
+要修改密码，在命令行下进入bin目录，mysql -u root登录，执行SET PASSWORD FOR root = PASSWORD(&#39;新密码&#39;);<br />
+要允许远程访问，把user表的host项从localhost改为%，我使用的语句是update user set host = &#39;%&#39; where host = &#39;localhost&#39;;<br />
+密码和远程访问都改好之后，重启mysql，然后用客户机的navicat输入ip和端口，用户名密码，登录成功。</p>
+</div>
+</div>
+</body>
+</html>

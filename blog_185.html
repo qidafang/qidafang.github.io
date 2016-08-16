@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>学一点加密和解密吧</h1>
+<div><p>这几年因为各种偶然的机会，知道了BASE64，MD5等几种算法，但没有这方面的系统知识。<br />
+于是找到了这本书，《Java加密与解密的艺术》，讲得很好。<br />
+四种算法：<br />
+1)传输算法BASE64，HEX，并没有加密的效果，提供了将字节串与字符串互相转换的能力<br />
+2)单向加密算法MD5，SHA1等，用于生成摘要指纹，无法从密文回推明文（但网上已有查询工具了，可能是基于大数据的）<br />
+3)对称加密算法DES，AES等，加密解密使用相同的密钥，关键在保管好这个密钥<br />
+4)非对称加密算法RSA等，分别用公钥和私钥进行加密和解密，私钥永不公开就是了，公钥随便别人获取<br />
+<a href="http://commons.apache.org/proper/commons-codec/index.html">commons-codec</a>专门用于做这些工作，jdk自身也提供了一些支持。<br />
+具体的各种算法的使用方法，详见《Java加密与解密的艺术》的章节及源码，不赘。<br />
+上一点最基本的代码，codec对传输算法和单向加密算法的优雅支持：</p>
+
+<blockquote>
+<p>&nbsp;&nbsp; &nbsp;@Test<br />
+&nbsp;&nbsp; &nbsp;public void testBase64() throws Exception {<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;String str = &quot;黄河远上白云间&quot;;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;String base64 = Base64.encode(str.getBytes());<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;String str2 = new String(Base64.decode(base64));<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;System.out.println(str2);<br />
+&nbsp;&nbsp; &nbsp;}</p>
+
+<p>&nbsp;&nbsp; &nbsp;@Test<br />
+&nbsp;&nbsp; &nbsp;public void testHex() throws Exception {<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;String str = &quot;一片孤城万仞山&quot;;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;String hex = Hex.encodeHexString(str.getBytes());<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;String str2 = new String(Hex.decodeHex(hex.toCharArray()));<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;System.out.println(str2);<br />
+&nbsp;&nbsp; &nbsp;}<br />
+&nbsp;&nbsp; &nbsp;<br />
+&nbsp;&nbsp; &nbsp;@Test<br />
+&nbsp;&nbsp; &nbsp;public void testMd5() throws Exception {<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;String str = &quot;羌笛何须怨杨柳&quot;;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;String md5Hex = DigestUtils.md5Hex(str.getBytes());<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;System.out.println(md5Hex);<br />
+&nbsp;&nbsp; &nbsp;}</p>
+
+<p>&nbsp;&nbsp; &nbsp;@Test<br />
+&nbsp;&nbsp; &nbsp;public void testSha1() throws Exception {<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;String str = &quot;春风不度玉门关&quot;;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;String sha1Hex = DigestUtils.sha1Hex(str.getBytes());<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;System.out.println(sha1Hex);<br />
+&nbsp;&nbsp; &nbsp;}</p>
+</blockquote>
+</div>
+</div>
+</body>
+</html>

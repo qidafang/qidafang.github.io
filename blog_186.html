@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>iframe的父子窗口操作</h1>
+<div><p>好久没用iframe这么剽悍的标签了。<br />
+最重要的当然是父子的js互操作，搜了一下也简单：<br />
+父：theIFrame.contentWindow即得到子的window对象。<br />
+子：parent即得到父的window对象。</p>
+
+<p>奇怪的是contentWindow这个属性，犀牛书《Javascript权威指南》没有介绍，<a href="http://www.w3school.com.cn/jsref/dom_obj_frame.asp">w3school</a>也没有，最后在w3cshool（注意比上个站多个c）<a href="http://www.w3cschool.cc/jsref/dom-obj-frame.html">找到答案</a>。<br />
+<strong>不是w3c标准，但是全浏览器支持。</strong></p>
+
+<p>写了个最简单的demo<a href="http://page.zidafone.com/iframe/">在这里</a>。</p>
+</div>
+</div>
+</body>
+</html>

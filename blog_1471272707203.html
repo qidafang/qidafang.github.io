@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>《写给大忙人看的java se 8》笔记</h1>
+<div><p>现在才来了解java8，是不是后知后觉了点？
+新的编程技术，个人不喜欢第一时间跟进，待社区已有实践积淀再切入似乎更划算些？
+一点点精明的考虑。
+不多说，上代码。</p>
+
+<pre><code>//读《写给大忙人看的java se 8》做的笔记代码
+//希望对忙到连这书都没工夫看的你，匆匆一瞥，留下印象
+//祝编程愉快
+public class MainTest {
+
+    //第一章，讲lambda表达式
+    //lambda表达式类似javascript的函数字面量，可用于替代java的匿名内部类
+    //基本型为 (形参列表)-&gt;{方法体}，有多种简写方式，不赘
+    //某个方法指定了接口参数时，即可将lambda表达式传入
+    private static void c1(){
+        List&lt;Integer&gt; l = Arrays.asList(1, 2, 3);
+
+        //功能不言自明
+        //forEach后面会讲，这里脸熟一下
+        l.forEach(i -&gt; print(i));
+
+        //另外，现在接口可以声明默认方法了
+        //所以，旧的接口+默认抽象类的二重声明，可以合为只声明个接口
+    }
+
+    //第二章，Stream简化集合使用
+    private static void c2(){
+        //过滤，可以理解为sql的where子句
+        List&lt;Integer&gt; l = Arrays.asList(1, 2, 3);
+        long bigNumberCount = l.stream().filter(i -&gt; i % 2 == 1).count();//顺便演示了聚合
+        print(bigNumberCount);//2
+
+        //投影，可以理解为sql的指定列子句
+        Stream&lt;Integer&gt; plusOne = l.stream().map(i -&gt; i+1);
+        plusOne.forEach(i -&gt; print(i));//2,3,4
+
+        //聚合上面已演示，可以理解为sql的count/avg/max/min语法
+
+        //收集为{1:2, 2:3, 3:4}的字典
+        Map&lt;Integer, Integer&gt; result = 
+                l.stream().collect(Collectors.toMap(i -&gt; i, i -&gt; i+1));
+        result.forEach((k,v) -&gt; print(k+":"+v));//顺便演示多个形参的lambda
+    }
+
+    //第五章，讲新的日期时间API
+    private static void c5(){
+        //日期
+        LocalDate today = LocalDate.now();
+        print(today);//2016-08-15
+        LocalDate birthday = LocalDate.of(1988, 10, 31);
+        print(birthday);//1988-10-31
+        //LocalDate有一些plusDays withDayOfMonth等实用方法
+
+        //时间
+        LocalTime time = LocalTime.of(10, 31);
+        print(time);//10:31
+        //LocalTime有一些plusHours withMinute等实用方法
+
+        //日期时间
+        LocalDateTime dateTime = LocalDateTime.now();
+        print(dateTime);//2016-08-15T21:46:01.719
+
+        //日期转字符串，使用默认格式
+        print(DateTimeFormatter.ISO_DATE.format(birthday));
+        //字符串转日期，使用自定义格式
+        DateTimeFormatter myFormatter = DateTimeFormatter.ofPattern("yyyy..MM..dd");
+        LocalDate fromStr = (LocalDate)LocalDate.parse("1988..10..31", myFormatter);
+        print(fromStr);
+
+        //与老Date互转
+        Date oldClass = Date.valueOf(birthday);
+        LocalDate newClass = oldClass.toLocalDate();
+    }
+
+    //杂项的改进
+    private static void c8(){
+        //String添加join
+        String whoIsHero = String.join(",", "曹操", "刘备", "孙权");
+        print(whoIsHero);
+
+        //Iterable添加forEach
+        Arrays.asList("关羽", "张飞", "赵云").forEach(i -&gt; print(i));
+
+        //方便地读取文件内容
+        Path path = Paths.get("/juqiuwang_logs", "juqiuwang.log");//顺便演示Path使用
+        try(Stream&lt;String&gt; lines = Files.lines(path)){//顺便演示自动关闭资源
+            lines.forEach(s -&gt; print(s));
+        }catch(Exception e){
+            throw new RuntimeException(e);
+        }
+    }
+
+    //java7特性
+    private static void c9(){
+        //自动关闭资源的try(xx)写法在c9中已演示
+
+        //路径Path在c9中也用过了
+        //方便地读取文件内容
+        try{
+            List&lt;String&gt; lines = Files.readAllLines(Paths.get("/juqiuwang_logs", "juqiuwang.log"));
+            lines.forEach(s -&gt; print(s));
+            //Files另外还有些实用方法，不赘
+        }catch(Exception e){
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void main(String[] args){
+        c1();
+        c2();
+        //第3章讲lambda的应用，请看书
+        //第4章讲JavaFX，如感兴趣请看书
+        c5();
+        //第6章讲并发，如感兴趣请看书
+        //第7章讲javascript引擎，如感兴趣请看书
+        c8();
+        c9();
+    }
+
+    private static void print(Object o){
+        System.out.println(o);
+    }
+
+}
+</code></pre>
+</div>
+</div>
+</body>
+</html>

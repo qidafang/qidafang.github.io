@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>shiro一个登录页俩登录表单</h1>
+<div><p>一个登录页面有两个表单，分别是两个不同角色登录使用。<br />
+俩表单的输入项和action都完全一样当然可以，但有个问题就是俩表单能互换使用，应该限制每个表单只能特定角色使用。<br />
+1.<br />
+根路径的响应函数，根据角色不同重定向到子项目的路径。<br />
+2.<br />
+根目录用user过滤器保护起来，这样直接访问根目录就会被重定向到登录页面。<br />
+3.<br />
+页面的多个form，每个form有一个隐藏域，说明是哪个角色使用的form。<br />
+4.<br />
+form们的action是相同的，在处理登录的filter里制作token，把隐藏域的值也放进去。<br />
+5.<br />
+realm里根据token中的角色信息，取用户时把角色条件带进去来取，如果不存在该角色的该用户即视为用户不存在。<br />
+6.<br />
+realm应该是唯一的，这样才会把异常类名放到request中去，方便页面提示错误信息。<br />
+如果有多于一个realm，具体的异常信息将被放弃，返回一个模糊的登录异常。<br />
+7.<br />
+在打酱油的controller中，在显示失败页面的方法里，根据异常类名，翻译成友好的提示信息。<br />
+8.<br />
+在页面上把提示信息显示出来。</p>
+</div>
+</div>
+</body>
+</html>

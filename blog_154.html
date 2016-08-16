@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>多个域名映射同一主机</h1>
+<div><p>====背景====</p>
+
+<p>我以前（在今天之前）有个蠢萌的想法：一个主机只能被一个域名使用。</p>
+
+<p>比如我建个<a href="http://zidafone.com/">记笔记的网站</a>，就得买个有外网IP的主机，我再建个<a href="http://427studio.net">自己工作室的官网</a>，又得买个有外网IP的主机。</p>
+
+<p>之所以这么认为，是在万网的域名管理中没发现将域名映射到端口的映射方法。二级域名倒是有两种方法可以配置，显式url和隐式url。但这俩方法都有缺点，显式url比如我将blog.zidafone.com映射到zidafone.com/blog/，在地址栏输入blog.zidafone.com倒是可以正常访问了，但地址栏显示的是zidafone.com/blog/，明显这是有个http重定向的动作，地址栏显示成这样，心里总不太爽。隐式url呢，地址栏始终保持blog.zidafone.com，即使点进去功能了也是一样。咋回事？原来blog.zidafone.com被定位到一个网页，该网页内嵌一个最大的iframe，该iframe的src是zidafone.com/blog&hellip;&hellip;<img alt="" src="http://427studio.net/static/ckeditor/plugins/smiley/QQexpression/76.gif" style="height:24px; width:24px" title="" /></p>
+
+<p>====背景完毕====</p>
+
+<p>今天终于想起来仔细研究研究了，我之前认为的&ldquo;一个主机不能发布两个80端口的站&rdquo;，是以下两个命题成立时为真：一是每个域名只能映射到一个IP上，不能附带端口，二是每个主机只能运行一个80端口的站，研究后发现，第二个理解是错的。</p>
+
+<p>关于使用Apache为80端口配置多个项目，网上的资料有很多（比如<a href="http://www.cnblogs.com/hi-bazinga/archive/2012/04/23/2466605.html">这篇</a>），搜&ldquo;Apache虚拟主机&rdquo;就能搜到，原理是配每个站的时候指定该站的域名，比如为第一个站配域名为zidafone.com，第二个站配域名为427studio.net，这样当你把zidafone.com和427studio.net两个域名都指向你的主机，当有用户访问其中一个域名比如zidafone.com时，主机会根据这个域名判断出应该由第一个站提供服务，而当另一个用户访问427studio.net时，主机会判断应该由第二个站进行服务。这就实现了同一主机为多个域名提供服务的目的了。</p>
+
+<p>之所以搜&ldquo;虚拟主机&rdquo;能搜到资料，是因为这就是虚拟主机的原理。虚拟主机是什么？多个用户，共用一个主机，使用他们不同的域名访问这同一个主机，主机会定位到某个特定的站点文件夹（就是用户可以通过ftp管理的那个文件夹），这样在用户看来，这个文件夹就是他的主机的根目录，他根本不知道还有多少个用户的多少个站在和他共用一台主机，也没必要知道，因为互相不会影响。</p>
+
+<p>一个主机为多个站提供服务的问题解决了，下一个问题是怎样把Apache和Tomcat连起来，这方面的资料也很多（比如<a href="http://bbs.blueidea.com/thread-2873268-1-1.html">这篇</a>），搜&ldquo;Apache Tomcat负载均衡&rdquo;可以搜到。根据资料和一点瞎蒙式的探索，最终成功的配置如下：</p>
+
+<p><strong>httpd.conf:</strong></p>
+
+<p>LoadModule jk_module modules/mod_jk.so<br />
+JkWorkersFile &quot;D:\servers\tomcat\apache-tomcat-7.0.56\conf\workers.properties&quot;<br />
+JkLogFile &quot;D:\servers\tomcat\apache-tomcat-7.0.56\logs\mod_jk2.log&quot;&nbsp;<br />
+JkLogLevel info<br />
+#add mod_jk(tomcat) end</p>
+
+<p><strong>httpd-vhosts.conf:</strong></p>
+
+<p><br />
+&nbsp; &nbsp; ServerAdmin webmaster@dummy-host.example.com<br />
+&nbsp; &nbsp; DocumentRoot &quot;e:/apachetomcat1/&quot;<br />
+&nbsp; &nbsp; ServerName test1.com<br />
+&nbsp; &nbsp; ServerAlias www.dummy-host.example.com<br />
+&nbsp; &nbsp; ErrorLog &quot;logs/dummy-host.example.com-error.log&quot;<br />
+&nbsp; &nbsp; CustomLog &quot;logs/dummy-host.example.com-access.log&quot; common</p>
+
+<p>&nbsp;&nbsp; &nbsp;JkMount /servlet/* controller1<br />
+&nbsp;&nbsp; &nbsp;JkMount /*.jsp controller1<br />
+&nbsp;&nbsp; &nbsp;JkMount /*.do controller1</p>
+
+<p><br />
+&nbsp; &nbsp; ServerAdmin webmaster@dummy-host2.example.com<br />
+&nbsp; &nbsp; DocumentRoot &quot;e:/apachetomcat2/&quot;<br />
+&nbsp; &nbsp; ServerName test2.com<br />
+&nbsp; &nbsp; ErrorLog &quot;logs/dummy-host2.example.com-error.log&quot;<br />
+&nbsp; &nbsp; CustomLog &quot;logs/dummy-host2.example.com-access.log&quot; common<br />
+&nbsp; &nbsp;&nbsp;<br />
+&nbsp;&nbsp; &nbsp;JkMount /servlet/* controller2<br />
+&nbsp;&nbsp; &nbsp;JkMount /*.jsp controller2<br />
+&nbsp;&nbsp; &nbsp;JkMount /*.do controller2</p>
+
+<p><strong>workers.properties:</strong></p>
+
+<p>#server<br />
+worker.list = controller1,controller2<br />
+#========tomcat1========<br />
+worker.tomcat1.port=8009<br />
+worker.tomcat1.host=localhost<br />
+worker.tomcat1.type=ajp13<br />
+worker.tomcat1.lbfactor = 1<br />
+#========tomcat2========<br />
+worker.tomcat2.port=9009<br />
+worker.tomcat2.host=localhost<br />
+worker.tomcat2.type=ajp13<br />
+worker.tomcat2.lbfactor = 1</p>
+
+<p>#========controller,负载均衡控制器========<br />
+worker.controller1.type=lb<br />
+worker.controller1.balanced_workers=tomcat1<br />
+worker.controller1.sticky_session=false<br />
+worker.controller1.sticky_session_force=1<br />
+worker.controller1.sticky_session=1</p>
+
+<p>worker.controller2.type=lb<br />
+worker.controller2.balanced_workers=tomcat2<br />
+worker.controller2.sticky_session=false<br />
+worker.controller2.sticky_session_force=1<br />
+worker.controller2.sticky_session=1</p>
+
+<p><strong>tomcat甲的server.xml:</strong></p>
+
+<p>&nbsp;</p>
+
+<p><strong>tomcat乙的server.xml:</strong></p>
+
+<p>&nbsp;</p>
+
+<p><strong>简明描述图：（PS能力捉急，见笑）</strong></p>
+
+<p><img alt="" src="http://img.zidafone.com/427studio/e83ba8a4-51aa-4b81-9d76-d2878d3a8b52.png" style="height:500px; width:500px" /></p>
+
+<p>异出同名，分道扬镳。再见！</p>
+</div>
+</div>
+</body>
+</html>

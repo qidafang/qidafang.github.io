@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>java开源商城shop++研究</h1>
+<div><p>shop++代码研究和总结：<br />
+1.框架：经典的SSH(Struts2+Spring+Hibernate)，及Freemarker，jQuery<br />
+2.静态化和缓存：商城重要页面（首页，文章页，商品页）静态化，全站应用oscache的页面缓存，数据库缓存也使用oscache。<br />
+3.管理后台设计：整个页面由frameset分成几部分，增删改查页风格一致，所以页面组件采用约定的命名方式，js采用同一个js。<br />
+操作方式：<br />
+增：url跳转；删：ajax；改：url跳转；查：js驱动form提交。<br />
+校验方式：<br />
+增：页面(jQuery Validator)+后台；删：后台；改：页面+后台<br />
+技术使用：<br />
+改：BeanUtils将未变化的字段从持久实体复制到表单实体；查：Hibernate的原型查询<br />
+4.商城前台设计：<br />
+静态和动态页面相结合，静态页动态页都采用freemarker<br />
+5.安装方式<br />
+安装时重写了重要配置文件，如web.xml和applicationContext.xml，所以安装后必须重启服务器。<br />
+6.动态的.js文件<br />
+重要的base.js也由模板生成，使js中含有一些动态内容成为可能。<br />
+7.加密方法<br />
+最蠢萌的是，为了不被发现加密的道道，将一些内容藏到编辑器不易发现的地方，如backup-applicationContext.xml往右拉。<br />
+还有一些敏感的单词为了不易发现，改成了字符串拼接。<br />
+这是尽力让更多的人需要购买技术支持吗。<br />
+8.小发现<br />
+页面怎么根据后台的进度显示真实的进度条？<br />
+答：浏览器和服务器多次交互，每次交互完成一部分，改变页面进度提示，并立刻发起下一次交互。<br />
+9.库们<br />
+因为没用maven，所有的jar一目了然。<br />
+除了ssh，就只有commons和处理xml的dom4j、处理json的json库了，几乎再没别的，可见技术简单。<br />
+前端的库，也就是jquery及其各种插件，include.ftl中一目了然。<br />
+10.不要炫技<br />
+但就是这些经典技术，成了业内有名的开源商城，好评率相当高。<br />
+可见技术还是基础，重要的是思想和设计。<br />
+<br />
+另外，还在shop++官网把3.0版的编译包下载下来，反编译后阅读障碍不算大，和静态资源放到一起在eclipse基本能看。<br />
+struts2换成了spring mvc，安全框架换成了shiro，总体来讲变化不大。<br />
+小小吐个槽，后台管理页面终于没有frameset了，变成了table布局+iframe，这个团队太喜欢在a标签上写target属性了。<br />
+<br />
+freemarker真是好东西，把中文文档下载下来了，要仔细学习一番。</p>
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>我用tomcat常做的配置</h1>
+<div><p>我用tomcat常做的配置：</p>
+
+<p>1)jvm参数修改<br />
+修改catalina.bat，直接在第一行后面写配置set JAVA_OPTS=-server -Xms1024m -Xmx1024m -XX:PermSize=128M -XX:MaxPermSize=256M之类，具体参考《java性能优化权威指南》的第五章。</p>
+
+<p>2)server.xml配置修改<br />
+修改端口：个人习惯统一改前两位，比如8080改为9080，那8005就改为9005，8443就改为9443，以此类推，Engine标签上的jvmRoute参数，也可以改为jvm9080，保证不会冲突。<br />
+字符设置：Connector标签添加URIEncoding=&quot;UTF-8&quot;，这样GET方式可以直接提交中文了。useBodyEncodingForURI设为true，避免可能出现的乱码问题。<br />
+更多的参考一下<a href="http://energykey.iteye.com/blog/2072797">这里</a>。<br />
+里面提到的我没用过的参数主要是以下几组：<br />
+最大线程数：<br />
+maxThreads=&quot;500&quot;<br />
+关于压缩：<br />
+compression=&quot;on&quot;&nbsp;<br />
+compressionMinSize=&quot;2048&quot;&nbsp;<br />
+noCompressionUserAgents=&quot;gozilla, traviata&quot;&nbsp;<br />
+compressableMimeType=&quot;text/html,application/xml,application/json,application/javascript,text/css,text/plain&quot;<br />
+上传时间限制：<br />
+disableUploadTimeout=&quot;false&quot;<br />
+connectionUploadTimeout=&quot;60000&quot;<br />
+最完全的参考还是<a href="http://tomcat.apache.org/tomcat-7.0-doc/config/http.html">官方文档</a>。</p>
+
+<p>3)apache和tomcat集群<br />
+略（见之前的博文）</p>
+
+<p>4)tomcat用memcached保存session<br />
+略（见之前的博文）</p>
+
+<p>5)用jmx监控<br />
+参考<a href="http://tomcat.apache.org/tomcat-7.0-doc/monitoring.html">这里</a><br />
+set CATALINA_OPTS=-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=3427 -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=false<br />
+这样就可以用jconsole或jvisualvm连接监视了</p>
+
+<p>6)远程调试<br />
+SET CATALINA_OPTS=-server -Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5888<br />
+当要配置的太多可以用set CATALINA_OPTS = %CATALINA_OPTS% -server...的方式分行来写。<br />
+在eclipse的debug窗口新建remote java application，输入ip和端口即可</p>
+
+<p>7)使用配置的方法部署项目（以前用eclipse开发java程序有用，现在没啥用了）<br />
+在Host节点下添加Context标签，直接写路径和项目文件夹<br />
+&lt;Context path=&quot;/hello&quot; docBase=&quot;F:\eclipse3.2\workspace\hello\WebRoot&quot; debug=&quot;0&quot; privileged=&quot;true&quot;&gt;&lt;/Context&gt;</p>
+
+<p>8)日志的配置<br />
+日志分为运行日志和访问日志。<br />
+运行日志的配置文件是conf下的logging.properties。<br />
+访问日志的配置文件server.xml，Host节点下的Valve，类名为AccessLogValve的那个。<br />
+实验：运行日志的级别全设为SEVERE，访问日志注释掉，启动tomcat，日志文件生成，但是没内容。<br />
+运行日志配置改回FINE，logs文件有内容。<br />
+访问日志配置解除注释，logs文件夹下出现访问日志。<br />
+具体的可以参考<a href="http://jingyan.baidu.com/article/36d6ed1f713b9d1bcf4883e1.html">这里</a>。</p>
+
+<p>参考：<br />
+各篇网络文章前面已给链接。当然，最重要的还是<a href="http://tomcat.apache.org/tomcat-7.0-doc/index.html">官方文档</a>。</p>
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>以楚汉为例聊聊并发</h1>
+<div><p>当你编写了一个runnable，你就是为自己找了个帮手：<br />
+1)你将失去独裁的辛苦和安心<br />
+2)你将获得分权的省力和操心</p>
+
+<p>你可以想象自己是刘邦，启动了一个叫&ldquo;大将军韩信&rdquo;的线程，为你攻城略地，但在他启动之后，他的行为就不是你能控制的了。<br />
+如果你一不留神在韩信的run方法里写了这样的语句：<br />
+if(齐.已定() &amp;&amp; 齐.王==null){<br />
+&nbsp;&nbsp; &nbsp;申请齐王();<br />
+}<br />
+你就只好郁闷了，因为你无法改变一个正在运行的韩信的run方法。<br />
+想影响其行为，只能通过影响其状态，来间接影响行为。<br />
+比如韩信有个属性<span style="color:#FF0000">private 兵符</span>;<br />
+在韩信的run方法里：<br />
+while(<span style="color:#FF0000">this.兵符 != null</span>){<br />
+&nbsp;&nbsp; &nbsp;...<br />
+}<br />
+那你只需要调用<span style="color:#FF0000">steal兵符From(韩信)</span>，就能终止其功高震主的狂逆行为。</p>
+
+<p><strong>张良：</strong><br />
+while(功成){<br />
+&nbsp;&nbsp; &nbsp;sleep(100000000000);<br />
+}</p>
+
+<p><strong>陈平：</strong><br />
+while(true){<br />
+&nbsp;&nbsp; &nbsp;if(刘邦.alive() || 吕后.alive()){<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;<span style="color:#FF0000">政治.wait();</span><br />
+&nbsp;&nbsp; &nbsp;}else{<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;this.第二春();<br />
+&nbsp;&nbsp; &nbsp;}<br />
+}<br />
+<strong>刘邦吕后们的父类：</strong><br />
+abstract class 本纪俱乐部成员 implements Runnable{<br />
+&nbsp;&nbsp; &nbsp;protected void die(){<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;天下.缟素();<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;<span style="color:#FF0000">政治.notifyAll();</span><br />
+&nbsp;&nbsp; &nbsp;}<br />
+}</p>
+
+<p><strong>线程安全的商山四皓：</strong><br />
+class 商山四皓{<br />
+&nbsp;&nbsp; &nbsp;<span style="color:#FF0000">private</span> boolean alreadyOut = false;<br />
+&nbsp;&nbsp; &nbsp;public <span style="color:#FF0000">synchronized</span> boolean decide(本纪俱乐部成员 x){<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;if(alreadyOut){<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;return false;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;}<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;if(x.equals(吕后)){<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;alreadyOut = true;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;return true;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;}else{<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;return false;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;}<br />
+&nbsp;&nbsp; &nbsp;}&nbsp;<br />
+}<br />
+在刘邦和吕后的线程里并行调用商山四皓.decide(this)也没问题。</p>
+
+<p><strong>反面例子，还是攻齐：</strong><br />
+韩信：<br />
+if(!齐国.已定()){<br />
+&nbsp;&nbsp; &nbsp;攻打(齐国);<br />
+}<br />
+private void 攻打(国 x){<br />
+&nbsp;&nbsp; &nbsp;if(!x.已定()){<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;x.投降();<br />
+&nbsp;&nbsp; &nbsp;}else{<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;x.王.怒();<br />
+&nbsp;&nbsp; &nbsp;}<br />
+}<br />
+郦食其：<br />
+if(!齐国.已定()){<br />
+&nbsp;&nbsp; &nbsp;游说(齐国);<br />
+}<br />
+private void 游说(国 x){<br />
+&nbsp;&nbsp; &nbsp;if(!x.已定()){<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;x.投降();<br />
+&nbsp;&nbsp; &nbsp;}else{<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;x.王.怒();<br />
+&nbsp;&nbsp; &nbsp;}<br />
+}<br />
+由于韩信和郦食其忘了将if放到一个同步块里，即使方法签名是这样：<br />
+public synchronized boolean 已定(){<br />
+&nbsp;&nbsp; &nbsp;return this.定;<br />
+}<br />
+public synchronized void 投降(){<br />
+&nbsp;&nbsp; &nbsp;this.定 = true;<br />
+}<br />
+也有出错的危险，即：<br />
+时间点1郦食其判断齐国未定，时间点2韩信判断齐国未定，时间点3郦食其游说齐王齐王投降；时间点4韩信攻齐&hellip;&hellip;<br />
+程序进行到齐.王.怒();郦食其悲剧。<br />
+这就是<span style="color:#FF0000">非原子性</span>的问题，<strong>线程安全的类，调它的任何一个方法都是安全的，但连续调两个则未必</strong>。而加锁之后故事将是：<br />
+时间点0郦食其获得齐国的锁，时间点1郦食其判断齐国未定，时间点2韩信尝试获得齐国的锁被阻塞，时间点3郦食其游说齐王齐王投降，<br />
+时间点4郦食其释放齐国的锁；时间点5韩信获得齐国的锁，时间点6韩信判断齐国已定，时间点7韩信想了想这段代码没并发的危险自己没作弊的机会、于是罢休&hellip;&hellip;</p>
+
+<p><strong>所谓死锁：</strong><br />
+这是刘邦的方法体：<br />
+synchronized(<span style="color:#FF0000">韩信</span>){<br />
+&nbsp;&nbsp; &nbsp;synchronized(<span style="color:#FF0000">彭越</span>){<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;askForHelp(韩信);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;askForHelp(彭越);<br />
+&nbsp;&nbsp; &nbsp;}<br />
+}<br />
+这是项羽的方法体：<br />
+synchronized(<span style="color:#FF0000">彭越</span>){<br />
+&nbsp;&nbsp; &nbsp;synchronized(<span style="color:#FF0000">韩信</span>){<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;askForHelp(彭越);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;askForHelp(韩信);<br />
+&nbsp;&nbsp; &nbsp;}<br />
+}<br />
+如果俩线程并发，刘邦拿着韩信的锁等着彭越的锁，项羽拿着彭越的锁等着韩信的锁，于是俩人僵持。<br />
+解决方法也简单：改为俩人都先锁韩信，后锁彭越就行了。</p>
+</div>
+</div>
+</body>
+</html>

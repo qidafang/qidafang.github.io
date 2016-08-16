@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>tomcat支持的websocket服务</h1>
+<div><p>在tomcat7之后的版本，写个websocket服务程序非常容易&mdash;&mdash;<br />
+如以下代码所示，当客户端建立了一个连接并发送了一些什么内容到服务器，服务器将每隔两秒返回一个字符串&ldquo;world&rdquo;。<br />
+之所以演示每两秒返回一次是为了说明这是长连接而不是短连接。</p>
+
+<blockquote>
+<p>import java.io.IOException;</p>
+
+<p>import javax.websocket.OnMessage;<br />
+import javax.websocket.Session;<br />
+import javax.websocket.server.ServerEndpoint;</p>
+
+<p>@ServerEndpoint(&quot;/test&quot;)<br />
+public class MyTest {</p>
+
+<p>&nbsp;&nbsp; &nbsp;@OnMessage<br />
+&nbsp; &nbsp; public void onMessage(String message, Session session)&nbsp;<br />
+&nbsp; &nbsp; &nbsp;&nbsp; &nbsp;throws IOException, InterruptedException {<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;System.out.println(&quot;客户端说：&quot; + message);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;while(true){<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;session.getBasicRemote().sendText(&quot;world&quot;);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;Thread.sleep(2000);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;}<br />
+&nbsp; &nbsp; }<br />
+&nbsp;&nbsp; &nbsp;<br />
+}</p>
+</blockquote>
+
+<p>网页只需要这样写：</p>
+
+<blockquote>
+<p>&lt;!DOCTYPE html&gt;<br />
+&lt;html&gt;<br />
+&lt;head&gt;<br />
+&nbsp;&nbsp; &nbsp;&lt;meta charset=&quot;utf-8&quot;&gt;<br />
+&nbsp;&nbsp; &nbsp;&lt;title&gt;Hello WebSocket&lt;/title&gt;<br />
+&lt;/head&gt;<br />
+&lt;body&gt;<br />
+&nbsp;&nbsp; &nbsp;&lt;div id=&quot;content&quot;&gt;&lt;/div&gt;<br />
+&nbsp;&nbsp; &nbsp;&lt;button onclick=&quot;sayHello()&quot;&gt;打招呼&lt;/button&gt;</p>
+
+<p>&nbsp;&nbsp; &nbsp;&lt;script type=&quot;text/javascript&quot;&gt;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;var webSocket =&nbsp;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;new WebSocket(&#39;ws://localhost:8080/dyna/test&#39;);</p>
+
+<p>&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;webSocket.onerror = function(event) {<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;onError(event)<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;};</p>
+
+<p>&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;webSocket.onopen = function(event) {<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;onOpen(event)<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;};</p>
+
+<p>&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;webSocket.onmessage = function(event) {<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;onMessage(event)<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;};</p>
+
+<p>&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;function onMessage(event) {<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;document.getElementById(&#39;content&#39;).innerHTML += &#39;&lt;br /&gt;服务器说：&#39; + event.data;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;}</p>
+
+<p>&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;function onOpen(event) {<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;document.getElementById(&#39;content&#39;).innerHTML = &#39;连接成功&#39;;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;}</p>
+
+<p>&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;function onError(event) {<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;document.getElementById(&#39;content&#39;).innerHTML = &#39;出现错误&#39;;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;}</p>
+
+<p>&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;function sayHello() {<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;webSocket.send(&#39;hello&#39;);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;return false;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;}<br />
+&nbsp;&nbsp; &nbsp;&lt;/script&gt;<br />
+&lt;/body&gt;<br />
+&lt;/html&gt;</p>
+</blockquote>
+
+<p>调试的时候发现tomcat7的支持不是特别好，<br />
+在eclipse里添加server然后在上面跑项目，不支持websocket；<br />
+用在server.xml里添项目的方式，也不支持websocket。</p>
+
+<p>所以换成tomcat8，在eclipse里添加server然后跑项目，websocket也好使。<br />
+这样调试就很方便了。</p>
+
+<p><br />
+<strong>TODO:</strong><br />
+1.maven的tomcat7:run个别项目出现奇怪的问题；maven集成tomcat8的实验有时间做做<br />
+2.spring4对websocket的支持怎么试都不成功，有时间攻克它。<br />
+3.把今天学的即使通讯技术与websocket结合，做网页版qq之类的demo。</p>
+</div>
+</div>
+</body>
+</html>

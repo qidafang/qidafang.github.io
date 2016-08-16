@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>思而勤工作室</title>
+	<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<div id="container">
+<a href="index.html">回目录</a>
+<h1>memcached初识</h1>
+<div><p>1.服务端：<br />
+官方只提供了linux的服务端，windows下的要自己找，或者干脆用springside带的memcached模拟器。<br />
+下载<a href="http://lx.cdn.baidupcs.com/file/9beee91123af8490b6e1e9bb79c697ce?bkt=p2-nj-168&amp;xcode=be69a5daa0b000dd602bc099decc883e2a7a4a66d7327584d796109456bd1356&amp;fid=2855137217-250528-80052886016121&amp;time=1430227597&amp;sign=FDTAXERLBH-DCb740ccc5511e5e8fedcff06b081203-AHtMraW3qMULBe%2B5%2FzokZ%2BTAWpE%3D&amp;to=sc&amp;fm=Nan,B,M,mn&amp;sta_dx=0&amp;sta_cs=31&amp;sta_ft=zip&amp;sta_ct=6&amp;newver=1&amp;newfm=1&amp;flow_ver=3&amp;sl=73203791&amp;expires=8h&amp;rt=sh&amp;r=878343999&amp;mlogid=3622725284&amp;vuk=1493363632&amp;vbdid=1162060378&amp;fin=memcached-win64-1.4.4-14.zip&amp;fn=memcached-win64-1.4.4-14.zip&amp;slt=pm&amp;uta=0">64位windows下的memcached</a><br />
+安装：memcached.exe -d install<br />
+运行：memcached.exe -d start</p>
+
+<p>2.客户端：<br />
+网上教程说telnet可访问，我这总出错，放弃。<br />
+直接用java客户端跑单元测试：</p>
+
+<blockquote>
+<p><br />
+<br />
+&nbsp;&nbsp; &nbsp;net.spy<br />
+&nbsp;&nbsp; &nbsp;spymemcached<br />
+&nbsp;&nbsp; &nbsp;2.11.5</p>
+</blockquote>
+
+<p><br />
+测试代码：</p>
+
+<blockquote>
+<p><br />
+package test;</p>
+
+<p>import net.spy.memcached.AddrUtil;<br />
+import net.spy.memcached.MemcachedClient;</p>
+
+<p>import org.junit.After;<br />
+import org.junit.Assert;<br />
+import org.junit.Before;<br />
+import org.junit.Test;</p>
+
+<p>public class MemcachedTest {<br />
+&nbsp;&nbsp; &nbsp;<br />
+&nbsp;&nbsp; &nbsp;MemcachedClient client;<br />
+&nbsp;&nbsp; &nbsp;<br />
+&nbsp;&nbsp; &nbsp;@Before<br />
+&nbsp;&nbsp; &nbsp;public void setUp() throws Exception{<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;client = new MemcachedClient(AddrUtil.getAddresses(&quot;127.0.0.1:11211&quot;));</p>
+
+<p>&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;//flush<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;client.flush();<br />
+&nbsp;&nbsp; &nbsp;}<br />
+&nbsp;&nbsp; &nbsp;<br />
+&nbsp;&nbsp; &nbsp;@After<br />
+&nbsp;&nbsp; &nbsp;public void tearDown() throws Exception{<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;client.shutdown();<br />
+&nbsp;&nbsp; &nbsp;}<br />
+&nbsp;&nbsp; &nbsp;<br />
+&nbsp;&nbsp; &nbsp;@Test<br />
+&nbsp;&nbsp; &nbsp;public void test() throws Exception{<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;//set &amp; get<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;client.set(&quot;name&quot;, 1000, &quot;427studio&quot;);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;String nameFromCache = (String)client.get(&quot;name&quot;);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;Assert.assertEquals(&quot;名字不对&quot;, &quot;427studio&quot;, nameFromCache);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;//add<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;client.add(&quot;name&quot;, 1000, &quot;思而勤工作室&quot;);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;nameFromCache = (String)client.get(&quot;name&quot;);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;Assert.assertEquals(&quot;对已有的数据add应该无效&quot;, &quot;427studio&quot;, nameFromCache);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;//replace<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;client.replace(&quot;studioName&quot;, 1000, &quot;思而勤工作室&quot;);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;nameFromCache = (String)client.get(&quot;studioName&quot;);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;Assert.assertEquals(&quot;对没有的数据replace应该无效&quot;, null, nameFromCache);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;//delete<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;client.delete(&quot;name&quot;);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;nameFromCache = (String)client.get(&quot;name&quot;);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;Assert.assertEquals(&quot;数据应该已被删除掉&quot;, null, nameFromCache);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;//increment<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;client.incr(&quot;code&quot;, 1, 427, 1000);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;String codeFromCache = (String)client.get(&quot;code&quot;);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;Assert.assertEquals(&quot;编号不对&quot;, &quot;427&quot;, codeFromCache);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;//decrement<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;client.decr(&quot;code&quot;, 247);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;codeFromCache = (String)client.get(&quot;code&quot;);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;Assert.assertEquals(&quot;编号不对&quot;, String.valueOf(427 - 247), codeFromCache);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;<br />
+&nbsp;&nbsp; &nbsp;}<br />
+}</p>
+</blockquote>
+
+<p><br />
+以上演示了最常用的api的使用，可以自己封装得更好用，也可以参考<a href="https://github.com/springside/springside4/blob/master/modules/extension/src/main/java/org/springside/modules/cache/memcached/SpyMemcachedClient.java">springside的封装</a>。</p>
+
+<p>3.修改memcached的端口和内存<br />
+注册表HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\memcached Server的ImagePath项<br />
+修改为D:\memcached\memcached.exe&rdquo; -p 10000 -m 512 -d runservice<br />
+p项为端口，m项为内存（单位：兆）</p>
+
+<p>4.memcached的使用，没悬念</p>
+
+<blockquote>
+<p>Object target = spyMemcachedClient.get(&quot;target_id&quot;);<br />
+if(target == null){<br />
+&nbsp;&nbsp; &nbsp;//从数据库取值<br />
+&nbsp;&nbsp; &nbsp;target = ...<br />
+&nbsp;&nbsp; &nbsp;spyMemcachedClient.set(&quot;target_id&quot;, 60 * 60 * 1, target);<br />
+}else{<br />
+&nbsp;&nbsp; &nbsp;//从缓存取值<br />
+}<br />
+return target;</p>
+</blockquote>
+</div>
+</div>
+</body>
+</html>
