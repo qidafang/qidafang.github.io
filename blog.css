@@ -24,6 +24,6 @@ blockquote, pre{
 	border-radius: 3px;
 }
 
-a:link, a:visited, a:hover, a:activity{
+a:link, a:visited, a:hover, a:active{
 	color: black;
 }
