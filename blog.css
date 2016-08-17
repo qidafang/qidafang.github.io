@@ -23,3 +23,7 @@ blockquote, pre{
 	background-color: #BBB;
 	border-radius: 3px;
 }
+
+a:link,a:visited,a:hover,a:activity{
+	color: black;
+}
