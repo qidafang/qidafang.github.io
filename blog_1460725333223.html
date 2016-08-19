@@ -406,6 +406,18 @@ fi
 
 <pre><code>service crond restart
 </code></pre>
+
+<h1>2016.8.19添加</h1>
+
+<h2>更新网站程序的脚本</h2>
+
+<pre><code>cd /usr/local/tomcat7/apache-tomcat-9.0.0.M4/
+bin/shutdown.sh
+kill -9 $(pgrep -f tomcat)
+rm -rf webapps/*
+mv ROOT.war webapps
+bin/startup.sh
+</code></pre>
 </div>
 </div>
 </body>
