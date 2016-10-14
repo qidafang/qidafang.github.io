@@ -418,6 +418,44 @@ rm -rf webapps/*
 mv ROOT.war webapps
 bin/startup.sh
 </code></pre>
+	
+<h1>2016.10.14添加</h1>
+
+<h2>莫名其妙需要重装服务器</h2>
+
+<pre><code>换用centos7之后，部网站要在它自带的firewall防火墙加配置：
+firewall-cmd --zone=public --add-port=80/tcp --permanent
+firewall-cmd --zone=public --add-port=3306/tcp --permanent
+然后更新防火墙规则：
+firewall-cmd --reload
+
+参考这篇 http://www.centoscn.com/CentOS/help/2015/0208/4667.html
+
+安装mysql是这样，要先添加源：
+wget http://repo.mysql.com/mysql-community-release-el7-5.noarch.rpm
+sudo rpm -ivh mysql-community-release-el7-5.noarch.rpm
+然后安装：
+sudo yum install mysql-server
+之后的琐事是：
+service mysqld start
+mysql -u root
+进入mysql之后执行：
+use mysql;
+update user set password=password('123456') where user='root';
+update user set host='%' where user='root';
+exit;
+这是设置密码，并允许从远程登录。
+然后重启mysql服务：
+service mysqld restart;
+再然后远程连接，把数据传过去就是了。
+
+安装jdk是照着这个：
+http://www.linuxidc.com/Linux/2014-12/110676.htm
+总觉得下载到本地再ftp传过去有点不科学，但需要点「同意许可协议」按钮啊。
+
+tomcat到官网下载tar.gz然后解压就行了，不多说。
+</code></pre>
+	
 </div>
 </div>
 </body>
