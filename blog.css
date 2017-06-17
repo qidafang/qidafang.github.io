@@ -1,13 +1,16 @@
-﻿*{
+*{
 	font-family: 微软雅黑,宋体,Consolas,arial;
 	line-height: 1.7;
 }
 
 body{
-	background-color: #AAD;
+	background-color: #AAA;
 	color: #300;
 }
 
+li{
+	margin-bottom: 10px;
+}
 
 #container{
 	width: 1200px;
