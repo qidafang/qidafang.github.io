@@ -1,12 +1,16 @@
-﻿*{
+*{
 	font-family: 微软雅黑,宋体,Consolas,arial;
-	line-height: 1.7;
+	line-height: 2;
 }
 
 body{
-	background-color: #EEE;
+	background-color: #AAA;
+	color: #300;
 }
 
+li{
+	margin-bottom: 10px;
+}
 
 #container{
 	width: 1200px;
@@ -22,4 +26,8 @@ blockquote, pre{
 	line-height: 1.4;
 	background-color: #BBB;
 	border-radius: 3px;
+}
+
+a:link, a:visited, a:hover, a:active{
+	color: #003;
 }
